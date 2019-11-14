@@ -27,6 +27,10 @@ from plotting import singularplot
 from sparql import getdbpediaimage
 # import strings data from respective module
 from strings_reader import language_dicts
+from networks import draw_network
+
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 languages = '/'.join(list(language_dicts.keys())).upper()
 
@@ -126,7 +130,7 @@ defaultsearchengine = config.get('Other', 'default_search')
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-wvectors = Blueprint('wvectors', __name__, template_folder='templates')
+wvectors = Blueprint('wvectors', __name__, template_folder='templates', static_folder='static')
 
 
 def after_this_request(func):
@@ -226,6 +230,7 @@ def home(lang):
     g.strings = language_dicts[lang]
 
     if request.method == 'POST':
+        models_to_neighbors = dict()
         list_data = 'dummy'
         try:
             list_data = request.form['list_query']
@@ -239,44 +244,45 @@ def home(lang):
                 error_value = "Incorrect tag!"
                 return render_template('home.html', error=error_value, other_lang=other_lang,
                                        languages=languages, url=url)
-            model_value = request.form.getlist('model')
-            if len(model_value) < 1:
-                model = defaultmodel
-            else:
-                model = model_value[0]
-            images = {query.split('_')[0]: None}
-            models_row = {}
-            frequencies = {}
-            if model_props[model]['tags'] == 'False':
-                query = query.split('_')[0]
-                pos = 'ALL'
-            else:
-                pos = query.split('_')[-1]
-            message = {'operation': '1', 'query': query, 'pos': pos, 'model': model,
-                       'nr_neighbors': 30}
-            result = json.loads(serverquery(message).decode('utf-8'))
-            frequencies[model] = result['frequencies']
-            if query + " is unknown to the model" in result:
-                return render_template('home.html', error=query + " is unknown to the model",
-                                       other_lang=other_lang, languages=languages,
-                                       url=url, word=query)
-            else:
-                inferred = set()
-                for word in result['neighbors']:
-                    images[word[0].split('_')[0]] = None
-                models_row[model] = result['neighbors']
-                if dbpedia:
-                    try:
-                        images = get_images(images)
-                    except:
-                        pass
-                if 'inferred' in result:
-                    inferred.add(model)
-                return render_template('home.html', list_value=models_row, word=query,
-                                       wordimages=images, models=our_models, model=model, tags=tags,
-                                       other_lang=other_lang, languages=languages, url=url,
-                                       inferred=inferred, frequencies=frequencies,
-                                       visible_neighbors=10)
+            for model in model_props.keys():
+                images = {query.split('_')[0]: None}
+                models_row = {}
+                frequencies = {}
+                if model_props[model]['tags'] == 'False':
+                    query = query.split('_')[0]
+                    pos = 'ALL'
+                else:
+                    pos = query.split('_')[-1]
+                message = {'operation': '1', 'query': query, 'pos': pos, 'model': model,
+                           'nr_neighbors': 30}
+                result = json.loads(serverquery(message).decode('utf-8'))
+                frequencies[model] = result['frequencies']
+                if query + " is unknown to the model" in result:
+                    return render_template('home.html', error=query + " is unknown to the model",
+                                           other_lang=other_lang, languages=languages,
+                                           url=url, word=query)
+                else:
+                    inferred = set()
+                    for word in result['neighbors']:
+                        images[word[0].split('_')[0]] = None
+                    models_row[model] = result['neighbors']
+                    if dbpedia:
+                        try:
+                            images = get_images(images)
+                        except:
+                            pass
+                    if 'inferred' in result:
+                        inferred.add(model)
+                    models_to_neighbors[model] = [word for (word, score) in result["neighbors"]]
+            models = list(models_to_neighbors.keys())
+            neighbors = [models_to_neighbors[model] for model in models]
+            neighbors_T = list(map(list, zip(*neighbors)))
+            save_neighbors_heatmap(neighbors, models, "./static/plt.png")
+            return render_template("hist.html",
+                                   models=models,
+                                   neighbors=neighbors_T,
+                                   n=len(models),
+                                   url=url, plt_path="/static/plt.png")
         else:
             error_value = "Incorrect query!"
             return render_template("home.html", error=error_value, tags=tags, other_lang=other_lang,
@@ -284,6 +290,16 @@ def home(lang):
     return render_template(
         'home.html', tags=tags, other_lang=other_lang, languages=languages, url=url)
 
+
+def get_jaccard_coeff(neighbors1, neighbors2):
+    return len(set(neighbors1).intersection(neighbors2)) / \
+           len(set(neighbors1).union(neighbors2))
+
+
+def save_neighbors_heatmap(neighbors, models, path):
+    my_heatmap = [[get_jaccard_coeff(a, b) for b in neighbors] for a in neighbors]
+    sns.heatmap(my_heatmap, xticklabels=models, yticklabels=models)
+    plt.savefig(path)
 
 @wvectors.route(url + '<lang:lang>/misc/', methods=['GET', 'POST'])
 def misc_page(lang):
@@ -520,7 +536,7 @@ def visual_page(lang):
                         classes.append(groups.index(group))
 
             unknown = {}
-            models_row = {}
+            models_row = {"tsne": {}, "pca": {}}
             links_row = {}
             frequencies = {}
             for model in model_value:
@@ -535,15 +551,22 @@ def visual_page(lang):
                 name = name.encode('ascii', 'backslashreplace')
                 m.update(name)
                 fname = m.hexdigest()
-                plotfile = "%s_%s.png" % (model, fname)
-                identifier = plotfile[:-4]
-                models_row[model] = plotfile
+                plotfile_tsne = "%s_%s_tsne.png" % (model, fname)
+                plotfile_pca = "%s_%s_pca.png" % (model, fname)
+                identifier_tsne = plotfile_tsne[:-4]
+                identifier_pca = plotfile_pca[:-4]
+                models_row["tsne"][model] = plotfile_tsne
+                models_row["pca"][model] = plotfile_pca
                 labels = []
                 if not os.path.exists(root + 'data/images/tsneplots'):
                     os.makedirs(root + 'data/images/tsneplots')
-                if not os.access(root + 'data/images/tsneplots/' + plotfile, os.F_OK):
-                    print('No previous image found', root + 'data/images/tsneplots/' + plotfile,
-                          file=sys.stderr)
+
+                if not os.path.exists(root + 'data/images/pcaplots'):
+                    os.makedirs(root + 'data/images/pcaplots')
+                if not (os.access(root + 'data/images/tsneplots/' + plotfile_tsne, os.F_OK)\
+                        and os.access(root + 'data/images/tsneplots/' + plotfile_pca, os.F_OK)):
+                    # print('No previous image found', root + 'data/images/tsneplots/' + plotfile,
+                    #       file=sys.stderr)
                     vectors = []
                     for w in words2vis:
                         if model_props[model]['tags'] == 'False':
@@ -565,21 +588,16 @@ def visual_page(lang):
                             classes = [word.split('_')[-1] for word in labels]
                         print('Embedding...', file=sys.stderr)
                         matrix2vis = np.vstack(([v for v in vectors]))
-                        embed(labels, matrix2vis.astype('float64'), classes, model, fname)
-                        models_row[model] = plotfile
-                        if tensorflow_integration:
-                            l2c = word2vec2tensor(identifier, vectors, labels, classes)
-                        else:
-                            l2c = None
+                        embed(labels, matrix2vis.astype('float64'), classes, model, fname + "_tsne", kind="TSNE")
+                        embed(labels, matrix2vis.astype('float64'), classes, model, fname + "_pca", kind="PCA")
+                        models_row["tsne"][model] = plotfile_tsne
+                        models_row["pca"][model] = plotfile_pca
+                        l2c = None
                         links_row[model] = l2c
                     else:
                         models_row[model] = "Too few words!"
                 else:
-                    if tensorflow_integration:
-                        links_row[model] = \
-                            open(root + 'data/images/tsneplots/' + identifier + '.url', 'r').read()
-                    else:
-                        links_row[model] = None
+                    links_row[model] = None
             return render_template('visual.html', languages=languages, visual=models_row,
                                    words=groups, number=len(model_value), models=our_models,
                                    unknown=unknown, url=url, usermodels=model_value, l2c=links_row,
@@ -591,6 +609,7 @@ def visual_page(lang):
                                    usermodels=[defaultmodel])
     return render_template('visual.html', models=our_models, other_lang=other_lang,
                            languages=languages, url=url, usermodels=[defaultmodel])
+
 
 
 @wvectors.route(url + '<lang:lang>/calculator/', methods=['GET', 'POST'])
