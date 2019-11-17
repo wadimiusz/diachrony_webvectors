@@ -276,7 +276,7 @@ def home(lang):
             models = list(models_to_neighbors.keys())
             neighbors = [models_to_neighbors[model] for model in models]
             neighbors_T = list(map(list, zip(*neighbors)))
-            save_neighbors_heatmap(neighbors, models, "./static/plt.png")
+            save_neighbors_heatmap(neighbors, models, root + "data/images/plt.png")
             return render_template("hist.html",
                                    models=models,
                                    neighbors=neighbors_T,
@@ -1024,4 +1024,4 @@ def redirect_main():
     else:
         if req[-1] != '/':
             req += '/'
-    return redirect(url + 'en' + req)
+    return redirect(url + 'ru' + req)
