@@ -1,2 +1,6 @@
 identifier	name	path	string	default	tags	algo	size
-ruscorpora_upos_skipgram_300_5_2018	Russian National Corpus	/var/www/html/static/models/rusvectores4/RNC/ruscorpora_upos_skipgram_300_5_2018.model	similar4	False	True	word2vec	250000000
+2015	Russian News 2015	/mnt/data/HistGeo/models/news/2015_0_5.model	similar2015	True	True	word2vec	20241296
+2016	Russian News 2016	/mnt/data/HistGeo/models/news/2016_0_5.model	similar2016	True	True	word2vec	16946790
+2017	Russian News 2017	/mnt/data/HistGeo/models/news/2017_0_5.model	similar2017	True	True	word2vec	18262075
+2018	Russian News 2018	/mnt/data/HistGeo/models/news/2018_0_5.model	similar2018	True	True	word2vec	10442011
+2019	Russian News 2019	/mnt/data/HistGeo/models/news/2019_0_5.model	similar2019	True	True	word2vec	10672777

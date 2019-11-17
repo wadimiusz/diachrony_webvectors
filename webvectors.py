@@ -27,7 +27,6 @@ from plotting import singularplot
 from sparql import getdbpediaimage
 # import strings data from respective module
 from strings_reader import language_dicts
-from networks import draw_network
 
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -48,7 +47,7 @@ dbpedia = config.getboolean('Other', 'dbpedia_images')
 languages_list = config.get('Languages', 'interface_languages').split(',')
 
 if lemmatize:
-    from lemmatizer import tagword
+    from lemmatizer import tag_ud
 
     tagger_port = config.getint('Sockets', 'tagger_port')
 
@@ -159,7 +158,7 @@ def process_query(userquery):
                 return 'Incorrect tag!'
         else:
             if lemmatize:
-                poses = tagword(userquery)  # We tag using Stanford CoreNLP
+                poses = tag_ud(tagger_port, userquery)  # We tag using UDPipe
                 if len(poses) == 1:
                     pos_tag = poses[0]
                 else:

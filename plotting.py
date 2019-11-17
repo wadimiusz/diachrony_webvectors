@@ -37,7 +37,7 @@ def singularplot(word, modelname, vector, fname):
     plot.clf()
 
 
-def embed(words, matrix, classes, usermodel, fname):
+def embed(words, matrix, classes, usermodel, fname, kind='TSNE'):
     perplexity = 6.0  # Should be smaller than the number of points!
     embedding = TSNE(n_components=2, perplexity=perplexity, metric='cosine', n_iter=500, init='pca')
     y = embedding.fit_transform(matrix)

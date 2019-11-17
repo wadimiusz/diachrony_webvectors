@@ -62,7 +62,7 @@
         {{ "{:.4f} ".format(res[1]) }}
         {% if wordimages[res[0].split('_')[0]] -%}
         <div class="avataricon">
-          <a href="https://en.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
+          <a href="https://ru.wikipedia.org/wiki/{{ res[0].split('_')[0] }}" target="_blank">
           <img src = "{{ wordimages[res[0].split('_')[0]] }}" alt = "{{res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}"
             title = "{{ res[0].split('_')[0]|capitalize }} {{strings['synraw11']}}" width="30">
           </a>
@@ -106,7 +106,7 @@
         </a></span>
       </li>
       <li><span style = "font-size:larger;">
-        <a target="_blank" href="https://en.wiktionary.org/wiki/{{ word.split('_')[0].replace('::', ' ') }}">
+        <a target="_blank" href="https://ru.wiktionary.org/wiki/{{ word.split('_')[0].replace('::', ' ') }}">
         &laquo;{{ word.split('_')[0].replace('::', ' ') }}&raquo; {{strings['synraw8']}}
         </a></span>
       </li>
@@ -114,7 +114,7 @@
     <hr/>
     <!-- Vector's components on the plot-->
     {%- if image -%}
-    <a href="https://en.wikipedia.org/wiki/{{ word.split('_')[0].replace('::', ' ')  }}" target="_blank">
+    <a href="https://ru.wikipedia.org/wiki/{{ word.split('_')[0].replace('::', ' ')  }}" target="_blank">
     <img src = '{{ image }}' alt = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}"
       title = "{{word.split('_')[0].replace('::', ' ') }} {{strings['synraw11']}}" class="img-responsive">
     </a>
