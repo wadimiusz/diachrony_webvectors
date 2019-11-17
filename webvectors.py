@@ -281,7 +281,7 @@ def home(lang):
                                    models=models,
                                    neighbors=neighbors_T,
                                    n=len(models),
-                                   url=url, plt_path="/static/plt.png")
+                                   url=url)
         else:
             error_value = "Incorrect query!"
             return render_template("home.html", error=error_value, tags=tags, other_lang=other_lang,
