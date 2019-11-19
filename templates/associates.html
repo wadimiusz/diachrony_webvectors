@@ -29,7 +29,7 @@
             <!-- A cicle for models to work with -->
             {%- for m in models %}
             <label>
-            <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="model" value="{{ m }}">{{ strings[models[m]] }}
+            <input type="checkbox" checked name="model" value="{{ m }}">{{ strings[models[m]] }}
             </label>
             {%- endfor %}
           </fieldset>

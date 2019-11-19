@@ -131,6 +131,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 wvectors = Blueprint('wvectors', __name__, template_folder='templates', static_folder='static')
 
+our_models = OrderedDict(sorted(our_models.items(), key=lambda x: int(x[0])))
 
 def after_this_request(func):
     if not hasattr(g, 'call_after_request'):
@@ -216,73 +217,6 @@ def word2vec2tensor(alias, vectorlist, wordlist, classes):
     outputfile.write(link2config)
     outputfile.close()
     return link2config
-
-
-@wvectors.route(url + '<lang:lang>/', methods=['GET', 'POST'])
-def home(lang):
-    # pass all required variables to template
-    # repeated within each @wvectors.route function
-    g.lang = lang
-    s = set()
-    s.add(lang)
-    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
-    g.strings = language_dicts[lang]
-
-    if request.method == 'POST':
-        list_data = 'dummy'
-        try:
-            list_data = request.form['list_query']
-        except:
-            pass
-        if list_data != 'dummy' and \
-                list_data.replace('_', '').replace('-', '').replace('::', '').replace(' ',
-                                                                                      '').isalnum():
-            query = process_query(list_data)
-            if query == "Incorrect tag!":
-                error_value = "Incorrect tag!"
-                return render_template('home.html', error=error_value, other_lang=other_lang,
-                                       languages=languages, url=url)
-            images = {query.split('_')[0]: None}
-            models_row = {}
-            frequencies = {}
-            for model in our_models:
-                if model_props[model]['tags'] == 'False':
-                    query = query.split('_')[0]
-                    pos = 'ALL'
-                else:
-                    pos = query.split('_')[-1]
-                message = {'operation': '1', 'query': query, 'pos': pos, 'model': model,
-                           'nr_neighbors': 30}
-                result = json.loads(serverquery(message).decode('utf-8'))
-                frequencies[model] = result['frequencies']
-                if query + " is unknown to the model" in result:
-                    return render_template('home.html', error=query + " is unknown to the model",
-                                           other_lang=other_lang, languages=languages,
-                                           url=url, word=query)
-                else:
-                    inferred = set()
-                    for word in result['neighbors']:
-                        images[word[0].split('_')[0]] = None
-                    models_row[model] = result['neighbors']
-                    if dbpedia:
-                        try:
-                            images = get_images(images)
-                        except:
-                            pass
-                    if 'inferred' in result:
-                        inferred.add(model)
-
-            return render_template('home.html', list_value=models_row, word=query,
-                                   wordimages=images, models=our_models, tags=tags,
-                                   other_lang=other_lang, languages=languages, url=url,
-                                   inferred=inferred, frequencies=frequencies,
-                                   visible_neighbors=10)
-        else:
-            error_value = "Incorrect query!"
-            return render_template("home.html", error=error_value, tags=tags, other_lang=other_lang,
-                                   languages=languages, url=url)
-    return render_template(
-        'home.html', tags=tags, other_lang=other_lang, languages=languages, url=url)
 
 
 def get_jaccard_coeff(neighbors1, neighbors2):
@@ -387,7 +321,9 @@ def misc_page(lang):
 
 @wvectors.route(url + '<lang:lang>/associates/', methods=['GET', 'POST'])
 @wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/', methods=["GET", "POST"])
 def associates_page(lang):
+    global our_models
     g.lang = lang
     s = set()
     s.add(lang)
@@ -466,6 +402,8 @@ def associates_page(lang):
                             pass
                     if 'inferred' in result:
                         inferred.add(model)
+
+            models_row = OrderedDict(sorted(models_row.items(), key=lambda x: int(x[0])))
             return render_template('associates.html', list_value=models_row, word=query, pos=pos,
                                    number=len(model_value), wordimages=images, models=our_models,
                                    tags=tags, other_lang=other_lang, languages=languages,
