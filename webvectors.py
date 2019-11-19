@@ -229,7 +229,6 @@ def home(lang):
     g.strings = language_dicts[lang]
 
     if request.method == 'POST':
-        models_to_neighbors = dict()
         list_data = 'dummy'
         try:
             list_data = request.form['list_query']
@@ -243,10 +242,10 @@ def home(lang):
                 error_value = "Incorrect tag!"
                 return render_template('home.html', error=error_value, other_lang=other_lang,
                                        languages=languages, url=url)
-            for model in model_props.keys():
-                images = {query.split('_')[0]: None}
-                models_row = {}
-                frequencies = {}
+            images = {query.split('_')[0]: None}
+            models_row = {}
+            frequencies = {}
+            for model in our_models:
                 if model_props[model]['tags'] == 'False':
                     query = query.split('_')[0]
                     pos = 'ALL'
@@ -272,16 +271,12 @@ def home(lang):
                             pass
                     if 'inferred' in result:
                         inferred.add(model)
-                    models_to_neighbors[model] = [word for (word, score) in result["neighbors"]]
-            models = list(models_to_neighbors.keys())
-            neighbors = [models_to_neighbors[model] for model in models]
-            neighbors_T = list(map(list, zip(*neighbors)))
-            save_neighbors_heatmap(neighbors, models, root + "data/images/plt.png")
-            return render_template("hist.html",
-                                   models=models,
-                                   neighbors=neighbors_T,
-                                   n=len(models),
-                                   url=url)
+
+            return render_template('home.html', list_value=models_row, word=query,
+                                   wordimages=images, models=our_models, tags=tags,
+                                   other_lang=other_lang, languages=languages, url=url,
+                                   inferred=inferred, frequencies=frequencies,
+                                   visible_neighbors=10)
         else:
             error_value = "Incorrect query!"
             return render_template("home.html", error=error_value, tags=tags, other_lang=other_lang,

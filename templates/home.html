@@ -18,6 +18,7 @@
   </form>
 </div>
 <!-- Featuring results -->
+{% for model in models %}
 {%- if list_value -%}
 <h3><strong>{{strings['home4']}}
   <i><a href="{{ url }}{{lang}}/{{ model }}/{{ word }}/"
@@ -61,6 +62,7 @@
     {%- endfor %}
   </ol>
 </div>
+
 <hr>
 <ul>
   <li>
@@ -140,4 +142,5 @@
   </div>
 </div>
 {%- endif %}
+{% endfor %}
 {%- endblock %}
