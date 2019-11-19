@@ -218,17 +218,6 @@ def word2vec2tensor(alias, vectorlist, wordlist, classes):
     outputfile.close()
     return link2config
 
-
-def get_jaccard_coeff(neighbors1, neighbors2):
-    return len(set(neighbors1).intersection(neighbors2)) / \
-           len(set(neighbors1).union(neighbors2))
-
-
-def save_neighbors_heatmap(neighbors, models, path):
-    my_heatmap = [[get_jaccard_coeff(a, b) for b in neighbors] for a in neighbors]
-    sns.heatmap(my_heatmap, xticklabels=models, yticklabels=models)
-    plt.savefig(path)
-
 @wvectors.route(url + '<lang:lang>/misc/', methods=['GET', 'POST'])
 def misc_page(lang):
     g.lang = lang
@@ -404,12 +393,30 @@ def associates_page(lang):
                         inferred.add(model)
 
             models_row = OrderedDict(sorted(models_row.items(), key=lambda x: int(x[0])))
+
+            neighbors = [[word for word, freq in neighbors] for year, neighbors in models_row.items()]
+            heatmap = get_heatmap(neighbors)
+            m = hashlib.md5()
+            hashword = ":".join([",".join([str(i) for i in j]) for j in heatmap])
+            hashword = hashword.encode('ascii', 'backslashreplace')
+            m.update(hashword)
+
+            if not os.path.isdir("data/images/heatmaps"):
+                os.mkdir("data/images/heatmaps")
+
+            fname = m.hexdigest()
+            if not os.path.exists(os.path.join("data/images/heatmaps", fname + ".png")):
+                labels = list(models_row.keys())
+                sns.heatmap(heatmap, xticklabels=labels, yticklabels=labels)
+                img_path = os.path.join("data/images/heatmaps", fname)
+                plt.savefig(img_path)
+
             return render_template('associates.html', list_value=models_row, word=query, pos=pos,
                                    number=len(model_value), wordimages=images, models=our_models,
                                    tags=tags, other_lang=other_lang, languages=languages,
                                    tags2show=exposed_tags, url=url, usermodels=model_value,
                                    userpos=userpos, inferred=inferred, frequencies=frequencies,
-                                   visible_neighbors=10)
+                                   visible_neighbors=10, fname=fname)
         else:
             error_value = "Incorrect query!"
             return render_template("associates.html", error=error_value, models=our_models,
@@ -419,6 +426,13 @@ def associates_page(lang):
                            languages=languages, url=url, usermodels=[defaultmodel],
                            tags2show=exposed_tags)
 
+def get_jaccard_coeff(neighbors1, neighbors2):
+    return len(set(neighbors1).intersection(neighbors2)) / \
+           len(set(neighbors1).union(neighbors2))
+
+
+def get_heatmap(neighbors):
+    return [[get_jaccard_coeff(a, b) for b in neighbors] for a in neighbors]
 
 @wvectors.route(url + '<lang:lang>/visual/', methods=['GET', 'POST'])
 def visual_page(lang):
