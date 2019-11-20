@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title%}
+<title>{{strings['base3']}}: {strings['pairwise1']}</title>
+{% endblock title %}
+{% block content %}
+<form method="post">
+    <div class="checkbox">
+      <p><em>{{strings['pairwise2']}}</em></p>
+      <fieldset>
+        <!-- A cicle for models to work with -->
+        {%- for m in models %}
+        <label>
+        <input type="radio" checked name="model1" value="{{ m }}">{{ strings[models[m]] }}
+        </label>
+        {%- endfor %}
+      </fieldset>
+    </div>
+
+    <div class="checkbox">
+      <p><em>{{strings['pairwise3']}}</em></p>
+      <fieldset>
+        <!-- A cicle for models to work with -->
+        {%- for m in models %}
+        <label>
+        <input type="radio" checked name="model2" value="{{ m }}">{{ strings[models[m]] }}
+        </label>
+        {%- endfor %}
+      </fieldset>
+    </div>
+    <button type="submit" class="btn btn-primary">{{strings['pairwise4']}}</button>
+</form>
+
+{% if top_changes %}
+<h2>{{strings['pairwise5']}} {{model1}}, {{model2}}</h2>
+<ol>
+    {% for word in top_changes%}
+    <li>{{ word }}</li>
+    {% endfor %}
+</ol>
+{% endif %}
+{% endblock content%}

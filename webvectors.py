@@ -434,6 +434,28 @@ def get_jaccard_coeff(neighbors1, neighbors2):
 def get_heatmap(neighbors):
     return [[get_jaccard_coeff(a, b) for b in neighbors] for a in neighbors]
 
+@wvectors.route(url + "<lang:lang>/pairwise/", methods=["GET", "POST"])
+def pairwise_page(lang):
+    g.lang = lang
+    s = set()
+    s.add(lang)
+    other_lang = list(set(language_dicts.keys()))
+    g.strings = language_dicts[lang]
+    if request.method == "GET":
+        return render_template("pairwise.html", other_lang=other_lang, url=url,
+                           models=our_models)
+    else:
+        model1 = request.form.getlist('model1')[0]
+        model2 = request.form.getlist('model2')[0]
+        if model1 > model2:
+            model1, model2 = model2, model1
+        message = {"operation": "5", "model1": model1, "model2": model2,
+                   "n": 10}
+        result = json.loads(serverquery(message).decode('utf-8'))
+        return render_template("pairwise.html", other_lang=other_lang, url=url,
+                               models=our_models, top_changes=result,
+                               model1=model1, model2=model2)
+
 @wvectors.route(url + '<lang:lang>/visual/', methods=['GET', 'POST'])
 def visual_page(lang):
     g.lang = lang

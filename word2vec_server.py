@@ -17,6 +17,8 @@ import json
 import configparser
 import csv
 
+from procrustes import ProcrustesAligner
+from functools import lru_cache
 
 class WebVectorsThread(threading.Thread):
     def __init__(self, connect, address):
@@ -352,10 +354,25 @@ def vector(query):
     results['vector'] = raw_vector
     return results
 
+@lru_cache()
+def get_global_anchors_model(model1_name, model2_name):
+    model1 = models_dic[model1_name]
+    model2 = models_dic[model2_name]
+    return ProcrustesAligner(w2v1=model1, w2v2=model2)
 
-operations = {'1': find_synonyms, '2': find_similarity, '3': scalculator, '4': vector}
+def find_shifts(query):
+    model1 = query['model1']
+    model2 = query['model2']
+    n = query['n']
+    procrustes_aligner = get_global_anchors_model(model1, model2)
+    changes = procrustes_aligner.get_changes(n)
+    return [word for word, score in changes]
+
+operations = {'1': find_synonyms, '2': find_similarity, '3': scalculator,
+              '4': vector, '5': find_shifts}
 
 # Bind socket to local host and port
+
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print('Socket created', file=sys.stderr)
