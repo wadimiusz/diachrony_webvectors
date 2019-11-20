@@ -50,33 +50,6 @@ title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}
 >
 {{ word.split('_')[0].replace('::', ' ') }}</a>
 {% endfor %}
-<div class="row">
-  <h1>TSNE</h1>
-  {% for model in visual['tsne'] %}
-  <div class="col-md-5">
-    <h3><strong><a href="{{ url }}{{lang}}/models/#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
-    {% if not 'Too few words' in visual[model] %}
-    {% if l2c[model] %}
-    <i><a target="_blank" title="{{strings['visual23']}}" href="https://projector.tensorflow.org/?config={{ l2c[model] }}">
-    {{strings['visual22']}}</a></i>
-    {% endif %}
-    <a href="{{ url }}data/images/tsneplots/{{ visual['tsne'][model] }}" target="_blank">
-    <img class="img-responsive" src = "{{ url }}data/images/tsneplots/{{ visual['tsne'][model] }}" alt = "{{strings['visual6']}}" title = "{{strings['visual6']}}">
-    </a>
-    {% else %}
-    <p>{{strings['visual8']}}</p>
-    {% endif %}
-    {% if unknown[model] %}
-    <p>{{strings['visual4']}}</p>
-    <ul>
-      {% for w in unknown[model] %}
-      <li><b>{{ w }}</b></li>
-      {% endfor %}
-    </ul>
-    {% endif %}
-  </div>
-  {% endfor %}
-</div>
 
 <div class="row">
   <h2>PCA</h2>
@@ -105,6 +78,35 @@ title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}
   </div>
   {% endfor %}
 </div>
+
+<div class="row">
+  <h1>TSNE</h1>
+  {% for model in visual['tsne'] %}
+  <div class="col-md-5">
+    <h3><strong><a href="{{ url }}{{lang}}/models/#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
+    {% if not 'Too few words' in visual[model] %}
+    {% if l2c[model] %}
+    <i><a target="_blank" title="{{strings['visual23']}}" href="https://projector.tensorflow.org/?config={{ l2c[model] }}">
+    {{strings['visual22']}}</a></i>
+    {% endif %}
+    <a href="{{ url }}data/images/tsneplots/{{ visual['tsne'][model] }}" target="_blank">
+    <img class="img-responsive" src = "{{ url }}data/images/tsneplots/{{ visual['tsne'][model] }}" alt = "{{strings['visual6']}}" title = "{{strings['visual6']}}">
+    </a>
+    {% else %}
+    <p>{{strings['visual8']}}</p>
+    {% endif %}
+    {% if unknown[model] %}
+    <p>{{strings['visual4']}}</p>
+    <ul>
+      {% for w in unknown[model] %}
+      <li><b>{{ w }}</b></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
 {% elif error %}
 <p> <span style = "font-size:larger;"><strong>
   {% if 'Incorrect tag' in error %}

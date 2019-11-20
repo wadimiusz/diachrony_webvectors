@@ -13,6 +13,7 @@ import pylab as plot
 import numpy as np
 from matplotlib import font_manager
 from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
 import configparser
 
 
@@ -39,7 +40,14 @@ def singularplot(word, modelname, vector, fname):
 
 def embed(words, matrix, classes, usermodel, fname, kind='TSNE'):
     perplexity = 6.0  # Should be smaller than the number of points!
-    embedding = TSNE(n_components=2, perplexity=perplexity, metric='cosine', n_iter=500, init='pca')
+
+    if kind.lower() == "tsne":
+        embedding = TSNE(n_components=2, perplexity=perplexity, metric='cosine', n_iter=500, init='pca')
+    elif kind.lower() == "pca":
+        embedding = PCA(n_components=2)
+    else:
+        raise ValueError("Kind is {}, must be TSNE or PCA".format(kind))
+
     y = embedding.fit_transform(matrix)
 
     print('2-d embedding finished', file=sys.stderr)
@@ -60,14 +68,12 @@ def embed(words, matrix, classes, usermodel, fname, kind='TSNE'):
         seen.add(class_label)
 
         lemma = word.split('_')[0].replace('::', ' ')
-        mid = len(lemma) / 2
-        mid *= 6  # TODO Should really think about how to adapt this variable to the real plot size
-        plot.annotate(lemma, xy=(x - mid, y), size='x-large', weight='bold', fontproperties=font, color=color)
+        plot.annotate(lemma, xy=(x, y), xytext=(-len(lemma)*4.5, 0), textcoords="offset points", size='x-large', weight='bold', fontproperties=font, color=color)
 
     plot.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
     plot.tick_params(axis='y', which='both', left=False, right=False, labelleft=False)
     plot.legend(loc='best')
 
-    plot.savefig(root + 'data/images/tsneplots/' + usermodel + '_' + fname + '.png', dpi=150, bbox_inches='tight')
+    plot.savefig(root + 'data/images/' + kind.lower() + 'plots/' + usermodel + '_' + fname + '.png', dpi=150, bbox_inches='tight')
     plot.close()
     plot.clf()
