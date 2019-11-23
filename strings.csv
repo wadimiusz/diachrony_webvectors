@@ -52,7 +52,7 @@ home3,Найти похожие слова!,Find similar words!
 home4,Семантические аналоги для,Semantic associates for
 home5,вычисленные на&nbsp;модели,computed&nbsp;on
 home6,&#8217;You shall know a&nbsp;word by&nbsp;the company it&nbsp;keeps.&#8217; (Firth 1957).,&#8217;You shall know a&nbsp;word by&nbsp;the company it&nbsp;keeps.&#8217; (Firth 1957)
-home7,computer_NOUN,computer_NOUN
+home7,свобода,свобода
 similar0,Araneum fastText,Araneum fastText
 similar1,Вычисление семантических ассоциатов,Computing associates
 similar2,"Введите слово, чтобы получить список из&nbsp;10&nbsp;его ближайших семантических аналогов (квази-синонимов). Вы&nbsp;можете приписать к&nbsp;слову знак подчеркивания &laquo;_&raquo; и&nbsp;<a href=""http://universaldependencies.org/u/pos/all.html"" data-toggle=""tooltip"" data-placement=""top"" title=""NOUN, PROPN, VERB, ADJ..."" target=""_blank"">тэг части речи</a> (<i>&laquo;tea_NOUN&raquo;</i>). Если вы&nbsp;этого не&nbsp;сделаете, <i>WebVectors</i> определит часть речи автоматически.","Enter a&nbsp;word to&nbsp;produce a&nbsp;list of&nbsp;its 10&nbsp;nearest semantic associates (quazy-synonyms). You can optionally end the word with an&nbsp;underscore and a&nbsp;<a href=""http://universaldependencies.org/u/pos/all.html"" data-toggle=""tooltip"" data-placement=""top"" title=""NOUN, PROPN, VERB, ADJ..."" target=""_blank"">PoS tag</a> (<i>&laquo;tea_NOUN&raquo;</i>). Otherwise, <i>WebVectors</i> will detect&nbsp;it."
@@ -133,7 +133,7 @@ visual3,Визуализация взаимного расположения с�
 visual4,Следующие слова неизвестны модели:,The following words were unknown to&nbsp;the model:
 visual5,&#8212;&nbsp;это алгоритм снижения размерности и&nbsp;визуализации высокоразмерных данных. Он&nbsp;разработан Лоренсом ван дер Маатеном и&nbsp;описан в&nbsp;этой статье:,"is&nbsp;an&nbsp;algorithm for dimensionality reduction and visualization of&nbsp;high-dimensional datasets, developed by&nbsp;Laurens van der Maaten and described in&nbsp;this paper:"
 visual6,Визуализация отношений между словами; по&nbsp;клику доступна полноразмерная версия,Plot for word relations; click for full-size image
-visual7,"car,tank,transport,computer,mouse,Moscow,Paris,London,Russia,France,Britain,clean,dirty,new","car,tank,transport,computer,mouse,Moscow,Paris,London,Russia,France,Britain,clean,dirty,new"
+visual7,"прогресс,свобода,порядок,государство,традиция,консерватизм,либерализм,общество,право,личность","прогресс,свобода,порядок,государство,традиция,консерватизм,либерализм,общество,право,личность"
 visual8,Слишком мало слов,Too few words
 visual9,Слова не&nbsp;должны повторяться,Words must be&nbsp;unique
 visual15,Визуализировать,Visualize

@@ -1,15 +1,7 @@
 # webvectors
 _Webvectors_ is a toolkit to serve distributional semantic models (particularly, continuous word embeddings, as in _word2vec_) over the web, making it easy to demonstrate models to general public. It is written in Python, and uses _Flask_ and _Gensim_ under the hood.
 
-Working demos:
-<ul>
-<li>http://rusvectores.org (for Russian)</li>
-<li>http://vectors.nlpl.eu/explore/embeddings/ (for English and Norwegian)</li>
-</ul>
-
 The service can be either integrated into _Apache_ web server as a WSGI application or run as a standalone server using _Gunicorn_.
-
-![Logo](https://rusvectores.org/data/images/associates_rus.png/)
 
 ## Brief installation instructions
 
@@ -49,7 +41,7 @@ Then, _WebVectors_ will allow users to limit their queries by tags. You also sho
 **Models daemon**
 
 _WebVectors_ uses a daemon, which runs in the background and actually processes all embedding tasks. It can also run on a different machine, if you want. Thus, in `webvectors.cfg` you should specify `host` and `port` that this daemon will listen at.
-After that, start `word2vec_server.py`. It will load the models and open a listening socket. This script must run permanently, so you may want to launch it using _screen_ or something like this.
+After that, start `diachronic_server.py`. It will load the models and open a listening socket. This script must run permanently, so you may want to launch it using _screen_ or something like this.
 
 **Models**
 
@@ -104,12 +96,6 @@ If you prefer the standalone option, execute the following command in the root d
 
 where _address_ is the address on which the service should be active (can be localhost), and _port_ is, well, port to listen (for example, 9999).
 
-
-## Contacts
-
-In case of any problems, please feel free to contact us:
-<ul><li> andreku@ifi.uio.no (Andrey Kutuzov) </li>
-<li> lizaku77@gmail.com (Elizaveta Kuzmenko) </li></ul>
 
 ## References
 1. http://www.aclweb.org/anthology/E17-3025
