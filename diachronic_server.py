@@ -372,8 +372,34 @@ def find_shifts(query):
                                  {word: frequency(word, model1) for word in result['changes']}}
     return result
 
-operations = {'1': find_synonyms, '2': find_similarity, '3': scalculator,
-              '4': vector, '5': find_shifts}
+def align_similar_words(year, word, year_models):
+
+    all_similar_words = []
+    word_vectors = []
+
+    def unite_sims(similar_words):
+        for most_sim_word in similar_words:
+            all_similar_words.append(most_sim_word[0])
+
+    for pair in combinations(year_models, 2):
+        _, _ = intersection_align_gensim(pair[0], pair[1])
+        _ = smart_procrustes_align_gensim(pair[0], pair[1])
+
+    for model_idx, year_model in enumerate(year_models):
+        unite_sims(year_model.most_similar(word, topn=7))
+        if model_idx != 0:
+            word_vectors.append(year_models[model_idx][word])
+
+    return all_similar_words, word_vectors, year_models[0], word, year
+
+operations = {
+    '1': find_synonyms,
+    '2': find_similarity,
+    '3': scalculator,
+    '4': vector,
+    '5': find_shifts,
+    '6': align_similar_words
+}
 
 # Bind socket to local host and port
 
