@@ -394,6 +394,7 @@ def associates_page(lang):
 
             models_row = OrderedDict(sorted(models_row.items(), key=lambda x: int(x[0])))
 
+            print(models_row.items())
             neighbors = [[word for word, freq in neighbors] for year, neighbors in models_row.items()]
             heatmap = get_heatmap(neighbors)
             m = hashlib.md5()
@@ -441,20 +442,33 @@ def pairwise_page(lang):
     s.add(lang)
     other_lang = list(set(language_dicts.keys()))
     g.strings = language_dicts[lang]
+    tags_options = list(exposed_tags.keys()) + ["ALL"]
     if request.method == "GET":
         return render_template("pairwise.html", other_lang=other_lang, url=url,
-                           models=our_models)
+                           models=our_models, tags_options=tags_options,
+                               exposed_tags=exposed_tags, checked_model1=list(our_models.keys())[-2],
+                               checked_model2=list(our_models.keys())[-1])
     else:
         model1 = request.form.getlist('model1')[0]
         model2 = request.form.getlist('model2')[0]
+        pos = request.form.getlist('tag')[0]
         if model1 > model2:
             model1, model2 = model2, model1
         message = {"operation": "5", "model1": model1, "model2": model2,
-                   "n": 10}
+                   "n": 100, "pos": pos}
+        print("Message", message)
         result = json.loads(serverquery(message).decode('utf-8'))
+        print("result", result)
+        frequencies_key = list(result["frequencies"].keys())[0]
         return render_template("pairwise.html", other_lang=other_lang, url=url,
-                               models=our_models, top_changes=result,
-                               model1=model1, model2=model2)
+                               models=our_models, top_changes=result['changes'],
+                               frequencies=result["frequencies"],
+                               frequencies_key=frequencies_key,
+                               model1=model1, model2=model2,
+                               checked_model1=model1,
+                               checked_model2=model2,
+                               tags_options=tags_options,
+                               exposed_tags=exposed_tags, pos=pos)
 
 @wvectors.route(url + '<lang:lang>/visual/', methods=['GET', 'POST'])
 def visual_page(lang):

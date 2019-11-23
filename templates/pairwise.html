@@ -10,7 +10,7 @@
         <!-- A cicle for models to work with -->
         {%- for m in models %}
         <label>
-        <input type="radio" checked name="model1" value="{{ m }}">{{ strings[models[m]] }}
+        <input type="radio" {% if m == checked_model1 %} checked {% endif %} name="model1" value="{{ m }}">{{ strings[models[m]] }}
         </label>
         {%- endfor %}
       </fieldset>
@@ -22,20 +22,55 @@
         <!-- A cicle for models to work with -->
         {%- for m in models %}
         <label>
-        <input type="radio" checked name="model2" value="{{ m }}">{{ strings[models[m]] }}
+        <input type="radio" {% if m == checked_model2 %} checked {% endif %} name="model2" value="{{ m }}">{{ strings[models[m]] }}
         </label>
         {%- endfor %}
       </fieldset>
     </div>
+
+      <div class="checkbox">
+      <p><em>{{strings['pairwise6']}}</em></p>
+      <fieldset>
+        <!-- A cicle for models to work with -->
+        {%- for tag in tags_options %}
+        <label>
+        <input type="radio" checked name="tag" value="{{ tag }}">{{ strings[exposed_tags[tag]] or strings['pairwise7']}}
+        </label>
+        {%- endfor %}
+      </fieldset>
+    </div>
+
+      <div class="checkbox">
+      <p><em>{{strings['frequency1']}}</em></p>
+      <label class="frequency-high" title="{{strings['frequency5']}}">
+      <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>
+      <label class="frequency-mid" title="{{strings['frequency6']}}">
+      <input id="mid" type="checkbox" checked>{{ strings['frequency3'] }}</label>
+      <label class="frequency-low" title="{{strings['frequency7']}}">
+      <input id="low" type="checkbox">{{ strings['frequency4'] }}</label>
+    </div>
+
     <button type="submit" class="btn btn-primary">{{strings['pairwise4']}}</button>
 </form>
 
 {% if top_changes %}
 <h2>{{strings['pairwise5']}} {{model1}}, {{model2}}</h2>
-<ol>
-    {% for word in top_changes%}
-    <li>{{ word }}</li>
-    {% endfor %}
-</ol>
+<div class="row" id="result" data-visible="10" data-result='{{ frequencies|tojson }}'>
+  <div class="col-mid-5">
+    <ol id="{{ frequencies_key }}" style="font-size: larger;" type="1">
+      {%- for word in top_changes %}
+      <li data-word="{{word}}" class="frequency-item-{{frequencies[frequencies_key][word][1]}}">
+      <a href="{{ url }}{{lang}}/{{ model1 }}/{{word}}/"
+      title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{frequencies[frequencies_key][word][1]}}"
+      class="frequency-{{frequencies[frequencies_key][word][1]}}">
+      {{word.split('_')[0].replace('::', ' ')}}
+      {% if word.split('_')|length > 1 -%}
+      <sub style="font-size:50%;">{{word.split('_')[-1]}}</sub>
+      {% endif %}</a>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</div>
 {% endif %}
 {% endblock content%}

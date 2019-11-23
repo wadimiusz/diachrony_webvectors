@@ -110,13 +110,17 @@ class ProcrustesAligner(object):
         score = np.dot(vector1, vector2)  # More straightforward computation
         return score
 
-    def get_changes(self, top_n_changed_words: int):
+    def get_changes(self, top_n_changed_words: int, pos: str = None):
         print('Doing procrustes', file=sys.stderr)
         result = list()
         # their vocabs should be the same, so it doesn't matter over which to iterate:
         for word in self.w2v1.wv.vocab.keys():
-            score = self.get_score(word)
-            result.append((word, score))
+            if pos is None or pos == "ALL" or word.endswith(pos):
+                try:  # надо написать нормальный способ это обходить, исправив баг с рефами в intersection_align_gensim, но в любом случае выкидываются только редкие слов атут
+                    score = self.get_score(word)
+                except KeyError:
+                    pass
+                result.append((word, score))
 
         result = sorted(result, key=lambda x: x[1])
         result = result[:top_n_changed_words]
