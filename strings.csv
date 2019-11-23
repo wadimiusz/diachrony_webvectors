@@ -158,3 +158,5 @@ pairwise2,Первая модель,First model
 pairwise3,Вторая модель,Second model
 pairwise4,Найти сдвиги,Find shifts
 pairwise5,Топ сдвигов для моделей:,Top shifts for models:
+pairwise6,Части речи:,Parts of speech:
+pairwise7,Все части речи,All parts of speech
