@@ -31,7 +31,7 @@ class WebVectorsThread(threading.Thread):
 
 
 def clientthread(connect, addres):
-    # Sending message to connected client
+    # Sending message 'operation': '1'to connected client
     connect.send(bytes(b'word2vec model server'))
 
     # infinite loop so that function do not terminate and thread do not end.
@@ -363,38 +363,42 @@ def get_global_anchors_model(model1_name, model2_name):
 def find_shifts(query):
     model1 = query['model1']
     model2 = query['model2']
+    pos = query.get("pos")
     n = query['n']
     procrustes_aligner = get_global_anchors_model(model1, model2)
-    changes = procrustes_aligner.get_changes(n)
-    return [word for word, score in changes]
+    result = dict()
+    result['changes'] = [word for word, score in procrustes_aligner.get_changes(n, pos=pos)]
+    result['frequencies'] = {"{}_{}".format(model1, model2):
+                                 {word: frequency(word, model1) for word in result['changes']}}
+    return result
 
 operations = {'1': find_synonyms, '2': find_similarity, '3': scalculator,
               '4': vector, '5': find_shifts}
 
 # Bind socket to local host and port
 
+if __name__ == "__main__":
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print('Socket created', file=sys.stderr)
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-print('Socket created', file=sys.stderr)
+    try:
+        s.bind((HOST, PORT))
+    except socket.error as msg:
+        print('Bind failed. Error Code and message: ' + str(msg), file=sys.stderr)
+        sys.exit()
 
-try:
-    s.bind((HOST, PORT))
-except socket.error as msg:
-    print('Bind failed. Error Code and message: ' + str(msg), file=sys.stderr)
-    sys.exit()
+    print('Socket bind complete', file=sys.stderr)
 
-print('Socket bind complete', file=sys.stderr)
+    # Start listening on socket
+    s.listen(100)
+    print('Socket now listening on port', PORT, file=sys.stderr)
 
-# Start listening on socket
-s.listen(100)
-print('Socket now listening on port', PORT, file=sys.stderr)
+    # now keep talking with the client
+    while 1:
+        # wait to accept a connection - blocking call
+        conn, addr = s.accept()
 
-# now keep talking with the client
-while 1:
-    # wait to accept a connection - blocking call
-    conn, addr = s.accept()
-
-    # start new thread takes 1st argument as a function name to be run,
-    # 2nd is the tuple of arguments to the function.
-    thread = WebVectorsThread(conn, addr)
-    thread.start()
+        # start new thread takes 1st argument as a function name to be run,
+        # 2nd is the tuple of arguments to the function.
+        thread = WebVectorsThread(conn, addr)
+        thread.start()
