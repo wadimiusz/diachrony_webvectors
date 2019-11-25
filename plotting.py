@@ -7,8 +7,8 @@ standard_library.install_aliases()
 from builtins import zip
 from builtins import range
 import sys
-import import matplotlib.pyplot as plt
-plt.use('Agg')
+import matplotlib
+matplotlib.use('Agg')
 import re
 import pylab as plot
 import numpy as np
@@ -34,15 +34,15 @@ def tsne_semantic_shifts(array, word_labels, word_vectors):
     word_coordinates = [y[i] for i in range(0, len(word_vectors) + 1)]
     x_coordinates, y_coordinates = y[:, 0], y[:, 1]
 
-    plt.scatter(x_coordinates, y_coordinates)
-    plt.axis('off')
+    plot.scatter(x_coordinates, y_coordinates)
+    plot.axis('off')
 
     for label, x, y in zip(word_labels, x_coordinates, y_coordinates):
         plt.annotate(label, xy=(x, y), xytext=(-len(label)*4.5, 4), textcoords='offset points')
-    plt.xlim(x_coordinates.min() - 10, x_coordinates.max() + 10)
-    plt.ylim(y_coordinates.min() - 10, y_coordinates.max() + 10)
+    plot.xlim(x_coordinates.min() - 10, x_coordinates.max() + 10)
+    plot.ylim(y_coordinates.min() - 10, y_coordinates.max() + 10)
     for i in range(len(word_coordinates) - 1, 0, -1):
-        plt.annotate("", xy=(word_coordinates[i - 1][0], word_coordinates[i - 1][1]),
+        plot.annotate("", xy=(word_coordinates[i - 1][0], word_coordinates[i - 1][1]),
                      xytext=(word_coordinates[i][0], word_coordinates[i][1] + 5),
                      arrowprops=dict(arrowstyle='-|>', color='indianred'))
 
