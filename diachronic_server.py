@@ -1,24 +1,19 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from __future__ import print_function
-from __future__ import division
-from future import standard_library
-
-standard_library.install_aliases()
-from builtins import str
 import socket
 import datetime
 import threading
 import sys
+from itertools import combinations
 import gensim
 import logging
 import json
 import configparser
 import csv
-
 from procrustes import ProcrustesAligner
 from functools import lru_cache
+
 
 class WebVectorsThread(threading.Thread):
     def __init__(self, connect, address):
@@ -354,11 +349,13 @@ def vector(query):
     results['vector'] = raw_vector
     return results
 
+
 @lru_cache()
 def get_global_anchors_model(model1_name, model2_name):
     model1 = models_dic[model1_name]
     model2 = models_dic[model2_name]
     return ProcrustesAligner(w2v1=model1, w2v2=model2)
+
 
 def find_shifts(query):
     model1 = query['model1']
@@ -372,8 +369,8 @@ def find_shifts(query):
                                  {word: frequency(word, model1) for word in result['changes']}}
     return result
 
-def align_similar_words(year, word, year_models):
 
+def align_similar_words(year, word, year_models):
     all_similar_words = []
     word_vectors = []
 
@@ -391,6 +388,7 @@ def align_similar_words(year, word, year_models):
             word_vectors.append(year_models[model_idx][word])
 
     return all_similar_words, word_vectors, year_models[0], word, year
+
 
 operations = {
     '1': find_synonyms,

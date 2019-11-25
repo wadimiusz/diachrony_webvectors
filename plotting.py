@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-from __future__ import print_function
-from __future__ import division
-from future import standard_library
-standard_library.install_aliases()
-from builtins import zip
-from builtins import range
+
 import sys
 import matplotlib
 matplotlib.use('Agg')
@@ -38,7 +33,7 @@ def tsne_semantic_shifts(array, word_labels, word_vectors):
     plot.axis('off')
 
     for label, x, y in zip(word_labels, x_coordinates, y_coordinates):
-        plt.annotate(label, xy=(x, y), xytext=(-len(label)*4.5, 4), textcoords='offset points')
+        plot.annotate(label, xy=(x, y), xytext=(-len(label)*4.5, 4), textcoords='offset points')
     plot.xlim(x_coordinates.min() - 10, x_coordinates.max() + 10)
     plot.ylim(y_coordinates.min() - 10, y_coordinates.max() + 10)
     for i in range(len(word_coordinates) - 1, 0, -1):
@@ -92,7 +87,8 @@ def singularplot(word, modelname, vector, fname):
     plot.title(plot_title, fontproperties=font)
     plot.xlabel('Vector components')
     plot.ylabel('Components values')
-    plot.savefig(root + 'data/images/singleplots/' + modelname + '_' + fname + '.png', dpi=150, bbox_inches='tight')
+    plot.savefig(root + 'data/images/singleplots/' + modelname + '_' + fname + '.png', dpi=150,
+                 bbox_inches='tight')
     plot.close()
     plot.clf()
 
@@ -101,7 +97,8 @@ def embed(words, matrix, classes, usermodel, fname, kind='TSNE'):
     perplexity = 6.0  # Should be smaller than the number of points!
 
     if kind.lower() == "tsne":
-        embedding = TSNE(n_components=2, perplexity=perplexity, metric='cosine', n_iter=500, init='pca')
+        embedding = TSNE(n_components=2, perplexity=perplexity, metric='cosine', n_iter=500,
+                         init='pca')
     elif kind.lower() == "pca":
         embedding = PCA(n_components=2)
     else:
@@ -123,16 +120,19 @@ def embed(words, matrix, classes, usermodel, fname, kind='TSNE'):
     plot.clf()
 
     for color, word, class_label, x, y in zip(class2color, words, classes, xpositions, ypositions):
-        plot.scatter(x, y, 20, marker='.', color=color, label=class_label if class_label not in seen else "")
+        plot.scatter(x, y, 20, marker='.', color=color,
+                     label=class_label if class_label not in seen else "")
         seen.add(class_label)
 
         lemma = word.split('_')[0].replace('::', ' ')
-        plot.annotate(lemma, xy=(x, y), xytext=(-len(lemma)*4.5, 0), textcoords="offset points", size='x-large', weight='bold', fontproperties=font, color=color)
+        plot.annotate(lemma, xy=(x, y), xytext=(-len(lemma)*4.5, 0), textcoords="offset points",
+                      size='x-large', weight='bold', fontproperties=font, color=color)
 
     plot.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
     plot.tick_params(axis='y', which='both', left=False, right=False, labelleft=False)
     plot.legend(loc='best')
 
-    plot.savefig(root + 'data/images/' + kind.lower() + 'plots/' + usermodel + '_' + fname + '.png', dpi=150, bbox_inches='tight')
+    plot.savefig(root + 'data/images/' + kind.lower() + 'plots/' + usermodel + '_' + fname + '.png',
+                 dpi=150, bbox_inches='tight')
     plot.close()
     plot.clf()

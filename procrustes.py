@@ -2,22 +2,27 @@ import gensim
 import numpy as np
 import sys
 
+
 def intersection_align_gensim(m1: gensim.models.KeyedVectors, m2: gensim.models.KeyedVectors,
                               pos_tag: (str, None) = None, words: (list, None) = None):
     """
-    This procedure, taken from https://gist.github.com/quadrismegistus/09a93e219a6ffc4f216fb85235535faf and slightly
-    modified, corrects two models in a way that only the shared words of the vocabulary are kept in the model,
-    and both vocabularies are sorted by frequencies.
+    This procedure, taken from
+    https://gist.github.com/quadrismegistus/09a93e219a6ffc4f216fb85235535faf and slightly
+    modified, corrects two models in a way that only the shared words of the vocabulary
+    are kept in the model, and both vocabularies are sorted by frequencies.
     Original comment is as follows:
 
     Intersect two gensim word2vec models, m1 and m2.
     Only the shared vocabulary between them is kept.
     If 'words' is set (as list or set), then the vocabulary is intersected with this list as well.
-    Indices are re-organized from 0..N in order of descending frequency (=sum of counts from both m1 and m2).
+    Indices are re-organized from 0..N in order of descending frequency
+    (=sum of counts from both m1 and m2).
     These indices correspond to the new vectors and vectors_norm objects in both gensim models:
         -- so that Row 0 of m1.vectors will be for the same word as Row 0 of m2.vectors
-        -- you can find the index of any word on the .index2word list: model.index2word.index(word) => 2
-    The .vocab dictionary is also updated for each model, preserving the count but updating the index.
+        -- you can find the index of any word on the .index2word list:
+        model.index2word.index(word) => 2
+    The .vocab dictionary is also updated for each model,
+    preserving the count but updating the index.
 
     :param m1: the first model
     :param m2: the second model
@@ -40,7 +45,7 @@ def intersection_align_gensim(m1: gensim.models.KeyedVectors, m2: gensim.models.
         common_vocab &= set(words)
 
     # If no alignment necessary because vocab is identical...
-    if not vocab_m1-common_vocab and not vocab_m2-common_vocab:
+    if not vocab_m1 - common_vocab and not vocab_m2 - common_vocab:
         return m1, m2
 
     # Otherwise sort lexicographically
@@ -62,10 +67,12 @@ def intersection_align_gensim(m1: gensim.models.KeyedVectors, m2: gensim.models.
         new_vocab = dict()
         for new_index, word in enumerate(common_vocab):
             old_vocab_obj = old_vocab[word]
-            new_vocab[word] = gensim.models.word2vec.Vocab(index=new_index, count=old_vocab_obj.count)
+            new_vocab[word] = gensim.models.word2vec.Vocab(index=new_index,
+                                                           count=old_vocab_obj.count)
         m.vocab = new_vocab
 
     return m1, m2
+
 
 def smart_procrustes_align_gensim(base_embed: gensim.models.KeyedVectors,
                                   other_embed: gensim.models.KeyedVectors):
@@ -116,11 +123,14 @@ class ProcrustesAligner(object):
         # their vocabs should be the same, so it doesn't matter over which to iterate:
         for word in self.w2v1.wv.vocab.keys():
             if pos is None or pos == "ALL" or word.endswith(pos):
-                try:  # надо написать нормальный способ это обходить, исправив баг с рефами в intersection_align_gensim, но в любом случае выкидываются только редкие слов атут
+                # надо написать нормальный способ это обходить,
+                # исправив баг с рефами в intersection_align_gensim,
+                # но в любом случае выкидываются только редкие слова тут
+                try:
                     score = self.get_score(word)
+                    result.append((word, score))
                 except KeyError:
                     pass
-                result.append((word, score))
 
         result = sorted(result, key=lambda x: x[1])
         result = result[:top_n_changed_words]

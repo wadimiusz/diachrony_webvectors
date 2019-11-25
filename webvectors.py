@@ -1,13 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from __future__ import print_function
-from future import standard_library
-
-standard_library.install_aliases()
-from builtins import zip
-from builtins import map
-from builtins import str
 import configparser
 import codecs
 import hashlib
@@ -81,7 +74,7 @@ def serverquery(d_message):
     # Connect to remote server
     s.connect((remote_ip, port))
     # Now receive initial data
-    initial_reply = s.recv(1024)
+    _ = s.recv(1024)
 
     # Send some data to remote server
     d_message = json.dumps(d_message, ensure_ascii=False)
@@ -132,6 +125,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 wvectors = Blueprint('wvectors', __name__, template_folder='templates', static_folder='static')
 
 our_models = OrderedDict(sorted(our_models.items(), key=lambda x: int(x[0])))
+
 
 def after_this_request(func):
     if not hasattr(g, 'call_after_request'):
@@ -217,6 +211,7 @@ def word2vec2tensor(alias, vectorlist, wordlist, classes):
     outputfile.write(link2config)
     outputfile.close()
     return link2config
+
 
 @wvectors.route(url + '<lang:lang>/misc/', methods=['GET', 'POST'])
 def misc_page(lang):
@@ -387,7 +382,7 @@ def associates_page(lang):
                     if dbpedia:
                         try:
                             images = get_images(images)
-                        except:
+                        except TimeoutError:
                             pass
                     if 'inferred' in result:
                         inferred.add(model)
@@ -395,7 +390,8 @@ def associates_page(lang):
             models_row = OrderedDict(sorted(models_row.items(), key=lambda x: int(x[0])))
 
             print(models_row.items())
-            neighbors = [[word for word, freq in neighbors] for year, neighbors in models_row.items()]
+            neighbors = [[word for word, freq in neighbors] for year, neighbors in
+                         models_row.items()]
             heatmap = get_heatmap(neighbors)
             m = hashlib.md5()
             hashword = ":".join([",".join([str(i) for i in j]) for j in heatmap])
@@ -427,6 +423,7 @@ def associates_page(lang):
                            languages=languages, url=url, usermodels=[defaultmodel],
                            tags2show=exposed_tags)
 
+
 def get_jaccard_coeff(neighbors1, neighbors2):
     return len(set(neighbors1).intersection(neighbors2)) / \
            len(set(neighbors1).union(neighbors2))
@@ -434,6 +431,7 @@ def get_jaccard_coeff(neighbors1, neighbors2):
 
 def get_heatmap(neighbors):
     return [[get_jaccard_coeff(a, b) for b in neighbors] for a in neighbors]
+
 
 @wvectors.route(url + "<lang:lang>/pairwise/", methods=["GET", "POST"])
 def pairwise_page(lang):
@@ -445,8 +443,9 @@ def pairwise_page(lang):
     tags_options = list(exposed_tags.keys()) + ["ALL"]
     if request.method == "GET":
         return render_template("pairwise.html", other_lang=other_lang, url=url,
-                           models=our_models, tags_options=tags_options,
-                               exposed_tags=exposed_tags, checked_model1=list(our_models.keys())[-2],
+                               models=our_models, tags_options=tags_options,
+                               exposed_tags=exposed_tags,
+                               checked_model1=list(our_models.keys())[-2],
                                checked_model2=list(our_models.keys())[-1])
     else:
         model1 = request.form.getlist('model1')[0]
@@ -469,6 +468,7 @@ def pairwise_page(lang):
                                checked_model2=model2,
                                tags_options=tags_options,
                                exposed_tags=exposed_tags, pos=pos)
+
 
 @wvectors.route(url + '<lang:lang>/visual/', methods=['GET', 'POST'])
 def visual_page(lang):
@@ -545,7 +545,7 @@ def visual_page(lang):
 
                 if not os.path.exists(root + 'data/images/pcaplots'):
                     os.makedirs(root + 'data/images/pcaplots')
-                if not (os.access(root + 'data/images/tsneplots/' + plotfile_tsne, os.F_OK)\
+                if not (os.access(root + 'data/images/tsneplots/' + plotfile_tsne, os.F_OK)
                         and os.access(root + 'data/images/tsneplots/' + plotfile_pca, os.F_OK)):
                     # print('No previous image found', root + 'data/images/tsneplots/' + plotfile,
                     #       file=sys.stderr)
@@ -570,8 +570,10 @@ def visual_page(lang):
                             classes = [word.split('_')[-1] for word in labels]
                         print('Embedding...', file=sys.stderr)
                         matrix2vis = np.vstack(([v for v in vectors]))
-                        embed(labels, matrix2vis.astype('float64'), classes, model, fname + "_tsne", kind="TSNE")
-                        embed(labels, matrix2vis.astype('float64'), classes, model, fname + "_pca", kind="PCA")
+                        embed(labels, matrix2vis.astype('float64'), classes, model, fname + "_tsne",
+                              kind="TSNE")
+                        embed(labels, matrix2vis.astype('float64'), classes, model, fname + "_pca",
+                              kind="PCA")
                         models_row["tsne"][model] = plotfile_tsne
                         models_row["pca"][model] = plotfile_pca
                         l2c = None
@@ -591,7 +593,6 @@ def visual_page(lang):
                                    usermodels=[defaultmodel])
     return render_template('visual.html', models=our_models, other_lang=other_lang,
                            languages=languages, url=url, usermodels=[defaultmodel])
-
 
 
 @wvectors.route(url + '<lang:lang>/calculator/', methods=['GET', 'POST'])
@@ -689,7 +690,7 @@ def finder(lang):
                 if dbpedia:
                     try:
                         images = get_images(images)
-                    except:
+                    except TimeoutError:
                         pass
             return render_template('calculator.html', analogy_value=models_row, pos=pos,
                                    plist=positive_list, userpos=userpos, nlist=negative_list,
@@ -764,7 +765,7 @@ def finder(lang):
                 if dbpedia:
                     try:
                         images = get_images(images)
-                    except:
+                    except TimeoutError:
                         pass
             return render_template('calculator.html', calc_value=models_row, pos=pos,
                                    plist2=positive_list, tags2show=exposed_tags,
@@ -838,7 +839,7 @@ def raw_finder(lang, model, userquery):
                 try:
                     images = get_images(images)
                     image = images[query.split('_')[0]]
-                except:
+                except TimeoutError:
                     pass
             return render_template('wordpage.html', list_value=models_row, word=query,
                                    model=model, pos=pos_tag, vector=vector, image=image,

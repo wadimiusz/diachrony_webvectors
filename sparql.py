@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from future import standard_library
-
-standard_library.install_aliases()
 from SPARQLWrapper import SPARQLWrapper, JSON
 import codecs
 import configparser
@@ -25,7 +22,6 @@ def getdbpediaimage(query, cache):
     if query in cache:
         return cache[query]
     else:
-        # return None
         sparql = SPARQLWrapper("http://dbpedia.org/sparql")
         sparql.setQuery("""
         SELECT DISTINCT ?e ?pic
@@ -38,7 +34,7 @@ def getdbpediaimage(query, cache):
         sparql.setReturnFormat(JSON)
         try:
             results = sparql.query().convert()
-        except:
+        except TimeoutError:
             return None
         if len(results["results"]["bindings"]) > 0:
             image = results["results"]["bindings"][0]["pic"]["value"]
