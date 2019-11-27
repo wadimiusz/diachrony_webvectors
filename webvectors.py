@@ -480,6 +480,7 @@ def visual_page(lang):
 
     if request.method == 'POST':
         list_data = request.form.getlist('list_query')
+        viz_method = request.form.getlist('viz_method')[0]
         if list_data:
             model_value = request.form.getlist('model')
             if len(model_value) < 1:
@@ -585,7 +586,7 @@ def visual_page(lang):
             return render_template('visual.html', languages=languages, visual=models_row,
                                    words=groups, number=len(model_value), models=our_models,
                                    unknown=unknown, url=url, usermodels=model_value, l2c=links_row,
-                                   qwords=querywords, frequencies=frequencies)
+                                   qwords=querywords, frequencies=frequencies, viz_method=viz_method)
         else:
             error_value = "Incorrect query!"
             return render_template("visual.html", error=error_value, models=our_models,
