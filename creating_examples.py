@@ -2,45 +2,44 @@ import pandas as pd
 import numpy as np
 from utils import log, format_time, intersection_align_gensim
 from algos import smart_procrustes_align_gensim
-import functools
-import random
-import sys
 import time
-import os
-import gensim
-import logging
 from scipy import spatial
-import conllu
 from tqdm import tqdm
 
 
 class GetExamples:
-    def __init__(self, word):
+    def __init__(self, word, corpora):
         self.word = word
+        self.corpora = corpora
 
     def get_corpuses(self):
         corpuses = {}
         for year in range(2015, 2020):
-            df = pd.read_csv('corpora/tables/{year}_contexts.csv'.format(year=year), index_col='ID')
+            log('Loading {year} corpus...'.format(year=year))
+            df = pd.read_csv(self.corpora + '{year}_contexts.csv.gz'.format(year=year),
+                             index_col='ID')
             corpuses.update({year: df})
-
         return corpuses
 
-    def intersec_models(self, modeldict, intersec_vocab):
+    @staticmethod
+    def intersec_models(modeldict, intersec_vocab):
         for year, model in modeldict.items():
             if year != 2015:
-                _, _ = intersection_align_gensim(m1=modeldict.get(2015), m2=model, words=intersec_vocab)
+                _, _ = intersection_align_gensim(
+                    m1=modeldict.get(2015), m2=model, words=intersec_vocab)
 
         return modeldict
 
-    def align_models(self, modeldict):
+    @staticmethod
+    def align_models(modeldict):
         for year, model in modeldict.items():
             if year != 2015:
                 _ = smart_procrustes_align_gensim(modeldict.get(2015), model)
 
         return modeldict
 
-    def avg_feature_vector(self, sentence, model, num_features):
+    @staticmethod
+    def avg_feature_vector(sentence, model, num_features):
         feature_vec = np.zeros((num_features, ), dtype='float32')
         n_words = 0
         for word in sentence:
@@ -52,19 +51,9 @@ class GetExamples:
 
         return feature_vec
 
-    def create_examples(self):
-        models = {}
-        for year in tqdm(range(2015, 2020)):
-            model = gensim.models.KeyedVectors.load_word2vec_format(
-                'models/{year}_0_5.bin'.format(year=year), binary=True, unicode_errors='replace')
-            model.init_sims(replace=True)
-
-            models.update({year: model})
-
-        vocabs = [model.vocab for model in list(models.values())]
-        intersected_vocab = set.intersection(*map(set, vocabs))
-        intersected_models = GetExamples.intersec_models(self, models, intersected_vocab)
-        aligned_models = GetExamples.align_models(self, intersected_models)
+    def create_examples(self, models, intersected_vocab):
+        intersected_models = GetExamples.intersec_models(models, intersected_vocab)
+        aligned_models = GetExamples.align_models(intersected_models)
 
         corpora = GetExamples.get_corpuses(self)
 
@@ -95,7 +84,8 @@ class GetExamples:
             except ValueError:
                 raise ValueError("Problem with", word, year, "because not enough samples found")
 
-        pairs = [[years[y1], years[y2]] for y1 in range(len(years)) for y2 in range(y1 + 1, len(years))]
+        pairs = [[years[y1], years[y2]] for y1 in range(len(years))
+                 for y2 in range(y1 + 1, len(years))]
 
         for pair in tqdm(pairs):
             model1 = aligned_models.get(pair[0])
@@ -108,12 +98,14 @@ class GetExamples:
             new_samples_vec = []
 
             for sample in old_samples:
-                sample_vec = GetExamples.avg_feature_vector(self, sample[0], model=model1, num_features=300)
+                sample_vec = GetExamples.avg_feature_vector(sample[0], model=model1,
+                                                            num_features=300)
                 sample_dict = {'vec': sample_vec, 'sent': sample[1]}
                 old_samples_vec.append(sample_dict)
 
             for sample in new_samples:
-                sample_vec = GetExamples.avg_feature_vector(self, sample[0], model=model2, num_features=300)
+                sample_vec = GetExamples.avg_feature_vector(sample[0], model=model2,
+                                                            num_features=300)
                 sample_dict = {'vec': sample_vec, 'sent': sample[1]}
                 new_samples_vec.append(sample_dict)
 
@@ -142,9 +134,12 @@ class GetExamples:
             new_years.append(pair[1])
 
         log("")
-        log("This took", format_time(time.time() - start))
+        log("This took ", format_time(time.time() - start))
+        log("")
         output_df = pd.DataFrame({"WORD": word, "BASE_YEAR": base_years,
-                                  "OLD_CONTEXTS": old_contexts, "NEW_YEAR": new_years, "NEW_CONTEXTS": new_contexts})
+                                  "OLD_CONTEXTS": old_contexts, "NEW_YEAR": new_years,
+                                  "NEW_CONTEXTS": new_contexts})
         output_df.index.names = ["ID"]
         output_df.to_csv('contexts_by_year.csv')
+        log('Contexts saved to contexts_by_year.csv')
 
