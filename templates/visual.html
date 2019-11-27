@@ -38,6 +38,17 @@
       {% endfor %}
     </fieldset>
   </div>
+    <div class="checkbox">
+    <p><em>{{strings['visual25']}}</em></p>
+    <fieldset>
+      <label>
+      <input type="radio" {%if viz_method != "TSNE" %} checked {% endif %} name="viz_method" value="PCA">PCA
+      </label>
+      <label>
+      <input type="radio" {%if viz_method == "TSNE" %} checked {% endif %}name="viz_method" value="TSNE">TSNE
+      </label>
+    </fieldset>
+  </div>
   <button type="submit" class="btn btn-primary">{{strings['visual15']}}</button>
 </form>
 {% if visual %}
@@ -52,6 +63,7 @@ title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}
 {% endfor %}
 
 <div class="row">
+  {% if viz_method == "PCA" %}
   <h2>PCA</h2>
   {% for model in visual['pca'] %}
   <div class="col-md-5">
@@ -77,9 +89,11 @@ title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}
     {% endif %}
   </div>
   {% endfor %}
+  {% endif %}
 </div>
 
 <div class="row">
+  {% if viz_method == "TSNE" %}
   <h1>TSNE</h1>
   {% for model in visual['tsne'] %}
   <div class="col-md-5">
@@ -105,6 +119,7 @@ title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}
     {% endif %}
   </div>
   {% endfor %}
+  {% endif %}
 </div>
 
 {% elif error %}
