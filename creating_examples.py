@@ -8,34 +8,27 @@ from tqdm import tqdm
 
 
 class GetExamples:
-    def __init__(self, word, corpora):
+    def __init__(self, word, corpora, years):
         self.word = word
         self.corpora = corpora
+        self.years = years
 
     def get_corpuses(self):
+
         corpuses = {}
-        for year in range(2015, 2020):
+        for year in self.years:
             log('Loading {year} corpus...'.format(year=year))
             df = pd.read_csv(self.corpora + '{year}_contexts.csv.gz'.format(year=year),
                              index_col='ID')
             corpuses.update({year: df})
         return corpuses
 
-    @staticmethod
-    def intersec_models(modeldict, intersec_vocab):
-        for year, model in modeldict.items():
-            if year != 2015:
-                _, _ = intersection_align_gensim(
-                    m1=modeldict.get(2015), m2=model, words=intersec_vocab)
-
+    def intersect_models(self, modeldict):
+        _, _ = intersection_align_gensim(m1=modeldict[self.years[0]], m2=modeldict[self.years[1]])
         return modeldict
 
-    @staticmethod
-    def align_models(modeldict):
-        for year, model in modeldict.items():
-            if year != 2015:
-                _ = smart_procrustes_align_gensim(modeldict.get(2015), model)
-
+    def align_models(self, modeldict):
+        _ = smart_procrustes_align_gensim(modeldict[self.years[0]], modeldict[self.years[1]])
         return modeldict
 
     @staticmethod
@@ -51,9 +44,9 @@ class GetExamples:
 
         return feature_vec
 
-    def create_examples(self, models, intersected_vocab):
-        intersected_models = GetExamples.intersec_models(models, intersected_vocab)
-        aligned_models = GetExamples.align_models(intersected_models)
+    def create_examples(self, models):
+        intersected_models = GetExamples.intersect_models(self, models)
+        aligned_models = GetExamples.align_models(self, intersected_models)
 
         corpora = GetExamples.get_corpuses(self)
 
@@ -70,7 +63,7 @@ class GetExamples:
         all_samples = {}
 
         years = []
-        for year in tqdm(range(2015, 2020)):
+        for year in tqdm(self.years):
             years.append(year)
             corpus = corpora.get(year)
             samples = []
