@@ -77,8 +77,9 @@ class GetExamples:
 
             try:
                 for idx, lemmas, raw in corpus[['LEMMAS', 'RAW']].itertuples():
-                    if word in lemmas.split():
-                        samples.append([lemmas.split(), raw])
+                    lemmas_split = lemmas.split()
+                    if word in lemmas_split:
+                        samples.append([lemmas_split, raw])
                 all_samples.update({year: samples})
 
             except ValueError:
