@@ -32,16 +32,17 @@ class GetExamples:
         return modeldict
 
     @staticmethod
-    def avg_feature_vector(sentence, model, num_features):
-        feature_vec = np.zeros((num_features, ), dtype='float32')
-        n_words = 0
-        for word in sentence:
-            if word in model.vocab:
-                n_words += 1
-                feature_vec = np.add(feature_vec, model[word])
-        if n_words > 0:
-            feature_vec = np.divide(feature_vec, n_words)
-
+    def avg_feature_vector(sentence, model):
+        num_features = model.vector_size
+        words = [w for w in sentence if w in model]
+        lw = len(words)
+        if lw == 0:
+            return None
+        feature_matrix = np.zeros((lw, num_features), dtype='float32')
+        for i in list(range(lw)):
+            word = words[i]
+            feature_matrix[i, :] = model[word]
+        feature_vec = np.average(feature_matrix, axis=0)
         return feature_vec
 
     def create_examples(self, models):
@@ -62,9 +63,8 @@ class GetExamples:
 
         all_samples = {}
 
-        years = []
+        log("Finding samples...")
         for year in tqdm(self.years):
-            years.append(year)
             corpus = corpora.get(year)
             samples = []
 
@@ -78,54 +78,64 @@ class GetExamples:
             except ValueError:
                 raise ValueError("Problem with", word, year, "because not enough samples found")
 
-        pairs = [[years[y1], years[y2]] for y1 in range(len(years))
-                 for y2 in range(y1 + 1, len(years))]
+        model1 = aligned_models.get(self.years[0])
+        model2 = aligned_models.get(self.years[1])
 
-        for pair in tqdm(pairs):
-            model1 = aligned_models.get(pair[0])
-            model2 = aligned_models.get(pair[1])
+        old_samples = all_samples.get(self.years[0])
+        new_samples = all_samples.get(self.years[1])
 
-            old_samples = all_samples.get(pair[0])
-            new_samples = all_samples.get(pair[1])
+        # Keep matrices of sentence vectors for future usage:
+        old_samples_vec = np.zeros((len(old_samples), model1.vector_size), dtype='float32')
+        new_samples_vec = np.zeros((len(new_samples), model2.vector_size), dtype='float32')
 
-            old_samples_vec = []
-            new_samples_vec = []
+        for nr, old_sample in enumerate(old_samples):
+            old_sample_vec = GetExamples.avg_feature_vector(old_sample[0], model=model1)
+            if old_sample_vec is not None:
+                old_samples_vec[nr, :] = old_sample_vec
 
-            for sample in old_samples:
-                sample_vec = GetExamples.avg_feature_vector(sample[0], model=model1,
-                                                            num_features=300)
-                sample_dict = {'vec': sample_vec, 'sent': sample[1]}
-                old_samples_vec.append(sample_dict)
+        for nr, new_sample in enumerate(new_samples):
+            new_sample_vec = GetExamples.avg_feature_vector(new_sample[0], model=model2)
+            if new_sample_vec is not None:
+                new_samples_vec[nr, :] = new_sample_vec
 
-            for sample in new_samples:
-                sample_vec = GetExamples.avg_feature_vector(sample[0], model=model2,
-                                                            num_features=300)
-                sample_dict = {'vec': sample_vec, 'sent': sample[1]}
-                new_samples_vec.append(sample_dict)
+        # Calculate all pairwise cosine distances at once:
+        distances = spatial.distance.cdist(old_samples_vec, new_samples_vec, 'cosine')
 
-            similarities = {}
-            for dict1 in old_samples_vec:
-                for dict2 in new_samples_vec:
-                    vec1 = dict1.get('vec')
-                    vec2 = dict2.get('vec')
-                    sim = spatial.distance.cosine(vec1, vec2)
-                    similarities.update({sim: [dict1.get('sent'), dict2.get('sent')]})
+        # Find the pair of most distant sentences:
+        most_distant_ids = np.unravel_index(np.argmax(distances), distances.shape)
 
-            five_old_samples = []
-            five_new_samples = []
+        # This is for debugging:
 
-            for k, v in sorted(similarities.items(), reverse=True):
-                if (v[0] not in five_old_samples) and (v[1] not in five_new_samples):
-                    print(k, v)
-                    five_old_samples.append(v[0])
-                    five_new_samples.append(v[1])
-                    if len(five_new_samples) == 5:
-                        break
+        # max_distance = np.max(distances)
+        # most_distant_sentences = [old_samples[most_distant_ids[0]][1],
+        # new_samples[most_distant_ids[1]][1]]
+        # print(most_distant_ids)
+        # print(max_distance)
+        # print(most_distant_sentences)
 
-            old_contexts.append(five_old_samples)
-            new_contexts.append(five_new_samples)
-            base_years.append(pair[0])
-            new_years.append(pair[1])
+        # Reshaping most distant vectors a bit:
+        vector0 = old_samples_vec[most_distant_ids[0]]
+        vector0.shape = (1, model1.vector_size)
+        vector1 = new_samples_vec[most_distant_ids[1]]
+        vector1.shape = (1, model2.vector_size)
+
+        # Now we calculate distances within time bins...
+        old_distances = np.ravel(spatial.distance.cdist(vector0, old_samples_vec, 'cosine'))
+        new_distances = np.ravel(spatial.distance.cdist(vector1, new_samples_vec, 'cosine'))
+
+        # ...and five vectors nearest to the sentence vectors which was most distant
+        # at the previous step. This vector itself is included in these 5, of course:
+        old_nearest_ids = old_distances.argsort()[:6]
+        new_nearest_ids = new_distances.argsort()[:6]
+
+        # Extracting actual sentences corresponding to these vectors:
+        five_old_samples = [old_samples[i][1] for i in old_nearest_ids]
+        five_new_samples = [new_samples[i][1] for i in new_nearest_ids]
+
+        old_contexts.append(five_old_samples)
+        new_contexts.append(five_new_samples)
+        base_years.append(self.years[0])
+        new_years.append(self.years[1])
 
         log("")
         log("This took ", format_time(time.time() - start))
