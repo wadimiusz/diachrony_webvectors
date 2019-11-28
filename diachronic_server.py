@@ -102,9 +102,9 @@ def frequency(word, model):
     wordfreq = models_dic[model].wv.vocab[word].count
     relative = wordfreq / corpus_size
     tier = 'mid'
-    if relative > 0.00001:
+    if relative > 0.0001:
         tier = 'high'
-    elif relative < 0.0000005:
+    elif relative < 0.000005:
         tier = 'low'
     return wordfreq, tier
 

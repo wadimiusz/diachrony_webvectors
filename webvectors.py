@@ -389,7 +389,6 @@ def associates_page(lang):
 
             models_row = OrderedDict(sorted(models_row.items(), key=lambda x: int(x[0])))
 
-            print(models_row.items())
             neighbors = [[word for word, freq in neighbors] for year, neighbors in
                          models_row.items()]
             heatmap = get_heatmap(neighbors)
@@ -457,7 +456,7 @@ def pairwise_page(lang):
                    "n": 100, "pos": pos}
         print("Message", message)
         result = json.loads(serverquery(message).decode('utf-8'))
-        print("result", result)
+        # print("result", result)
         frequencies_key = list(result["frequencies"].keys())[0]
         return render_template("pairwise.html", other_lang=other_lang, url=url,
                                models=our_models, top_changes=result['changes'],
