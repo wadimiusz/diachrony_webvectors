@@ -1,18 +1,21 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import socket
-import datetime
-import threading
-import sys
-from itertools import combinations
-import gensim
-import logging
-import json
 import configparser
 import csv
-from procrustes import ProcrustesAligner
+import datetime
+import json
+import logging
+import socket
+import sys
+import threading
 from functools import lru_cache
+from itertools import combinations
+
+import gensim
+import joblib
+
+from algos import ProcrustesAligner
 
 
 class WebVectorsThread(threading.Thread):
@@ -90,6 +93,8 @@ for m in our_models:
     models_dic[m].init_sims(replace=True)
     print("Model", m, "from file", modelfile, "loaded successfully.", file=sys.stderr)
 
+
+shift_classifier = joblib.load("clf.pkl")
 
 # Vector functions
 
@@ -389,6 +394,15 @@ def align_similar_words(year, word, year_models):
 
     return all_similar_words, word_vectors, year_models[0], word, year
 
+def classify_semantic_shifts(query):
+    word = query["word"]
+    model1_name = query["model1"]
+    model2_name = query["model2"]
+    model1 = models_dic[model1_name]
+    model2 = models_dic[model2_name]
+    proba = shift_classifier.predict_proba([(word, model1, model2)])[0]
+    label = shift_classifier.predict([(word, model1, model2)])[0]
+    return {"proba": str(proba), "label": str(label)}
 
 operations = {
     '1': find_synonyms,
@@ -396,7 +410,8 @@ operations = {
     '3': scalculator,
     '4': vector,
     '5': find_shifts,
-    '6': align_similar_words
+    '6': align_similar_words,
+    '7': classify_semantic_shifts
 }
 
 # Bind socket to local host and port

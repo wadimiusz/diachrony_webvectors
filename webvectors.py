@@ -852,6 +852,34 @@ def raw_finder(lang, model, userquery):
         return render_template("wordpage.html", error=error_value, tags=tags, other_lang=other_lang,
                                languages=languages, url=url)
 
+@wvectors.route(url + '<lang:lang>/binary/', methods=["GET", "POST"])
+def binary(lang):
+    g.lang = lang
+    s = set()
+    s.add(lang)
+    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
+    g.strings = language_dicts[lang]
+
+    if request.method == "GET":
+        return render_template("binary.html", model1=list(our_models.keys())[-2],
+                               model2=list(our_models.keys())[-1], other_lang=other_lang,
+                               models=our_models, url=url)
+    else:
+        word = request.form.getlist("word")[0]
+        model1 = request.form.getlist("model1")[0]
+        model2 = request.form.getlist("model2")[0]
+        message = {'operation': '7', 'word': word,
+                   'model1': model1, "model2": model2}
+
+        result = json.loads(serverquery(message).decode('utf-8'))
+        label = result["label"]
+        proba = float(result["proba"])
+        return render_template("binary.html",
+                               model1=model1, model2=model2,
+                               other_lang=other_lang,
+                               models=our_models, url=url,
+                               label=label, proba="{:.2f}".format(proba),
+                               word=word)
 
 def generate(word, model, api_format):
     """

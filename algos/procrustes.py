@@ -2,6 +2,7 @@ import gensim
 import numpy as np
 from utils import log
 from utils import intersection_align_gensim
+from typing import Optional
 
 
 def smart_procrustes_align_gensim(base_embed: gensim.models.KeyedVectors,
@@ -47,13 +48,14 @@ class ProcrustesAligner(object):
         score = np.dot(vector1, vector2)  # More straightforward computation
         return score
 
-    def get_changes(self, top_n_changed_words: int):
+    def get_changes(self, top_n_changed_words: int, pos: Optional[str] = None):
         log('Doing procrustes')
         result = list()
         # their vocabs should be the same, so it doesn't matter over which to iterate:
         for word in self.w2v1.wv.vocab.keys():
-            score = self.get_score(word)
-            result.append((word, score))
+            if pos is None or pos.lower() == "all" or word.endswith("_" + pos):
+                score = self.get_score(word)
+                result.append((word, score))
 
         result = sorted(result, key=lambda x: x[1])
         result = result[:top_n_changed_words]
