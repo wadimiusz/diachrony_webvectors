@@ -11,6 +11,7 @@ import sys
 import threading
 from functools import lru_cache
 from itertools import combinations
+from procrustes import *
 
 import gensim
 import joblib
@@ -375,24 +376,40 @@ def find_shifts(query):
     return result
 
 
-def align_similar_words(year, word, year_models):
-    all_similar_words = []
-    word_vectors = []
+def align_similar_words(query):
+    """
+    :target_word: str
+    :model_year_list: a reversed list of years for the selected models
+    :model_list: a list of selected models to be aligned
+    """
+    target_word = query["query"]
+    model_year_list = list(reversed(query["model"]))
+    model_list = [models_dic[year] for year in model_year_list]
 
-    def unite_sims(similar_words):
-        for most_sim_word in similar_words:
-            all_similar_words.append(most_sim_word[0])
-
-    for pair in combinations(year_models, 2):
+    # procrustes alignment
+    for pair in combinations(model_list, 2):
         _, _ = intersection_align_gensim(pair[0], pair[1])
         _ = smart_procrustes_align_gensim(pair[0], pair[1])
 
-    for model_idx, year_model in enumerate(year_models):
-        unite_sims(year_model.most_similar(word, topn=7))
-        if model_idx != 0:
-            word_vectors.append(year_models[model_idx][word])
+    word_list = [" ".join([target_word, year]) for year in model_year_list]
+    vector_list = [model[target_word] for model in model_list]
 
-    return all_similar_words, word_vectors, year_models[0], word, year
+    # get word labels and vectors from the aligned models
+    for year_idx, model in enumerate(model_list):
+        similar_words = model.most_similar(target_word, topn=7)
+        for similar_word in similar_words:
+            similar_word = similar_word[0]
+            word_list.append(similar_word.split("_")[0])
+            vector_list.append(model[similar_word])
+
+    result = {
+        "word_list": word_list,
+        "vector_list": vector_list,
+        "model_number": len(model_year_list),
+    }
+
+    return result
+
 
 def classify_semantic_shifts(query):
     word = query["word"]
