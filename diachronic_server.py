@@ -395,7 +395,7 @@ def align_similar_words(query):
     vector_list = [model[target_word] for model in model_list]
 
     # get word labels and vectors from the aligned models
-    for year_idx, model in enumerate(model_list):
+    for model in model_list:
         similar_words = model.most_similar(target_word, topn=7)
         for similar_word in similar_words:
             similar_word = similar_word[0]
