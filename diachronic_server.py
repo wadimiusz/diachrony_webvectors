@@ -11,12 +11,12 @@ import sys
 import threading
 from functools import lru_cache
 from itertools import combinations
-from procrustes import *
 
 import gensim
 import joblib
 
-from algos import ProcrustesAligner
+from utils import intersection_align_gensim
+from algos import ProcrustesAligner, smart_procrustes_align_gensim
 
 
 class WebVectorsThread(threading.Thread):
