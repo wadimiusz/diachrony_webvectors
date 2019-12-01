@@ -1,4 +1,4 @@
-from algos import GlobalAnchors, ProcrustesAligner, Jaccard, KendallTau
+from algos import GlobalAnchors, Jaccard, KendallTau
 from gensim.models import KeyedVectors
 
 from sklearn.linear_model import LogisticRegression
@@ -12,14 +12,13 @@ import numpy as np
 @functools.lru_cache(maxsize=-1)
 def get_algo_by_kind_and_two_models(kind: str, model1: KeyedVectors,
                                     model2: KeyedVectors):
-    if kind.lower() == "procrustes":
-        return ProcrustesAligner(model1, model2)
-    elif kind.lower() == "global_anchors":
+    if kind.lower() == "global_anchors":
         return GlobalAnchors(model1, model2)
     elif kind.lower() == "jaccard":
         return Jaccard(model1, model2, top_n_neighbors=50)
     elif kind.lower() == "kendall_tau":
         return KendallTau(model1, model2, top_n_neighbors=50)
+
 
 
 class ShiftClassifier:
@@ -75,8 +74,7 @@ class ShiftClassifier:
             raise KeyError("Word {} is not in the "
                            "vocab of model1".format(word))
 
-        procrustes_score = get_algo_by_kind_and_two_models(
-            "procrustes", model1, model2).get_score(word)
+        procrustes_score = model1[word] @ model2[word]  # models have previously been aligned with Procrustes analysis
 
         global_anchors_score = \
             get_algo_by_kind_and_two_models(
