@@ -462,11 +462,12 @@ def pairwise_page(lang):
     g.lang = lang
     s = set()
     s.add(lang)
-    other_lang = list(set(language_dicts.keys()))
+    other_lang = list(set(language_dicts.keys()) - s)[0]
     g.strings = language_dicts[lang]
     tags_options = list(exposed_tags.keys()) + ["ALL"]
     if request.method == "GET":
-        return render_template("pairwise.html", other_lang=other_lang, url=url,
+        return render_template("pairwise.html", other_lang=other_lang,
+                               languages=languages, url=url,
                                models=our_models, tags_options=tags_options,
                                exposed_tags=exposed_tags,
                                checked_model1=list(our_models.keys())[-2],
@@ -886,8 +887,10 @@ def binary(lang):
     g.strings = language_dicts[lang]
 
     if request.method == "GET":
-        return render_template("binary.html", model1=list(our_models.keys())[-2],
-                               model2=list(our_models.keys())[-1], other_lang=other_lang,
+        return render_template("binary.html", other_lang=other_lang,
+                               languages=languages,
+                               model1=list(our_models.keys())[-2],
+                               model2=list(our_models.keys())[-1],
                                models=our_models, url=url)
     else:
         word = request.form.getlist("word")[0]
@@ -901,7 +904,7 @@ def binary(lang):
         proba = float(result["proba"])
         return render_template("binary.html",
                                model1=model1, model2=model2,
-                               other_lang=other_lang,
+                               other_lang=other_lang, languages=languages,
                                models=our_models, url=url,
                                label=label, proba="{:.2f}".format(proba),
                                word=word)
