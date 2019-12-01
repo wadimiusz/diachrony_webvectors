@@ -1,10 +1,13 @@
 import sys
 import gensim
+import logging
 import pickle
 import pandas as pd
 from argparse import ArgumentParser
 from os import path
 from smart_open import open
+
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 parser = ArgumentParser()
 parser.add_argument('--models', '-m', required=True, help='path to the word embeddings models')
@@ -13,8 +16,9 @@ args = parser.parse_args()
 
 corpuses = {}
 for year in range(2010, 2020):
+    print('Loading corpus:', year, file=sys.stderr)
     df = pd.read_csv(
-        path.join(args.models, '{year}_contexts.csv.gz'.format(year=year)),
+        path.join(args.corpora, '{year}_contexts.csv.gz'.format(year=year)),
         index_col='ID')
     corpuses.update({year: df})
 
@@ -28,6 +32,7 @@ united_vocab = set.union(*map(set, vocabs.values()))
 print('Total words:', len(united_vocab), file=sys.stderr)
 
 for word in united_vocab:
+    print('Saving word:', word, file=sys.stderr)
     out_dict = {}
     for year in vocabs:
         if word in vocabs[year]:
