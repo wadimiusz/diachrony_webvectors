@@ -16,8 +16,7 @@ import numpy as np
 from flask import g
 from flask import render_template, Blueprint, redirect, Response
 from flask import request
-from plotting import embed
-from plotting import singularplot
+from plotting import embed, singularplot, tsne_semantic_shifts
 from sparql import getdbpediaimage
 # import strings data from respective module
 from strings_reader import language_dicts
@@ -185,7 +184,6 @@ def get_images(images):
 
 
 def word2vec2tensor(alias, vectorlist, wordlist, classes):
-
     base_tensorboard = "https://projector.tensorflow.org/?config={}"
     outfiletsv = alias + "_tensor.tsv"
     outfiletsvmeta = alias + "_metadata.tsv"
@@ -193,7 +191,7 @@ def word2vec2tensor(alias, vectorlist, wordlist, classes):
     metadatatext = ""
     metadatatext += "word" + "\t" + "Class" + "\n"
 
-    for word, vector, group in zip(word_list, vector_list, classes):
+    for word, vector, group in zip(wordlist, vectorlist, classes):
         try:
             if " " in word:
                 word = re.sub(r"_[A-Z]+", "", word)
@@ -214,7 +212,7 @@ def word2vec2tensor(alias, vectorlist, wordlist, classes):
         "embeddings": [
             {
                 "tensorName": "WebVectors",
-                "tensorShape": [len(vector_list[0]), len(word_list)],
+                "tensorShape": [len(vectorlist[0]), len(wordlist)],
                 "tensorPath": a["files"][outfiletsv]["raw_url"],
                 "metadataPath": b["files"][outfiletsvmeta]["raw_url"],
             }
@@ -432,6 +430,13 @@ def associates_page(lang):
                 img_path = os.path.join("data/images/heatmaps", fname)
                 plt.savefig(img_path)
 
+            trajectory_message = {'operation': '6', 'query': query, 'model': model_value}
+            trajectory_result = json.loads(serverquery(trajectory_message).decode('utf-8'))
+
+            if not os.path.exists(root + 'data/images/tsne_shift'):
+                os.makedirs(root + 'data/images/tsne_shift')
+            tsne_semantic_shifts(trajectory_result, fname)
+
             return render_template('associates.html', list_value=models_row, word=query, pos=pos,
                                    number=len(model_value), wordimages=images, models=our_models,
                                    tags=tags, other_lang=other_lang, languages=languages,
@@ -561,8 +566,6 @@ def visual_page(lang):
                 fname = m.hexdigest()
                 plotfile_tsne = "%s_%s_tsne.png" % (model, fname)
                 plotfile_pca = "%s_%s_pca.png" % (model, fname)
-                identifier_tsne = plotfile_tsne[:-4]
-                identifier_pca = plotfile_pca[:-4]
                 models_row["tsne"][model] = plotfile_tsne
                 models_row["pca"][model] = plotfile_pca
                 labels = []
@@ -611,7 +614,8 @@ def visual_page(lang):
             return render_template('visual.html', languages=languages, visual=models_row,
                                    words=groups, number=len(model_value), models=our_models,
                                    unknown=unknown, url=url, usermodels=model_value, l2c=links_row,
-                                   qwords=querywords, frequencies=frequencies, viz_method=viz_method)
+                                   qwords=querywords, frequencies=frequencies,
+                                   viz_method=viz_method)
         else:
             error_value = "Incorrect query!"
             return render_template("visual.html", error=error_value, models=our_models,
@@ -878,6 +882,7 @@ def raw_finder(lang, model, userquery):
         return render_template("wordpage.html", error=error_value, tags=tags, other_lang=other_lang,
                                languages=languages, url=url)
 
+
 @wvectors.route(url + '<lang:lang>/binary/', methods=["GET", "POST"])
 def binary(lang):
     g.lang = lang
@@ -908,6 +913,7 @@ def binary(lang):
                                models=our_models, url=url,
                                label=label, proba="{:.2f}".format(proba),
                                word=word)
+
 
 def generate(word, model, api_format):
     """

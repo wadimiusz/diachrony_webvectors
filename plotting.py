@@ -4,8 +4,7 @@
 import sys
 import matplotlib
 matplotlib.use('Agg')
-import re
-import pylab as plot
+import matplotlib.pylab as plot
 import numpy as np
 from matplotlib import font_manager
 from sklearn.manifold import TSNE
@@ -30,9 +29,9 @@ def tsne_semantic_shifts(result, fname):
     vector_list = result["vector_list"]
     model_number = result["model_number"]
 
-    embed = TSNE(n_components=2, random_state=0, learning_rate=150, init="pca")
+    embedding = TSNE(n_components=2, random_state=0, learning_rate=150, init="pca")
     np.set_printoptions(suppress=True)
-    y = embed.fit_transform(np.array(vector_list))
+    y = embedding.fit_transform(np.array(vector_list))
 
     word_coordinates = [y[i] for i in range(0, model_number)]
     x_coordinates, y_coordinates = y[:, 0], y[:, 1]
@@ -71,9 +70,9 @@ def pca_semantic_shifts(result, fname):
     vector_list = result["vector_list"]
     model_number = result["model_number"]
 
-    embed = PCA(n_components=2, random_state=0)
+    embedding = PCA(n_components=2, random_state=0)
     np.set_printoptions(suppress=True)
-    y = embed.fit_transform(np.array(vector_list))
+    y = embedding.fit_transform(np.array(vector_list))
 
     word_coordinates = [y[i] for i in range(0, model_number)]
     x_coordinates, y_coordinates = y[:, 0], y[:, 1]
