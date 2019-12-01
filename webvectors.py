@@ -7,6 +7,7 @@ import hashlib
 import json
 import logging
 import os
+import re
 import socket  # for sockets
 import sys
 from collections import OrderedDict
@@ -183,34 +184,62 @@ def get_images(images):
     return images
 
 
-def word2vec2tensor(alias, vectorlist, wordlist, classes):
-    outfiletsv = alias + '_tensor.tsv'
-    outfiletsvmeta = alias + '_metadata.tsv'
-    tensortext = ''
-    metadatatext = ''
-    metadatatext += 'word' + '\t' + 'Class' + '\n'
-    for word, vector, group in zip(wordlist, vectorlist, classes):
+def word2vec2tensor(alias, result):
+
+    vector_list = result["vector_list"]
+    word_list = result["word_list"]
+    classes = [word.split("_")[-1] for word in word_list]
+
+    base_tensorboard = "https://projector.tensorflow.org/?config={}"
+    outfiletsv = alias + "_tensor.tsv"
+    outfiletsvmeta = alias + "_metadata.tsv"
+    tensortext = ""
+    metadatatext = ""
+    metadatatext += "word" + "\t" + "Class" + "\n"
+
+    for word, vector, group in zip(word_list, vector_list, classes):
         try:
-            (lemma, pos) = word.split('_')
+            if " " in word:
+                word = re.sub(r"_[A-Z]+", "", word)
+            (lemma, pos) = word.split("_")
         except ValueError:
             lemma = word
-        metadatatext += lemma + '\t' + str(group) + '\n'
-        vector_row = '\t'.join(map(str, vector))
-        tensortext += vector_row + '\n'
-    a = ghGist.create(name=outfiletsv, description='Tensors', public=True, content=tensortext)
+        metadatatext += lemma + "\t" + str(group) + "\n"
+        vector_row = "\t".join(map(str, vector))
+        tensortext += vector_row + "\n"
+    a = ghGist.create(
+        name=outfiletsv, description="Tensors", public=True, content=tensortext
+    )
     b = ghGist.create(
-        name=outfiletsvmeta, description='Metadata', public=True, content=metadatatext)
-    datadic = {"embeddings": [{"tensorName": 'WebVectors',
-                               "tensorShape": [len(vectorlist[0]), len(wordlist)],
-                               "tensorPath": a['files'][outfiletsv]['raw_url'],
-                               "metadataPath": b['files'][outfiletsvmeta]['raw_url']}]}
-    c = ghGist.create(name=alias + '_config.json', description='WebVectors', public=True,
-                      content=json.dumps(datadic))
-    link2config = c['files'][alias + '_config.json']['raw_url']
-    outputfile = open(root + 'data/images/tsneplots/' + alias + '.url', 'w')
+        name=outfiletsvmeta, description="Metadata", public=True, content=metadatatext
+    )
+
+    datadic = {
+        "embeddings": [
+            {
+                "tensorName": "WebVectors",
+                "tensorShape": [len(vector_list[0]), len(word_list)],
+                "tensorPath": a["files"][outfiletsv]["raw_url"],
+                "metadataPath": b["files"][outfiletsvmeta]["raw_url"],
+            }
+        ]
+    }
+
+    c = ghGist.create(
+        name=alias + "_config.json",
+        description="WebVectors",
+        public=True,
+        content=json.dumps(datadic),
+    )
+
+    link2config = c["files"][alias + "_config.json"]["raw_url"]
+    outputfile = open(root + "data/images/tsneplots/" + alias + ".url", "w")
     outputfile.write(link2config)
     outputfile.close()
-    return link2config
+
+    user_link = base_tensorboard.format(link2config)
+
+    return user_link
 
 
 @wvectors.route(url + '<lang:lang>/misc/', methods=['GET', 'POST'])
