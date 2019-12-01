@@ -385,7 +385,7 @@ def align_similar_words(query):
     """
     target_word = query["query"]
     model_year_list = sorted(query["model"], reverse=True)
-    model_list = [models_dic[year] for year in model_year_list]
+    model_list = [models_dic[year].tolist() for year in model_year_list]
 
     # procrustes alignment
     for pair in combinations(model_list, 2):
@@ -411,7 +411,7 @@ def align_similar_words(query):
                 lemma = similar_word
             if lemma not in word_list:
                 word_list.append(lemma)
-                vector_list.append(model_list[0][similar_word])
+                vector_list.append(model_list[0][similar_word].tolist())
 
     result = {
         "word_list": word_list,
