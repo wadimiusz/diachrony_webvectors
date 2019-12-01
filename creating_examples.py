@@ -8,20 +8,10 @@ from tqdm import tqdm
 
 
 class GetExamples:
-    def __init__(self, word, corpora, years):
+    def __init__(self, word, pickle, years):
         self.word = word
-        self.corpora = corpora
+        self.pickle = pickle
         self.years = years
-
-    def get_corpuses(self):
-
-        corpuses = {}
-        for year in self.years:
-            log('Loading {year} corpus...'.format(year=year))
-            df = pd.read_csv(self.corpora + '{year}_contexts.csv.gz'.format(year=year),
-                             index_col='ID')
-            corpuses.update({year: df})
-        return corpuses
 
     def intersect_models(self, modeldict):
         _, _ = intersection_align_gensim(m1=modeldict[self.years[0]], m2=modeldict[self.years[1]])
@@ -49,7 +39,7 @@ class GetExamples:
         intersected_models = GetExamples.intersect_models(self, models)
         aligned_models = GetExamples.align_models(self, intersected_models)
 
-        corpora = GetExamples.get_corpuses(self)
+        pickle = self.pickle
 
         old_contexts = list()
         new_contexts = list()
@@ -64,25 +54,15 @@ class GetExamples:
         all_samples = {}
 
         log("Finding samples...")
-        for year in tqdm(self.years):
-            corpus = corpora.get(year)
-            samples = []
+        try:
+            old_samples = pickle.get(self.years[0])
+            new_samples = pickle.get(self.years[1])
 
-            try:
-                for idx, lemmas, raw in corpus[['LEMMAS', 'RAW']].itertuples():
-                    lemmas_split = lemmas.split()
-                    if word in lemmas_split:
-                        samples.append([lemmas_split, raw])
-                all_samples.update({year: samples})
-
-            except ValueError:
-                raise ValueError("Problem with", word, year, "because not enough samples found")
+        except KeyError:
+            raise KeyError("Problem with", word, "because not enough samples found")
 
         model1 = aligned_models.get(self.years[0])
         model2 = aligned_models.get(self.years[1])
-
-        old_samples = all_samples.get(self.years[0])
-        new_samples = all_samples.get(self.years[1])
 
         # Keep matrices of sentence vectors for future usage:
         old_samples_vec = np.zeros((len(old_samples), model1.vector_size), dtype='float32')

@@ -10,13 +10,11 @@ import socket
 import sys
 import threading
 from functools import lru_cache
-from itertools import combinations
 
 import gensim
 import joblib
 
-from utils import intersection_align_gensim
-from algos import ProcrustesAligner, smart_procrustes_align_gensim
+from algos import ProcrustesAligner
 
 
 class WebVectorsThread(threading.Thread):
@@ -377,20 +375,15 @@ def find_shifts(query):
     return result
 
 
-def align_similar_words(query):
+def multiple_neighbors(query):
     """
     :target_word: str
     :model_year_list: a reversed list of years for the selected models
-    :model_list: a list of selected models to be aligned
+    :model_list: a list of selected models to be analyzed
     """
     target_word = query["query"]
     model_year_list = sorted(query["model"], reverse=True)
     model_list = [models_dic[year] for year in model_year_list]
-
-    # procrustes alignment
-    for pair in combinations(model_list, 2):
-        _, _ = intersection_align_gensim(pair[0], pair[1])
-        _ = smart_procrustes_align_gensim(pair[0], pair[1])
 
     word_list = [" ".join([target_word.split("_")[0], year]) for year in model_year_list]
 
@@ -402,7 +395,7 @@ def align_similar_words(query):
 
     # get word labels and vectors
     for model in model_list:
-        similar_words = model.most_similar(target_word, topn=7)
+        similar_words = model.most_similar(target_word, topn=6)
         for similar_word in similar_words:
             similar_word = similar_word[0]
             try:
@@ -411,7 +404,10 @@ def align_similar_words(query):
                 lemma = similar_word
             if lemma not in word_list:
                 word_list.append(lemma)
-                vector_list.append(model_list[0][similar_word].tolist())
+                for m in model_list:
+                    if similar_word in m:
+                        vector_list.append(m[similar_word].tolist())
+                        break
 
     result = {
         "word_list": word_list,
@@ -438,7 +434,7 @@ operations = {
     '3': scalculator,
     '4': vector,
     '5': find_shifts,
-    '6': align_similar_words,
+    '6': multiple_neighbors,
     '7': classify_semantic_shifts
 }
 
