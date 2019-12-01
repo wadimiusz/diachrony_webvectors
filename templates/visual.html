@@ -100,7 +100,7 @@ title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}
     <h3><strong><a href="{{ url }}{{lang}}/models/#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
     {% if not 'Too few words' in visual[model] %}
     {% if l2c[model] %}
-    <i><a target="_blank" title="{{strings['visual23']}}" href="https://projector.tensorflow.org/?config={{ l2c[model] }}">
+    <i><a target="_blank" title="{{strings['visual23']}}" href="{{ l2c[model] }}">
     {{strings['visual22']}}</a></i>
     {% endif %}
     <a href="{{ url }}data/images/tsneplots/{{ visual['tsne'][model] }}" target="_blank">
