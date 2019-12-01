@@ -1,7 +1,7 @@
 id,ru,en
-base1,RusNewsShifts: диахронические семантические модели русских новостей,RusNewsShifts: diachronic semantic models of Russian news
+base1,Shiftry: диахронические семантические модели русских новостей,Shiftry: diachronic semantic models of Russian news
 base2,Показать/скрыть меню,Toggle Navigation
-base3,RusNewsShifts,RusNewsShifts
+base3,Shiftry,Shiftry
 base4,О&nbsp;проекте,About
 base5,Калькулятор,Calculator
 base6,Похожие слова,Similar words
@@ -46,8 +46,8 @@ calc32,"Вы&nbsp;также можете попробовать более сл
 calc33,mother,mother
 calc34,daughter,daughter
 calc35,father,father
-description1,"РусВекторес: дистрибутивная семантика для русского языка, веб-интерфейс и модели для скачивания","WebVectors: word embeddings, web interface and models to download"
-home1,RusNewsShifts: семантические модели для русского языка,RusNewsShifts: word embeddings online
+description1,"Shiftry: семантические сдвиги в русских новостях","Shiftry: semantic shifts in Russian news"
+home1,Shiftry: Семантические изменения в текстах русских новостей,Shiftry: semantic shifts in Russian news
 home2,"Введите слово, чтобы получить список из&nbsp;10&nbsp;его ближайших семантических аналогов (квази-синонимов). <br/>Будет использована модель, обученная на русской Википедии и Национальном корпусе русского языка; другие модели вы можете найти на вкладке <a href=""associates/"">Похожие слова</a>.","Enter a&nbsp;word to&nbsp;produce a&nbsp;list of&nbsp;its 10&nbsp;nearest semantic associates.<br/>English Wikipedia model will be&nbsp;used; for other models, visit <a href=""associates"">Similar Words</a> tab."
 home3,Найти похожие слова!,Find similar words!
 home4,Семантические аналоги для,Semantic associates for
@@ -55,7 +55,7 @@ home5,вычисленные на&nbsp;модели,computed&nbsp;on
 home6,&#8217;You shall know a&nbsp;word by&nbsp;the company it&nbsp;keeps.&#8217; (Firth 1957).,&#8217;You shall know a&nbsp;word by&nbsp;the company it&nbsp;keeps.&#8217; (Firth 1957)
 home7,свобода,свобода
 similar0,Araneum fastText,Araneum fastText
-similar1,Вычисление семантических ассоциатов,Computing associates
+similar1,Семантические сдвиги,Semantic shifts
 similar2,"Введите слово, чтобы получить список из&nbsp;10&nbsp;его ближайших семантических аналогов (квази-синонимов). Вы&nbsp;можете приписать к&nbsp;слову знак подчеркивания &laquo;_&raquo; и&nbsp;<a href=""http://universaldependencies.org/u/pos/all.html"" data-toggle=""tooltip"" data-placement=""top"" title=""NOUN, PROPN, VERB, ADJ..."" target=""_blank"">тэг части речи</a> (<i>&laquo;tea_NOUN&raquo;</i>). Если вы&nbsp;этого не&nbsp;сделаете, <i>WebVectors</i> определит часть речи автоматически.","Enter a&nbsp;word to&nbsp;produce a&nbsp;list of&nbsp;its 10&nbsp;nearest semantic associates (quazy-synonyms). You can optionally end the word with an&nbsp;underscore and a&nbsp;<a href=""http://universaldependencies.org/u/pos/all.html"" data-toggle=""tooltip"" data-placement=""top"" title=""NOUN, PROPN, VERB, ADJ..."" target=""_blank"">PoS tag</a> (<i>&laquo;tea_NOUN&raquo;</i>). Otherwise, <i>WebVectors</i> will detect&nbsp;it."
 similar3,Выберите модель:,Choose the model:
 similar4,НКРЯ,Ruscorpora
