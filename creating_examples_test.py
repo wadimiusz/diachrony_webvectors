@@ -3,6 +3,7 @@ import gensim
 import logging
 from os import path
 from argparse import ArgumentParser
+import pickle
 
 if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
@@ -10,7 +11,7 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('--word', '-w', required=True, help='query word')
     parser.add_argument('--models', '-m', required=True, help='path to the word embeddings models')
-    parser.add_argument('--corpora', '-c', required=True, help='path to the corpora')
+    parser.add_argument('--pickle', '-p', required=True, help='path to the pickle')
     parser.add_argument('--year0', '-y', required=True, type=int,
                         help='First year of the comparison')
 
@@ -35,6 +36,8 @@ if __name__ == "__main__":
         models.update({year: model})
 
     word = args.word
-    corpora = args.corpora
 
-    GetExamples(word, corpora, years).create_examples(models)
+    with open(path.join(args.pickle, '{word}.pickle'.format(word=word)), 'rb') as f:
+        pickle_data = pickle.load(f)
+
+    GetExamples(word, pickle_data, years).create_examples(models)
