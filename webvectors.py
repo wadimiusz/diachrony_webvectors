@@ -184,11 +184,7 @@ def get_images(images):
     return images
 
 
-def word2vec2tensor(alias, result):
-
-    vector_list = result["vector_list"]
-    word_list = result["word_list"]
-    classes = [word.split("_")[-1] for word in word_list]
+def word2vec2tensor(alias, vectorlist, wordlist, classes):
 
     base_tensorboard = "https://projector.tensorflow.org/?config={}"
     outfiletsv = alias + "_tensor.tsv"
