@@ -29,7 +29,7 @@
             <!-- A cicle for models to work with -->
             {%- for m in models %}
             <label>
-            <input type="checkbox" checked name="model" value="{{ m }}">{{ strings[models[m]] }}
+            <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="model" value="{{ m }}">{{ strings[models[m]] }}
             </label>
             {%- endfor %}
           </fieldset>
@@ -101,7 +101,7 @@
         Similarity is shown to the hundredth.
         If there are relevant images, they are pulled from Wikipedia with the links to the articles. -->
     <div class="row" id="result" data-result ='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
-      {% for model in list_value -%}
+      {% for model in list_value|sort -%}
       <div class="col-md-4">
         <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h4>
         {%- if model in inferred %}
