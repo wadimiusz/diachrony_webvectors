@@ -10,13 +10,11 @@ import socket
 import sys
 import threading
 from functools import lru_cache
-from itertools import combinations
 
 import gensim
 import joblib
 
-from utils import intersection_align_gensim
-from algos import ProcrustesAligner, smart_procrustes_align_gensim
+from algos import ProcrustesAligner
 
 
 class WebVectorsThread(threading.Thread):
@@ -377,20 +375,15 @@ def find_shifts(query):
     return result
 
 
-def align_similar_words(query):
+def multiple_neighbors(query):
     """
     :target_word: str
     :model_year_list: a reversed list of years for the selected models
-    :model_list: a list of selected models to be aligned
+    :model_list: a list of selected models to be analyzed
     """
     target_word = query["query"]
     model_year_list = sorted(query["model"], reverse=True)
     model_list = [models_dic[year] for year in model_year_list]
-
-    # procrustes alignment
-    for pair in combinations(model_list, 2):
-        _, _ = intersection_align_gensim(pair[0], pair[1])
-        _ = smart_procrustes_align_gensim(pair[0], pair[1])
 
     word_list = [" ".join([target_word.split("_")[0], year]) for year in model_year_list]
 
@@ -438,7 +431,7 @@ operations = {
     '3': scalculator,
     '4': vector,
     '5': find_shifts,
-    '6': align_similar_words,
+    '6': multiple_neighbors,
     '7': classify_semantic_shifts
 }
 
