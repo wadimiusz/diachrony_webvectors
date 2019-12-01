@@ -395,7 +395,7 @@ def multiple_neighbors(query):
 
     # get word labels and vectors
     for model in model_list:
-        similar_words = model.most_similar(target_word, topn=7)
+        similar_words = model.most_similar(target_word, topn=6)
         for similar_word in similar_words:
             similar_word = similar_word[0]
             try:
@@ -404,7 +404,10 @@ def multiple_neighbors(query):
                 lemma = similar_word
             if lemma not in word_list:
                 word_list.append(lemma)
-                vector_list.append(model_list[0][similar_word].tolist())
+                for m in model_list:
+                    if similar_word in m:
+                        vector_list.append(m[similar_word].tolist())
+                        break
 
     result = {
         "word_list": word_list,
