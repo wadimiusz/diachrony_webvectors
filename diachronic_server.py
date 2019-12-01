@@ -393,7 +393,12 @@ def align_similar_words(query):
         _ = smart_procrustes_align_gensim(pair[0], pair[1])
 
     word_list = [" ".join([target_word.split("_")[0], year]) for year in model_year_list]
-    vector_list = [model[target_word] for model in model_list]
+
+    try:
+        vector_list = [model[target_word] for model in model_list]
+    except KeyError:
+        result = {"{} is unknown to the model".format(target_word): True}
+        return result
 
     # get word labels and vectors
     for model in model_list:
