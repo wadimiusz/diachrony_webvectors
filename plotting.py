@@ -63,6 +63,45 @@ def tsne_semantic_shifts(result, fname):
     plot.clf()
 
 
+def pca_semantic_shifts(result, fname):
+    """
+    :result: a dictionary containing word_list and vector_list from aligned models
+    """
+    word_list = result["word_list"]
+    vector_list = result["vector_list"]
+    model_number = result["model_number"]
+
+    embed = PCA(n_components=2, random_state=0)
+    np.set_printoptions(suppress=True)
+    y = embed.fit_transform(np.array(vector_list))
+
+    word_coordinates = [y[i] for i in range(0, model_number)]
+    x_coordinates, y_coordinates = y[:, 0], y[:, 1]
+
+    plot.figure(figsize=(10, 8))
+    plot.scatter(x_coordinates, y_coordinates)
+    plot.axis("off")
+
+    for label, x, y in zip(word_list, x_coordinates, y_coordinates):
+        plot.annotate(
+            label, xy=(x, y), xytext=(-len(label) * 4, 4), textcoords="offset points"
+        )
+
+    for i in range(len(word_coordinates) - 1, 0, -1):
+        plot.annotate(
+            "",
+            xy=(word_coordinates[i - 1][0], word_coordinates[i - 1][1]),
+            xytext=(word_coordinates[i][0], word_coordinates[i][1]),
+            arrowprops=dict(arrowstyle="-|>", color="indianred"),
+        )
+
+    plot.savefig(
+        root + "data/images/pca_shift/" + fname + ".png", dpi=150, bbox_inches="tight"
+    )
+    plot.close()
+    plot.clf()
+
+
 def singularplot(word, modelname, vector, fname):
     xlocations = np.array(list(range(len(vector))))
     plot.clf()
