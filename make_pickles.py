@@ -26,7 +26,8 @@ vocabs = {}
 for year in range(2010, 2020):
     model = gensim.models.KeyedVectors.load(
         path.join(args.models, '{year}_rnc_incremental.model'.format(year=year)))
-    vocabs[year] = set(model.index2word)
+    vocabs[year] = set([w for w in model.index2word if w.endswith('_NOUN')
+                        or w.endswith('_PROPN') or w.endswith('_ADJ')])
 
 united_vocab = set.union(*map(set, vocabs.values()))
 print('Total words:', len(united_vocab), file=sys.stderr)
