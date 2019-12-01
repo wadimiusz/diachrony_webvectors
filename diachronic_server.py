@@ -40,6 +40,7 @@ def clientthread(connect, addres):
         if not data:
             break
         query = json.loads(data.decode('utf-8'))
+        print(query)
         output = operations[query['operation']](query)
         now = datetime.datetime.now()
         print(now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t',
@@ -392,7 +393,7 @@ def align_similar_words(query):
         _ = smart_procrustes_align_gensim(pair[0], pair[1])
 
     word_list = [" ".join([target_word, year]) for year in model_year_list]
-    vector_list = [model[target_word] for model in model_list]
+    vector_list = [model[target_word].tolist() for model in model_list]
 
     # get word labels and vectors from the aligned models
     for model in model_list:
@@ -400,7 +401,7 @@ def align_similar_words(query):
         for similar_word in similar_words:
             similar_word = similar_word[0]
             word_list.append(similar_word.split("_")[0])
-            vector_list.append(model[similar_word])
+            vector_list.append(model[similar_word].tolist())
 
     result = {
         "word_list": word_list,

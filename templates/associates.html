@@ -61,6 +61,10 @@
     </div>
     <!-- Featuring results -->
     {% if list_value -%}
+    <!-- Word trajectory -->
+    <a href="{{ url }}data/images/tsne_shift/{{ fname }}.png" target="_blank">
+    <img class="img-responsive" src = "{{ url }}data/images/tsne_shift/{{ fname }}.png" alt = "Word trajectory" title = "Word trajectory">
+    </a>
     <!-- Title "Semantic associates for", "strong" means "bold" -->
     <h3>
       <strong>
@@ -98,7 +102,7 @@
         If there are relevant images, they are pulled from Wikipedia with the links to the articles. -->
     <div class="row" id="result" data-result ='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
       {% for model in list_value -%}
-      <div class="col-md-5">
+      <div class="col-md-4">
         <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h4>
         {%- if model in inferred %}
         <i>{{strings['similar32']}}</i>
@@ -136,6 +140,7 @@
       </div>
       {% endfor -%}
     </div>
+    <img src="{{ url }}data/images/heatmaps/{{ fname }}.png">
     <!-- The section for the actual results is over. -->
     <hr>
     <!-- "Parts of speech are shown for each word, if present in the model."  -->
@@ -162,6 +167,6 @@
   <!-- class="col-md-10" ends -->
 </div>
 <!-- class="row" ends -->
-<img src="{{ url }}data/images/heatmaps/{{ fname }}.png">
+
 {%- endblock %}
 <!-- The content block is over. -->

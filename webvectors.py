@@ -86,7 +86,12 @@ def serverquery(d_message):
         s.close()
         return None
     # Now receive data
-    reply = s.recv(32768)
+    reply = b""
+    while True:
+        data = s.recv(32768)
+        if not data:
+            break
+        reply += data
     s.close()
     return reply
 
@@ -410,13 +415,13 @@ def associates_page(lang):
                     if 'inferred' in result:
                         inferred.add(model)
 
-            models_row = OrderedDict(sorted(models_row.items(), key=lambda x: int(x[0])))
+            # models_row = OrderedDict(sorted(models_row.items(), key=lambda x: int(x[0])))
 
-            neighbors = [[word for word, freq in neighbors] for year, neighbors in
-                         models_row.items()]
-            heatmap = get_heatmap(neighbors)
+            # neighbors = [[word for word, freq in neighbors] for year, neighbors in
+            #             models_row.items()]
+            # heatmap = get_heatmap(neighbors)
             m = hashlib.md5()
-            hashword = ":".join([",".join([str(i) for i in j]) for j in heatmap])
+            hashword = ":".join([",".join([str(i) for i in j]) for j in model_value] + [query])
             hashword = hashword.encode('ascii', 'backslashreplace')
             m.update(hashword)
 
@@ -424,11 +429,11 @@ def associates_page(lang):
                 os.mkdir("data/images/heatmaps")
 
             fname = m.hexdigest()
-            if not os.path.exists(os.path.join("data/images/heatmaps", fname + ".png")):
-                labels = list(models_row.keys())
-                sns.heatmap(heatmap, xticklabels=labels, yticklabels=labels)
-                img_path = os.path.join("data/images/heatmaps", fname)
-                plt.savefig(img_path)
+            # if not os.path.exists(os.path.join("data/images/heatmaps", fname + ".png")):
+            #    labels = list(models_row.keys())
+            #    sns.heatmap(heatmap, xticklabels=labels, yticklabels=labels)
+            #    img_path = os.path.join("data/images/heatmaps", fname)
+            #    plt.savefig(img_path)
 
             trajectory_message = {'operation': '6', 'query': query, 'model': model_value}
             trajectory_result = json.loads(serverquery(trajectory_message).decode('utf-8'))
