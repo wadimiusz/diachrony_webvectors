@@ -384,7 +384,7 @@ def align_similar_words(query):
     :model_list: a list of selected models to be aligned
     """
     target_word = query["query"]
-    model_year_list = list(reversed(query["model"]))
+    model_year_list = sorted(query["model"], reverse=True)
     model_list = [models_dic[year] for year in model_year_list]
 
     # procrustes alignment
@@ -392,16 +392,21 @@ def align_similar_words(query):
         _, _ = intersection_align_gensim(pair[0], pair[1])
         _ = smart_procrustes_align_gensim(pair[0], pair[1])
 
-    word_list = [" ".join([target_word, year]) for year in model_year_list]
-    vector_list = [model[target_word].tolist() for model in model_list]
+    word_list = [" ".join([target_word.split("_")[0], year]) for year in model_year_list]
+    vector_list = [model[target_word] for model in model_list]
 
-    # get word labels and vectors from the aligned models
+    # get word labels and vectors
     for model in model_list:
         similar_words = model.most_similar(target_word, topn=7)
         for similar_word in similar_words:
             similar_word = similar_word[0]
-            word_list.append(similar_word.split("_")[0])
-            vector_list.append(model[similar_word].tolist())
+            try:
+                (lemma, pos) = similar_word.split("_")
+            except ValueError:
+                lemma = similar_word
+            if lemma not in word_list:
+                word_list.append(lemma)
+                vector_list.append(model_list[0][similar_word])
 
     result = {
         "word_list": word_list,
