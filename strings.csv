@@ -11,15 +11,15 @@ base9,Публикации,Publications
 base10,Контакты,Contacts
 base11,Команда WebVectors,WebVectors Team
 base12,Лицензия Creative Commons,Creative Commons License
-base13,Визуализации,Visualizations
+base13,Синхронические визуализации,Synchronic visualizations
 base14,Университет Осло, University of Oslo
 base15,Национальный Исследовательский Университет Высшая Школа Экономики,National Research University Higher School of Economics
 base16,Switch language,Сменить язык
 base17,Различные операции,Miscellaneous
 base18,"Слова, выделенные <span style='color: green;'>зеленым</span>, являются высокочастотными (доля в корпусе выше 0.00001); слова, выделенные <span style='color: red;'>красным</span>, являются низкочастотными (доля в корпусе ниже 0.0000005).","Words in <span style='color: green;'>green</span> are top frequent (corpus ratio higher than 0.00001); words in <span style='color: red;'>red</span>, are low frequent (corpus ratio less than 0.0000005)."
 base19,"Показаны только ассоциаты той же части речи, что и слово в запросе. Изменить этот фильтр можно на вкладке <a href=""associates/"">Похожие слова</a>.","We show only the associates of the same part of speech as your query. All associates can be found at the <a href=""associates/"">Similar Words</a> tab."
-base20,Семантические сдвиги,Semantic shifts
-base21,Классификация сдвигов,Shift classification
+base20,Изменившиеся слова,Shifted words
+base21,Классификатор сдвигов,Shift classifier
 calc1,Семантический калькулятор,Semantic Calculator
 calc2,Алгебраические операции,Algebraic operations
 calc3,"Введите в&nbsp;&laquo;<strong>положительную</strong>&raquo; и&nbsp;&laquo;<strong>отрицательную</strong>&raquo; формы не&nbsp;более 10&nbsp;слов через пробел. <i>WebVectors</i> сложит вектора положительных слов и&nbsp;вычтет из&nbsp;них отрицательные. Затем он&nbsp;выдаст слова, наиболее близкие к&nbsp;получившемуся вектору. Если вы&nbsp;оставите отрицательное поле пустым, <i>WebVectors</i> просто найдет центр лексического кластера, образованного положительными словами.","Enter not more than 10&nbsp;space-separated words into <strong>positive</strong> and <strong>negative</strong> forms. <i>WebVectors</i> will sum up&nbsp;vectors for the positive words and subtract vectors from the negative ones. Then it&nbsp;will output the word closest to&nbsp;the resulting vector. If&nbsp;you leave negative form empty, <i>WebVectors</i> will simply find the center of&nbsp;word cluster formed by&nbsp;your positive words."
@@ -55,7 +55,7 @@ home5,вычисленные на&nbsp;модели,computed&nbsp;on
 home6,&#8217;You shall know a&nbsp;word by&nbsp;the company it&nbsp;keeps.&#8217; (Firth 1957).,&#8217;You shall know a&nbsp;word by&nbsp;the company it&nbsp;keeps.&#8217; (Firth 1957)
 home7,свобода,свобода
 similar0,Araneum fastText,Araneum fastText
-similar1,Семантические сдвиги,Semantic shifts
+similar1,Семантические сдвиги в русских новостях,Semantic shifts in Russian news
 similar2,"Введите слово, чтобы получить список из&nbsp;10&nbsp;его ближайших семантических аналогов (квази-синонимов). Вы&nbsp;можете приписать к&nbsp;слову знак подчеркивания &laquo;_&raquo; и&nbsp;<a href=""http://universaldependencies.org/u/pos/all.html"" data-toggle=""tooltip"" data-placement=""top"" title=""NOUN, PROPN, VERB, ADJ..."" target=""_blank"">тэг части речи</a> (<i>&laquo;tea_NOUN&raquo;</i>). Если вы&nbsp;этого не&nbsp;сделаете, <i>WebVectors</i> определит часть речи автоматически.","Enter a&nbsp;word to&nbsp;produce a&nbsp;list of&nbsp;its 10&nbsp;nearest semantic associates (quazy-synonyms). You can optionally end the word with an&nbsp;underscore and a&nbsp;<a href=""http://universaldependencies.org/u/pos/all.html"" data-toggle=""tooltip"" data-placement=""top"" title=""NOUN, PROPN, VERB, ADJ..."" target=""_blank"">PoS tag</a> (<i>&laquo;tea_NOUN&raquo;</i>). Otherwise, <i>WebVectors</i> will detect&nbsp;it."
 similar3,Выберите модель:,Choose the model:
 similar4,НКРЯ,Ruscorpora
