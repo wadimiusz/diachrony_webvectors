@@ -1,5 +1,6 @@
 import gensim
 import numpy as np
+import copy
 from utils import log, intersection_align_gensim
 from gensim.matutils import unitvec
 
@@ -7,7 +8,8 @@ from gensim.matutils import unitvec
 class GlobalAnchors(object):
     def __init__(self, w2v1, w2v2, assume_vocabs_are_identical=False):
         if not assume_vocabs_are_identical:
-            w2v1, w2v2 = intersection_align_gensim(w2v1, w2v2)
+            w2v1, w2v2 = intersection_align_gensim(copy.copy(w2v1),
+                                                   copy.copy(w2v2))
         
         self.w2v1 = w2v1
         self.w2v2 = w2v2
