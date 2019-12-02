@@ -23,7 +23,7 @@ def get_algo_by_kind_and_two_models(kind: str, model1: KeyedVectors,
 
 class ShiftClassifier:
     def __init__(self):
-        self.clf = LogisticRegression()
+        self.clf = LogisticRegression(class_weight='balanced')
         self.scaler = StandardScaler()
         self.fitted = False
 
@@ -83,8 +83,6 @@ class ShiftClassifier:
         jaccard_score = get_algo_by_kind_and_two_models("jaccard", model1, model2).get_score(word)
 
         kendall_tau_score = get_algo_by_kind_and_two_models("kendall_tau", model1, model2).get_score(word)
-        frequency = model1.vocab[word].count + model2.vocab[word].count
-        log_frequency = np.log(frequency)
         features = [procrustes_score, global_anchors_score, jaccard_score,
-                    kendall_tau_score, log_frequency]
+                    kendall_tau_score]
         return features
