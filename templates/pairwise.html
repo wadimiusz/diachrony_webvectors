@@ -55,7 +55,7 @@
 
 {% if top_changes %}
 <h2>{{strings['pairwise5']}} {{model1}}, {{model2}}</h2>
-<div class="row" id="result" data-visible="10" data-result='{{ frequencies|tojson }}'>
+<div class="row" id="result" data-visible="100" data-result='{{ frequencies|tojson }}'>
   <div class="col-mid-5">
     <ol id="{{ frequencies_key }}" style="font-size: larger;" type="1">
       {%- for word in top_changes %}

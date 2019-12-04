@@ -440,7 +440,8 @@ def associates_page(lang):
 
             if not os.path.exists(root + 'data/images/tsne_shift'):
                 os.makedirs(root + 'data/images/tsne_shift')
-            tsne_semantic_shifts(trajectory_result, fname)
+            if trajectory_result['word_list']:
+                tsne_semantic_shifts(trajectory_result, fname)
 
             return render_template('associates.html', list_value=models_row, word=query, pos=pos,
                                    number=len(model_value), wordimages=images, models=our_models,
@@ -1075,4 +1076,4 @@ def redirect_main():
     else:
         if req[-1] != '/':
             req += '/'
-    return redirect(url + 'ru' + req)
+    return redirect(url + 'en' + req)

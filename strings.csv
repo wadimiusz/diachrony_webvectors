@@ -49,15 +49,15 @@ calc35,father,father
 description1,"Shiftry: семантические сдвиги в русских новостях","Shiftry: semantic shifts in Russian news"
 home1,Shiftry: Семантические изменения в текстах русских новостей,Shiftry: semantic shifts in Russian news
 home2,"Введите слово, чтобы получить список из&nbsp;10&nbsp;его ближайших семантических аналогов (квази-синонимов). <br/>Будет использована модель, обученная на русской Википедии и Национальном корпусе русского языка; другие модели вы можете найти на вкладке <a href=""associates/"">Похожие слова</a>.","Enter a&nbsp;word to&nbsp;produce a&nbsp;list of&nbsp;its 10&nbsp;nearest semantic associates.<br/>English Wikipedia model will be&nbsp;used; for other models, visit <a href=""associates"">Similar Words</a> tab."
-home3,Найти похожие слова!,Find similar words!
+home3,Посмотреть эволюцию слова,Trace semantic trajectory!
 home4,Семантические аналоги для,Semantic associates for
 home5,вычисленные на&nbsp;модели,computed&nbsp;on
 home6,&#8217;You shall know a&nbsp;word by&nbsp;the company it&nbsp;keeps.&#8217; (Firth 1957).,&#8217;You shall know a&nbsp;word by&nbsp;the company it&nbsp;keeps.&#8217; (Firth 1957)
 home7,свобода,свобода
 similar0,Araneum fastText,Araneum fastText
 similar1,Семантические сдвиги в русских новостях,Semantic shifts in Russian news
-similar2,"Введите слово, чтобы получить список из&nbsp;10&nbsp;его ближайших семантических аналогов (квази-синонимов). Вы&nbsp;можете приписать к&nbsp;слову знак подчеркивания &laquo;_&raquo; и&nbsp;<a href=""http://universaldependencies.org/u/pos/all.html"" data-toggle=""tooltip"" data-placement=""top"" title=""NOUN, PROPN, VERB, ADJ..."" target=""_blank"">тэг части речи</a> (<i>&laquo;tea_NOUN&raquo;</i>). Если вы&nbsp;этого не&nbsp;сделаете, <i>WebVectors</i> определит часть речи автоматически.","Enter a&nbsp;word to&nbsp;produce a&nbsp;list of&nbsp;its 10&nbsp;nearest semantic associates (quazy-synonyms). You can optionally end the word with an&nbsp;underscore and a&nbsp;<a href=""http://universaldependencies.org/u/pos/all.html"" data-toggle=""tooltip"" data-placement=""top"" title=""NOUN, PROPN, VERB, ADJ..."" target=""_blank"">PoS tag</a> (<i>&laquo;tea_NOUN&raquo;</i>). Otherwise, <i>WebVectors</i> will detect&nbsp;it."
-similar3,Выберите модель:,Choose the model:
+similar2,"Введите русское слово, и Shiftry покажет его семантическую траекторию по выбранным годам.","Enter a&nbsp;Russian word, and Shiftry will show its semantic trajectory across the chosen years."
+similar3,Выберите годы:,Choose the years:
 similar4,НКРЯ,Ruscorpora
 similar5,Английская Wikipedia,English Wikipedia
 similar6,Британский Национальный Корпус,British National Corpus
@@ -69,7 +69,7 @@ similar11,Глаголы,Verbs
 similar12,Наречия,Adverbs
 similar13,Прилагательные,Adjectives
 similar14,Все части речи,All of&nbsp;them
-similar15,Найти похожие слова!,Find similar words!
+similar15,Посмотреть эволюцию слова,Trace semantic trajectory!
 similar16,Cемантические аналоги для,Semantic associates for
 similar17,вычислено на&nbsp;модели,computed on&nbsp;data from
 similar18,Модели неизвестно слово,The model does not know the word

@@ -10,7 +10,7 @@ import socket
 import sys
 import threading
 from functools import lru_cache
-
+import numpy as np
 import gensim
 import joblib
 
@@ -363,15 +363,27 @@ def get_global_anchors_model(model1_name, model2_name):
 
 
 def find_shifts(query):
-    model1 = query['model1']
-    model2 = query['model2']
+    model1 = models_dic[query['model1']]
+    model2 = models_dic[query['model2']]
     pos = query.get("pos")
     n = query['n']
-    procrustes_aligner = get_global_anchors_model(model1, model2)
-    result = dict()
-    result['changes'] = [word for word, score in procrustes_aligner.get_changes(n, pos=pos)]
-    result['frequencies'] = {"{}_{}".format(model1, model2):
-                                 {word: frequency(word, model1) for word in result['changes']}}
+    # procrustes_aligner = get_global_anchors_model(model1, model2)
+    result = {}
+    shared_voc = list(set.intersection(set(model1.index2word), set(model2.index2word)))
+    matrix1 = np.zeros((len(shared_voc), 300))
+    matrix2 = np.zeros((len(shared_voc), 300))
+    for nr, word in enumerate(shared_voc):
+        matrix1[nr, :] = model1[word]
+        matrix2[nr, :] = model2[word]
+    sims = (matrix1 * matrix2).sum(axis=1)
+    min_sims = np.argsort(sims)[:n]
+    print(min_sims)
+    min_sims = reversed(np.argsort(sims))[:n]
+    print(min_sims)
+    result['changes'] = [shared_voc[nr] for nr in min_sims]
+    # result['changes'] = [word for word, score in procrustes_aligner.get_changes(n, pos=pos)]
+    result['frequencies'] = {"{}_{}".format(query['model1'], query['model2']):
+                                 {word: frequency(word, query['model1']) for word in result['changes']}}
     return result
 
 
@@ -382,19 +394,20 @@ def multiple_neighbors(query):
     :model_list: a list of selected models to be analyzed
     """
     target_word = query["query"]
+    word, pos = target_word.split('_')
+    target_word = word.lower() + '_' + pos
     model_year_list = sorted(query["model"], reverse=True)
     model_list = [models_dic[year] for year in model_year_list]
 
-    word_list = [" ".join([target_word.split("_")[0], year]) for year in model_year_list]
+    word_list = [" ".join([target_word.split("_")[0], year]) for year in model_year_list if target_word in models_dic[year]]
+    actual_years = len(word_list)
 
-    try:
-        vector_list = [model[target_word].tolist() for model in model_list]
-    except KeyError:
-        result = {"{} is unknown to the model".format(target_word): True}
-        return result
+    vector_list = [model[target_word].tolist() for model in model_list if target_word in model]
 
     # get word labels and vectors
     for model in model_list:
+        if target_word not in model:
+            continue
         similar_words = model.most_similar(target_word, topn=6)
         for similar_word in similar_words:
             similar_word = similar_word[0]
@@ -412,7 +425,7 @@ def multiple_neighbors(query):
     result = {
         "word_list": word_list,
         "vector_list": vector_list,
-        "model_number": len(model_year_list),
+        "model_number": actual_years,
     }
 
     return result
