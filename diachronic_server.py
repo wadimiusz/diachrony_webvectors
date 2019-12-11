@@ -395,9 +395,10 @@ def find_shifts(query):
 
         freq = frequency(word, query['model1'])
         if word.endswith(pos) or pos == "ALL":
-            results['neighbors'].append((word, sim))
-            results['frequencies'][word] = freq
-            freq_type_num[freq[1]] += 1
+            if freq_type_num[freq[1]] < n:
+                results['neighbors'].append((word, sim))
+                results['frequencies'][word] = freq
+                freq_type_num[freq[1]] += 1
 
     return results
 
