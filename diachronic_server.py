@@ -166,6 +166,8 @@ def find_synonyms(query):
         results['frequencies'][res[0]] = (freq, tier)
     raw_vector = model[qf]
     results['vector'] = raw_vector.tolist()
+    print("SYNONYM", results['neighbors']) # debug
+    print("SYNONYM FREQUENCIES", results['frequencies']) # debug
     return results
 
 
@@ -367,8 +369,8 @@ def find_shifts(query):
     model2 = models_dic[query['model2']]
     pos = query.get("pos")
     n = query['n']
+    results = {'frequencies': {}}
     # procrustes_aligner = get_global_anchors_model(model1, model2)
-    result = {}
     shared_voc = list(set.intersection(set(model1.index2word), set(model2.index2word)))
     matrix1 = np.zeros((len(shared_voc), 300))
     matrix2 = np.zeros((len(shared_voc), 300))
@@ -376,15 +378,29 @@ def find_shifts(query):
         matrix1[nr, :] = model1[word]
         matrix2[nr, :] = model2[word]
     sims = (matrix1 * matrix2).sum(axis=1)
-    min_sims = np.argsort(sims)[:n]
+    min_sims = np.argsort(sims)  # [:n]
     print(min_sims)
-    min_sims = reversed(np.argsort(sims))[:n]
-    print(min_sims)
-    result['changes'] = [shared_voc[nr] for nr in min_sims]
-    # result['changes'] = [word for word, score in procrustes_aligner.get_changes(n, pos=pos)]
-    result['frequencies'] = {"{}_{}".format(query['model1'], query['model2']):
-                                 {word: frequency(word, query['model1']) for word in result['changes']}}
-    return result
+    # min_sims = np.argsort(sims)[::-1][:n]
+    # print(min_sims)
+    print(sims[min_sims[0]])
+    results['neighbors'] = list()
+    results['frequencies'] = dict()
+    freq_type_num = {"low": 0, "mid": 0, "high": 0}
+    for nr in min_sims:
+        if min(freq_type_num.values()) > n:
+            break
+
+        word = shared_voc[nr]
+        sim = sims[nr]
+
+        freq = frequency(word, query['model1'])
+        if word.endswith(pos) or pos == "ALL":
+            results['neighbors'].append((word, sim))
+            results['frequencies'][word] = freq
+            freq_type_num[freq[1]] += 1
+
+    return results
+
 
 
 def multiple_neighbors(query):

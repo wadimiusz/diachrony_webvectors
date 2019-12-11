@@ -1,6 +1,7 @@
 import gensim
 import numpy as np
 import copy
+from tqdm.auto import tqdm
 from utils import log, intersection_align_gensim
 from gensim.matutils import unitvec
 
@@ -52,10 +53,7 @@ class GlobalAnchors(object):
         """
         log('Doing global anchors')
         result = list()
-        for num, word in enumerate(self.w2v1.wv.vocab.keys()):
-            if num % 10 == 0:
-                log("{num} / {length}".format(num=num, length=len(self.w2v1.wv.vocab)), end='\r')
-
+        for word in tqdm(self.w2v1.wv.vocab.keys()):
             score = self.get_score(word)
             result.append((word, score))
 

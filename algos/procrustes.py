@@ -50,9 +50,12 @@ def smart_procrustes_align_gensim(base_embed: gensim.models.KeyedVectors,
 
 
 class ProcrustesAligner(object):
-    def __init__(self, w2v1: gensim.models.KeyedVectors, w2v2: gensim.models.KeyedVectors):
+    def __init__(self, w2v1: gensim.models.KeyedVectors, w2v2: gensim.models.KeyedVectors, already_aligned=True):
         self.w2v1 = w2v1
-        self.w2v2 = smart_procrustes_align_gensim(w2v1, w2v2)
+        if already_aligned:
+            self.w2v2 = w2v2
+        else:
+            self.w2v2 = smart_procrustes_align_gensim(w2v1, w2v2)
 
     def __repr__(self):
         return "ProcrustesAligner"
@@ -67,7 +70,7 @@ class ProcrustesAligner(object):
         log('Doing procrustes')
         result = list()
         # their vocabs should be the same, so it doesn't matter over which to iterate:
-        for word in self.w2v1.wv.vocab.keys():
+        for word in set(self.w2v1.wv.vocab.keys()) & set(self.w2v2.wv.vocab.keys()):
             if pos is None or pos.lower() == "all" or word.endswith("_" + pos):
                 score = self.get_score(word)
                 result.append((word, score))

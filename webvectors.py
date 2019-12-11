@@ -470,40 +470,42 @@ def get_heatmap(neighbors):
 
 @wvectors.route(url + "<lang:lang>/pairwise/", methods=["GET", "POST"])
 def pairwise_page(lang):
+    global our_models
     g.lang = lang
     s = set()
     s.add(lang)
-    other_lang = list(set(language_dicts.keys()) - s)[0]
+    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
-    tags_options = list(exposed_tags.keys()) + ["ALL"]
-    if request.method == "GET":
-        return render_template("pairwise.html", other_lang=other_lang,
-                               languages=languages, url=url,
-                               models=our_models, tags_options=tags_options,
-                               exposed_tags=exposed_tags,
-                               checked_model1=list(our_models.keys())[-2],
-                               checked_model2=list(our_models.keys())[-1])
-    else:
-        model1 = request.form.getlist('model1')[0]
-        model2 = request.form.getlist('model2')[0]
-        pos = request.form.getlist('tag')[0]
-        if model1 > model2:
-            model1, model2 = model2, model1
+    if request.method == 'POST':
+        print(request.form.getlist('pos')) # debug
+        pos = request.form.getlist('pos')[0]
+        models_row = {}
+        inferred = set()
+        frequencies = {}
+        model1 = request.form.getlist("model1")[0]
+        model2 = request.form.getlist("model2")[0]
+
         message = {"operation": "5", "model1": model1, "model2": model2,
                    "n": 100, "pos": pos}
-        print("Message", message)
+        print(message)
         result = json.loads(serverquery(message).decode('utf-8'))
-        # print("result", result)
-        frequencies_key = list(result["frequencies"].keys())[0]
-        return render_template("pairwise.html", other_lang=other_lang, url=url,
-                               models=our_models, top_changes=result['changes'],
-                               frequencies=result["frequencies"],
-                               frequencies_key=frequencies_key,
-                               model1=model1, model2=model2,
-                               checked_model1=model1,
-                               checked_model2=model2,
-                               tags_options=tags_options,
-                               exposed_tags=exposed_tags, pos=pos)
+        frequencies[model1] = result['frequencies']
+        models_row[model1] = result['neighbors']
+        if 'inferred' in result:
+            inferred.add(model1)
+
+        return render_template('pairwise.html', list_value=models_row, pos=pos,
+                               number=2, models=our_models,
+                               tags=tags, other_lang=other_lang, languages=languages,
+                               tags2show=exposed_tags, url=url,
+                               userpos=pos, inferred=inferred, frequencies=frequencies,
+                               visible_neighbors=10, checked_model1=model1, checked_model2=model2)
+
+    return render_template('pairwise.html', models=our_models, tags=tags, other_lang=other_lang,
+                       languages=languages, url=url, usermodels=[defaultmodel],
+                       tags2show=exposed_tags,
+                       checked_model1=list(our_models.keys())[-2],
+                       checked_model2=list(our_models.keys())[-1])
 
 
 @wvectors.route(url + '<lang:lang>/visual/', methods=['GET', 'POST'])
