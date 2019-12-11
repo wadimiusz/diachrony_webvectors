@@ -167,6 +167,8 @@ pairwise4,Найти сдвиги,Find shifts
 pairwise5,Топ сдвигов для моделей:,Top shifts for models:
 pairwise6,Части речи:,Parts of speech:
 pairwise7,Все части речи,All parts of speech
+pairwise8,"Выберите из списка два временных периода, чтобы узнать слова, употребление которых изменилось особенно сильно.","Select two time periods to learn which words have experiences most significant change in usage."
+pairwise9,"Узнать наиболее изменившиеся слова","Extract shifted words"
 binary1,Классификация семантических сдвигов,Semantic shifts classification
 binary2,Введите слово,Enter your word
 binary3,Классифицировать,Classify
