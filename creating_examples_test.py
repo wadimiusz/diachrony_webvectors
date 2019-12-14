@@ -4,6 +4,7 @@ import logging
 from os import path
 from argparse import ArgumentParser
 import pickle
+import gzip
 
 if __name__ == "__main__":
     logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
@@ -14,6 +15,8 @@ if __name__ == "__main__":
     parser.add_argument('--pickle', '-p', required=True, help='path to the pickle')
     parser.add_argument('--year0', '-y', required=True, type=int,
                         help='First year of the comparison')
+    parser.add_argument('--method', '-met', required=True, type=int,
+                        help='method of selecting contexts')
 
     args = parser.parse_args()
 
@@ -37,7 +40,9 @@ if __name__ == "__main__":
 
     word = args.word
 
-    with open(path.join(args.pickle, '{word}.pickle'.format(word=word)), 'rb') as f:
+    with gzip.open(path.join(args.pickle, '{word}.pickle.gz'.format(word=word)), 'rb') as f:
         pickle_data = pickle.load(f)
 
-    GetExamples(word, pickle_data, years).create_examples(models)
+    method = args.method
+
+    GetExamples(word, pickle_data, years).create_examples(models, method)
