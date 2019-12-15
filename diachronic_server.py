@@ -416,28 +416,30 @@ def multiple_neighbors(query):
     model_year_list = sorted(query["model"], reverse=True)
     model_list = [models_dic[year] for year in model_year_list]
 
-    word_list = [" ".join([target_word.split("_")[0], year]) for year in model_year_list if target_word in models_dic[year]]
+    word_list = [" ".join([target_word.split("_")[0], year]) for year in model_year_list
+                 if target_word in models_dic[year]]
     actual_years = len(word_list)
-
     vector_list = [model[target_word].tolist() for model in model_list if target_word in model]
 
     # get word labels and vectors
-    for model in model_list:
+    for year, model in enumerate(model_list):
         if target_word not in model:
             continue
         similar_words = model.most_similar(target_word, topn=6)
         for similar_word in similar_words:
             similar_word = similar_word[0]
-            try:
-                (lemma, pos) = similar_word.split("_")
-            except ValueError:
-                lemma = similar_word
-            if lemma not in word_list:
-                word_list.append(lemma)
-                for m in model_list:
-                    if similar_word in m:
-                        vector_list.append(m[similar_word].tolist())
-                        break
+            freq, tier = frequency(similar_word, model_year_list[year])
+            if tier != "low":
+                try:
+                    (lemma, pos) = similar_word.split("_")
+                except ValueError:
+                    lemma = similar_word
+                if lemma not in word_list:
+                    word_list.append(lemma)
+                    for recent_model in model_list:
+                        if similar_word in recent_model:
+                            vector_list.append(recent_model[similar_word].tolist())
+                            break
 
     result = {
         "word_list": word_list,
