@@ -435,7 +435,7 @@ def associates_page(lang):
             #    img_path = os.path.join("data/images/heatmaps", fname)
             #    plt.savefig(img_path)
 
-            trajectory_message = {'operation': '6', 'query': query, 'model': model_value}
+            trajectory_message = {'operation': '6', 'query': query, 'pos': pos, 'model': model_value}
             trajectory_result = json.loads(serverquery(trajectory_message).decode('utf-8'))
 
             if not os.path.exists(root + 'data/images/tsne_shift'):

@@ -426,7 +426,6 @@ def multiple_neighbors(query):
         if target_word not in model:
             continue
         similar_words = model.most_similar(target_word, topn=6)
-
         for similar_word in similar_words:
             similar_word = similar_word[0]
             freq, tier = frequency(similar_word, model_year_list[year])
@@ -440,6 +439,7 @@ def multiple_neighbors(query):
                     # filter words by pos-tag
                     if pos == "ALL" or (similar_word_pos and pos == similar_word_pos):
                         word_list.append(lemma)
+                        # get the most recent meaning
                         for recent_model in model_list:
                             if similar_word in recent_model:
                                 vector_list.append(recent_model[similar_word].tolist())
