@@ -416,8 +416,7 @@ def multiple_neighbors(query):
     model_year_list = sorted(query["model"], reverse=True)
     model_list = [models_dic[year] for year in model_year_list]
 
-    word_list = [" ".join([target_word.split("_")[0], year]) for year in model_year_list
-                 if target_word in models_dic[year]]
+    word_list = [" ".join([target_word.split("_")[0], year]) for year in model_year_list]
     actual_years = len(word_list)
     vector_list = [model[target_word].tolist() for model in model_list if target_word in model]
 
