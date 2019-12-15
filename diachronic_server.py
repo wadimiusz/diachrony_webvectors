@@ -411,8 +411,9 @@ def multiple_neighbors(query):
     :model_list: a list of selected models to be analyzed
     """
     target_word = query["query"]
-    word, pos = target_word.split('_')
-    target_word = word.lower() + '_' + pos
+    pos = query["pos"]
+    word, target_word_pos = target_word.split('_')
+    target_word = word.lower() + '_' + target_word_pos
     model_year_list = sorted(query["model"], reverse=True)
     model_list = [models_dic[year] for year in model_year_list]
 
@@ -425,20 +426,24 @@ def multiple_neighbors(query):
         if target_word not in model:
             continue
         similar_words = model.most_similar(target_word, topn=6)
+
         for similar_word in similar_words:
             similar_word = similar_word[0]
             freq, tier = frequency(similar_word, model_year_list[year])
+            # filter words of low frequency
             if tier != "low":
                 try:
-                    (lemma, pos) = similar_word.split("_")
+                    (lemma, similar_word_pos) = similar_word.split("_")
                 except ValueError:
                     lemma = similar_word
                 if lemma not in word_list:
-                    word_list.append(lemma)
-                    for recent_model in model_list:
-                        if similar_word in recent_model:
-                            vector_list.append(recent_model[similar_word].tolist())
-                            break
+                    # filter words by pos-tag
+                    if pos == "ALL" or (similar_word_pos and pos == similar_word_pos):
+                        word_list.append(lemma)
+                        for recent_model in model_list:
+                            if similar_word in recent_model:
+                                vector_list.append(recent_model[similar_word].tolist())
+                                break
 
     result = {
         "word_list": word_list,
