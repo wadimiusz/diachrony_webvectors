@@ -14,6 +14,7 @@ import numpy as np
 import gensim
 import joblib
 import pickle
+import gzip
 
 from algos import ProcrustesAligner
 from creating_examples import GetExamples
@@ -467,7 +468,7 @@ def classify_semantic_shifts(query):
 
     years = [int(model1_name), int(model2_name)]
     models = {int(model1_name): model1, int(model2_name): model2}
-    pickle = gzip.open('{word}.pickle.gz'.format(word=word), 'rb')
+    pickle = gzip.open(root + config.get('Files and directories', 'pickles') + '{word}.pickle.gz'.format(word=word), 'rb')
     pickle_data = pickle.load(pickle)
     examples = GetExamples(word, pickle_data, years).create_examples(models, 1)
 
