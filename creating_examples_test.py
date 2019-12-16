@@ -49,4 +49,5 @@ if __name__ == "__main__":
     if method == 3:
         GetExamplesElmo().create_examples(word, pickle_data, years)
     else:
-        GetExamples(word, pickle_data, years).create_examples(models, method)
+        examples = GetExamples(word, pickle_data, years).create_examples(models, method)
+        print(examples)

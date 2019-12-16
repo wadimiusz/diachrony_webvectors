@@ -44,8 +44,8 @@ class GetExamples:
         old_contexts = list()
         new_contexts = list()
 
-        base_years = list()
-        new_years = list()
+        # base_years = list()
+        # new_years = list()
 
         word = self.word
 
@@ -127,16 +127,18 @@ class GetExamples:
         old_contexts.append(five_old_samples)
         new_contexts.append(five_new_samples)
 
-        base_years.append(self.years[0])
-        new_years.append(self.years[1])
+        # base_years.append(self.years[0])
+        # new_years.append(self.years[1])
 
         log("")
         log("This took ", format_time(time.time() - start))
         log("")
-        output_df = pd.DataFrame({"WORD": word, "BASE_YEAR": base_years,
-                                  "OLD_CONTEXTS": old_contexts, "NEW_YEAR": new_years,
-                                  "NEW_CONTEXTS": new_contexts})
-        output_df.index.names = ["ID"]
-        output_df.to_csv('contexts_by_year.csv')
-        log('Contexts saved to contexts_by_year.csv')
+        # output_df = pd.DataFrame({"WORD": word, "BASE_YEAR": base_years,
+        #                           "OLD_CONTEXTS": old_contexts, "NEW_YEAR": new_years,
+        #                           "NEW_CONTEXTS": new_contexts})
+        # output_df.index.names = ["ID"]
+        # output_df.to_csv('contexts_by_year.csv')
+        # log('Contexts saved to contexts_by_year.csv')
+
+        return {self.years[0]: old_contexts, self.years[1]: new_contexts}
 

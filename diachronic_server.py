@@ -13,8 +13,10 @@ from functools import lru_cache
 import numpy as np
 import gensim
 import joblib
+import pickle
 
 from algos import ProcrustesAligner
+from creating_examples import GetExamples
 
 
 class WebVectorsThread(threading.Thread):
@@ -462,7 +464,15 @@ def classify_semantic_shifts(query):
     model2 = models_dic[model2_name]
     proba = shift_classifier.predict_proba([(word, model1, model2)])[0]
     label = shift_classifier.predict([(word, model1, model2)])[0]
-    return {"proba": str(proba), "label": str(label)}
+
+    years = [int(model1_name), int(model2_name)]
+    models = {int(model1_name): model1, int(model2_name): model2}
+    pickle = gzip.open('{word}.pickle.gz'.format(word=word), 'rb')
+    pickle_data = pickle.load(pickle)
+    examples = GetExamples(word, pickle_data, years).create_examples(models, 1)
+
+    return {"proba": str(proba), "label": str(label), "examples": examples}
+
 
 operations = {
     '1': find_synonyms,

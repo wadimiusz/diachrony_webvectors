@@ -915,12 +915,14 @@ def binary(lang):
         result = json.loads(serverquery(message).decode('utf-8'))
         label = result["label"]
         proba = float(result["proba"])
+        examples = result["examples"]
+
         return render_template("binary.html",
                                model1=model1, model2=model2,
                                other_lang=other_lang, languages=languages,
                                models=our_models, url=url,
                                label=label, proba="{:.2f}".format(proba),
-                               word=word)
+                               word=word, examples=examples)
 
 
 def generate(word, model, api_format):
