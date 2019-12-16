@@ -1,4 +1,5 @@
 from creating_examples import GetExamples
+from creating_examples_elmo import GetExamplesElmo
 import gensim
 import logging
 from os import path
@@ -45,4 +46,7 @@ if __name__ == "__main__":
 
     method = args.method
 
-    GetExamples(word, pickle_data, years).create_examples(models, method)
+    if method == 3:
+        GetExamplesElmo().create_examples(word, pickle_data, years)
+    else:
+        GetExamples(word, pickle_data, years).create_examples(models, method)

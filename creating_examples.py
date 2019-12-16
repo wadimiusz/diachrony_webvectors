@@ -51,8 +51,6 @@ class GetExamples:
 
         start = time.time()
 
-        all_samples = {}
-
         log("Finding samples...")
         try:
             old_samples = pickle.get(self.years[0])
@@ -118,7 +116,7 @@ class GetExamples:
             most_distant_ids = np.unravel_index(np.argsort(distances, axis=None), distances.shape)
             old_samples_ids = set()
             new_samples_ids = set()
-            for i in range(0, len(most_distant_ids)):
+            for i in range(0, len(most_distant_ids[0])):
                 old_samples_ids.add(most_distant_ids[0][i])
                 new_samples_ids.add(most_distant_ids[1][i])
                 if len(new_samples_ids) == 5:
