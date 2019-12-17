@@ -468,9 +468,12 @@ def classify_semantic_shifts(query):
 
     years = [int(model1_name), int(model2_name)]
     models = {int(model1_name): model1, int(model2_name): model2}
-    pickle = gzip.open(root + config.get('Files and directories', 'pickles') + '{word}.pickle.gz'.format(word=word), 'rb')
-    pickle_data = pickle.load(pickle)
-    examples = GetExamples(word, pickle_data, years).create_examples(models, 1)
+    try:
+        pickle_file = gzip.open(root + config.get('Files and directories', 'pickles') + '{word}.pickle.gz'.format(word=word), 'rb')
+        pickle_data = pickle.load(pickle_file)
+        examples = GetExamples(word, pickle_data, years).create_examples(models, 1)
+    except FileNotFoundError:
+        examples = 'Contexts not found for this word.'
 
     return {"proba": str(proba), "label": str(label), "examples": examples}
 
