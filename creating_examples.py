@@ -140,5 +140,5 @@ class GetExamples:
         # output_df.to_csv('contexts_by_year.csv')
         # log('Contexts saved to contexts_by_year.csv')
 
-        return {self.years[0]: old_contexts, self.years[1]: new_contexts}
+        return {self.years[0]: old_contexts[0], self.years[1]: new_contexts[0]}
 

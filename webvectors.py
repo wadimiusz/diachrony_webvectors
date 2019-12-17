@@ -13,6 +13,7 @@ import sys
 from collections import OrderedDict
 import csv
 import numpy as np
+import pandas as pd
 from flask import g
 from flask import render_template, Blueprint, redirect, Response
 from flask import request
@@ -916,13 +917,15 @@ def binary(lang):
         label = result["label"]
         proba = float(result["proba"])
         examples = result["examples"]
+        if type(examples) is dict:
+            df = pd.DataFrame(data=examples)
 
         return render_template("binary.html",
                                model1=model1, model2=model2,
                                other_lang=other_lang, languages=languages,
                                models=our_models, url=url,
                                label=label, proba="{:.2f}".format(proba),
-                               word=word, examples=examples)
+                               word=word, examples=[df.to_html(classes='data', header="true", index=False)])
 
 
 def generate(word, model, api_format):

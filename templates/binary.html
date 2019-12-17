@@ -45,5 +45,7 @@
 {% elif label == "0" %}
 {{ strings['binary4'] }} {{ strings['binary6'] }} {{ proba }}
 {% endif %}
-<p> {{ examples }} </p>>
+{% for table in examples %}
+            {{ table|safe }}
+{% endfor %}
 {% endblock %}
