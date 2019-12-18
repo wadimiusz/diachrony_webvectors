@@ -478,7 +478,6 @@ def pairwise_page(lang):
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
     if request.method == 'POST':
-        print(request.form.getlist('pos')) # debug
         pos = request.form.getlist('pos')[0]
         models_row = {}
         inferred = set()
@@ -488,7 +487,6 @@ def pairwise_page(lang):
 
         message = {"operation": "5", "model1": model1, "model2": model2,
                    "n": 100, "pos": pos}
-        print(message)
         result = json.loads(serverquery(message).decode('utf-8'))
         frequencies[model1] = result['frequencies']
         models_row[model1] = result['neighbors']

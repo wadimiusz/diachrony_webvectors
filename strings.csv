@@ -18,7 +18,7 @@ base16,Switch language,Сменить язык
 base17,Различные операции,Miscellaneous
 base18,"Слова, выделенные <span style='color: green;'>зеленым</span>, являются высокочастотными (доля в корпусе выше 0.00001); слова, выделенные <span style='color: red;'>красным</span>, являются низкочастотными (доля в корпусе ниже 0.0000005).","Words in <span style='color: green;'>green</span> are top frequent (corpus ratio higher than 0.00001); words in <span style='color: red;'>red</span>, are low frequent (corpus ratio less than 0.0000005)."
 base19,"Показаны только ассоциаты той же части речи, что и слово в запросе. Изменить этот фильтр можно на вкладке <a href=""associates/"">Похожие слова</a>.","We show only the associates of the same part of speech as your query. All associates can be found at the <a href=""associates/"">Similar Words</a> tab."
-base20,Изменившиеся слова,Shifted words
+base20,Списки сдвигов,Shift lists
 base21,Классификатор сдвигов,Shift classifier
 calc1,Семантический калькулятор,Semantic Calculator
 calc2,Алгебраические операции,Algebraic operations
@@ -58,7 +58,7 @@ similar0,Araneum fastText,Araneum fastText
 similar1,Семантические сдвиги в русских новостях,Semantic shifts in Russian news
 similar2,"Введите русское слово, и Shiftry покажет его семантическую траекторию по выбранным годам.","Enter a&nbsp;Russian word, and Shiftry will show its semantic trajectory across the chosen years."
 similar3,Выберите годы:,Choose the years:
-similar4,НКРЯ,Ruscorpora
+similar4,Списки изменившихся слов,Lists of shifted words
 similar5,Английская Wikipedia,English Wikipedia
 similar6,Британский Национальный Корпус,British National Corpus
 similar7,Норвежский новостной корпус,Norsk Aviskorpus

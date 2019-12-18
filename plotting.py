@@ -29,7 +29,6 @@ def tsne_semantic_shifts(result, fname):
     model_number = result["model_number"]
 
     perplexity = int(len(word_list) ** 0.5)
-    print('Perplexity:', perplexity)
 
     embedding = TSNE(n_components=2, random_state=0, learning_rate=150, init="pca", perplexity=perplexity)
     np.set_printoptions(suppress=True)
