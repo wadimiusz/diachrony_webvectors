@@ -919,13 +919,17 @@ def binary(lang):
         examples = result["examples"]
         if type(examples) is dict:
             df = pd.DataFrame(data=examples)
+            examples = [df.to_html(classes='data', header="true", index=False)]
+            examples_type = 1
+        else:
+            examples_type = 0
 
         return render_template("binary.html",
                                model1=model1, model2=model2,
                                other_lang=other_lang, languages=languages,
                                models=our_models, url=url,
                                label=label, proba="{:.2f}".format(proba),
-                               word=word, examples=[df.to_html(classes='data', header="true", index=False)])
+                               word=word, examples=examples, examples_type=examples_type)
 
 
 def generate(word, model, api_format):

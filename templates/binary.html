@@ -45,7 +45,12 @@
 {% elif label == "0" %}
 {{ strings['binary4'] }} {{ strings['binary6'] }} {{ proba }}
 {% endif %}
+{% if examples_type == 1 %}
 {% for table in examples %}
             {{ table|safe }}
 {% endfor %}
+{% elif examples_type == 0 %}
+<p>{{ examples }}</p>
+{% endif %}
+
 {% endblock %}
