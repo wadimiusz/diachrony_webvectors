@@ -103,7 +103,16 @@
     <div class="row" id="result" data-result ='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
       {% for model in list_value|sort -%}
       <div class="col-md-4">
-        <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a></strong></h4>
+        <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>
+                {% if loop.index > 1 %}
+      {% if labels[loop.index-2] == "1" %}
+      ({{ strings['similar35'] }} {{ strings['similar37'] }} {{'%0.2f' % probas[loop.index-2] }})
+      {% elif labels[loop.index-2] == "0" %}
+      ({{ strings['similar36'] }} {{ strings['similar37'] }} {{'%0.2f' % probas[loop.index-2] }})
+      {% endif %}
+      {% endif %}
+
+        </strong></h4>
         {%- if model in inferred %}
         <i>{{strings['similar32']}}</i>
         {%- endif %}
@@ -140,7 +149,6 @@
       </div>
       {% endfor -%}
     </div>
-    <img src="{{ url }}data/images/heatmaps/{{ fname }}.png">
     <!-- The section for the actual results is over. -->
     <hr>
     <!-- "Parts of speech are shown for each word, if present in the model."  -->

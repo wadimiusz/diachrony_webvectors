@@ -127,8 +127,9 @@ def find_synonyms(query):
         candidates_set.add(q.upper())
         if tags and our_models[usermodel]['tags'] == 'True':
             candidates_set.add(q.split('_')[0] + '_X')
-            candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
-            candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
+            if q.count("_") > 0:
+                candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
+                candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
         else:
             candidates_set.add(q.lower())
             candidates_set.add(q.capitalize())
@@ -412,6 +413,8 @@ def multiple_neighbors(query):
     """
     target_word = query["query"]
     pos = query["pos"]
+    if target_word.count("_") == 0:
+        return {target_word + " is unknown to the model": True}
     word, target_word_pos = target_word.split('_')
     target_word = word.lower() + '_' + target_word_pos
     model_year_list = sorted(query["model"], reverse=True)
@@ -460,6 +463,13 @@ def classify_semantic_shifts(query):
     model2_name = query["model2"]
     model1 = models_dic[model1_name]
     model2 = models_dic[model2_name]
+
+    if word not in model1:
+        return {word + " is unknown to the model": True}
+
+    if word not in model2:
+        return {word + " is unknown to the model": True}
+
     proba = shift_classifier.predict_proba([(word, model1, model2)])[0]
     label = shift_classifier.predict([(word, model1, model2)])[0]
     return {"proba": str(proba), "label": str(label)}

@@ -381,6 +381,24 @@ def associates_page(lang):
             models_row = {}
             inferred = set()
             frequencies = {}
+            labels, probas = list(), list()
+            for model1, model2 in zip(model_value,model_value[1:]):
+                message = {'operation': '7', 'word': query,
+                           'model1': model1, "model2": model2}
+                result = json.loads(serverquery(message).decode('utf-8'))
+                if query + " is unknown to the model" in result:
+                    error_value = "Unknown word"
+                    return render_template("associates.html",
+                                           error=error_value,
+                                           models=our_models,
+                                           tags=tags, url=url,
+                                           usermodels=[defaultmodel],
+                                           tags2show=exposed_tags)
+                label = result["label"]
+                proba = float(result["proba"])
+                labels.append(label)
+                probas.append(proba)
+
             for model in model_value:
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages,
@@ -438,6 +456,15 @@ def associates_page(lang):
             trajectory_message = {'operation': '6', 'query': query, 'pos': pos, 'model': model_value}
             trajectory_result = json.loads(serverquery(trajectory_message).decode('utf-8'))
 
+            if query + " is unknown to the model" in trajectory_result:
+                error_value = "Unknown word"
+                return render_template("associates.html",
+                                       error=error_value,
+                                       models=our_models,
+                                       tags=tags, url=url,
+                                       usermodels=[defaultmodel],
+                                       tags2show=exposed_tags)
+
             if not os.path.exists(root + 'data/images/tsne_shift'):
                 os.makedirs(root + 'data/images/tsne_shift')
             if trajectory_result['word_list']:
@@ -448,7 +475,7 @@ def associates_page(lang):
                                    tags=tags, other_lang=other_lang, languages=languages,
                                    tags2show=exposed_tags, url=url, usermodels=model_value,
                                    userpos=userpos, inferred=inferred, frequencies=frequencies,
-                                   visible_neighbors=10, fname=fname)
+                                   visible_neighbors=10, fname=fname, labels=labels, probas=probas)
         else:
             error_value = "Incorrect query!"
             return render_template("associates.html", error=error_value, models=our_models,

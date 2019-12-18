@@ -89,6 +89,9 @@ similar31,История запросов близости,Similarity queries hi
 similar32,Слова нет в словаре модели; вектор восстановлен из формы слова.,The word is out of model vocabulary; its embedding is inferred from its characters.
 similar33,Тайга,Taiga
 similar34,"Для каждого слова показана его часть речи (если в модели они размечены).","Parts of speech are shown for each word, if present in the model."
+similar35,Есть сдвиг!,Shift found!
+similar36,Сдвига нет.,No shift found.
+similar37,Расстояние:,Distance:
 similar2010,Новости 2010,News 2010
 similar2011,Новости 2011,News 2011
 similar2012,Новости 2012,News 2012
