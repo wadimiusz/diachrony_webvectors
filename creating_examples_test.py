@@ -32,9 +32,8 @@ if __name__ == "__main__":
 
     models = {}
     for year in years:
-        model = gensim.models.KeyedVectors.load_word2vec_format(
-            path.join(args.models, '{year}_0_5.bin'.format(year=year)),
-            binary=True, unicode_errors='replace')
+        model = gensim.models.KeyedVectors.load(
+            path.join(args.models, '{year}_rnc_incremental.model'.format(year=year)))
         model.init_sims(replace=True)
 
         models.update({year: model})

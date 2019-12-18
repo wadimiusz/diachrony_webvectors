@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
-from utils import log, format_time, intersection_align_gensim
-from algos import smart_procrustes_align_gensim
+from utils import log, format_time
 import time
 from scipy import spatial
 from tqdm import tqdm
@@ -12,14 +11,6 @@ class GetExamples:
         self.word = word
         self.pickle = pickle
         self.years = years
-
-    def intersect_models(self, modeldict):
-        _, _ = intersection_align_gensim(m1=modeldict[self.years[0]], m2=modeldict[self.years[1]])
-        return modeldict
-
-    def align_models(self, modeldict):
-        _ = smart_procrustes_align_gensim(modeldict[self.years[0]], modeldict[self.years[1]])
-        return modeldict
 
     @staticmethod
     def avg_feature_vector(sentence, model):
@@ -36,8 +27,6 @@ class GetExamples:
         return feature_vec
 
     def create_examples(self, models, method):
-        intersected_models = GetExamples.intersect_models(self, models)
-        aligned_models = GetExamples.align_models(self, intersected_models)
 
         pickle = self.pickle
 
@@ -59,8 +48,8 @@ class GetExamples:
         except KeyError:
             raise KeyError("Problem with", word, "because not enough samples found")
 
-        model1 = aligned_models.get(self.years[0])
-        model2 = aligned_models.get(self.years[1])
+        model1 = models.get(self.years[0])
+        model2 = models.get(self.years[1])
 
         # Keep matrices of sentence vectors for future usage:
         old_samples_vec = np.zeros((len(old_samples), model1.vector_size), dtype='float32')
