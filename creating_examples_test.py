@@ -1,4 +1,5 @@
 from creating_examples import GetExamples
+from creating_examples_elmo import GetExamplesElmo
 import gensim
 import logging
 from os import path
@@ -31,9 +32,8 @@ if __name__ == "__main__":
 
     models = {}
     for year in years:
-        model = gensim.models.KeyedVectors.load_word2vec_format(
-            path.join(args.models, '{year}_0_5.bin'.format(year=year)),
-            binary=True, unicode_errors='replace')
+        model = gensim.models.KeyedVectors.load(
+            path.join(args.models, '{year}_rnc_incremental.model'.format(year=year)))
         model.init_sims(replace=True)
 
         models.update({year: model})
@@ -45,4 +45,8 @@ if __name__ == "__main__":
 
     method = args.method
 
-    GetExamples(word, pickle_data, years).create_examples(models, method)
+    if method == 3:
+        GetExamplesElmo().create_examples(word, pickle_data, years)
+    else:
+        examples = GetExamples(word, pickle_data, years).create_examples(models, method)
+        print(examples)

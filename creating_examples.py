@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
-from utils import log, format_time, intersection_align_gensim
-from algos import smart_procrustes_align_gensim
+from utils import log, format_time
 import time
 from scipy import spatial
 from tqdm import tqdm
@@ -12,14 +11,6 @@ class GetExamples:
         self.word = word
         self.pickle = pickle
         self.years = years
-
-    def intersect_models(self, modeldict):
-        _, _ = intersection_align_gensim(m1=modeldict[self.years[0]], m2=modeldict[self.years[1]])
-        return modeldict
-
-    def align_models(self, modeldict):
-        _ = smart_procrustes_align_gensim(modeldict[self.years[0]], modeldict[self.years[1]])
-        return modeldict
 
     @staticmethod
     def avg_feature_vector(sentence, model):
@@ -36,22 +27,18 @@ class GetExamples:
         return feature_vec
 
     def create_examples(self, models, method):
-        intersected_models = GetExamples.intersect_models(self, models)
-        aligned_models = GetExamples.align_models(self, intersected_models)
 
         pickle = self.pickle
 
         old_contexts = list()
         new_contexts = list()
 
-        base_years = list()
-        new_years = list()
+        # base_years = list()
+        # new_years = list()
 
         word = self.word
 
         start = time.time()
-
-        all_samples = {}
 
         log("Finding samples...")
         try:
@@ -61,8 +48,8 @@ class GetExamples:
         except KeyError:
             raise KeyError("Problem with", word, "because not enough samples found")
 
-        model1 = aligned_models.get(self.years[0])
-        model2 = aligned_models.get(self.years[1])
+        model1 = models.get(self.years[0])
+        model2 = models.get(self.years[1])
 
         # Keep matrices of sentence vectors for future usage:
         old_samples_vec = np.zeros((len(old_samples), model1.vector_size), dtype='float32')
@@ -118,7 +105,7 @@ class GetExamples:
             most_distant_ids = np.unravel_index(np.argsort(distances, axis=None), distances.shape)
             old_samples_ids = set()
             new_samples_ids = set()
-            for i in range(0, len(most_distant_ids)):
+            for i in range(0, len(most_distant_ids[0])):
                 old_samples_ids.add(most_distant_ids[0][i])
                 new_samples_ids.add(most_distant_ids[1][i])
                 if len(new_samples_ids) == 5:
@@ -129,16 +116,18 @@ class GetExamples:
         old_contexts.append(five_old_samples)
         new_contexts.append(five_new_samples)
 
-        base_years.append(self.years[0])
-        new_years.append(self.years[1])
+        # base_years.append(self.years[0])
+        # new_years.append(self.years[1])
 
         log("")
         log("This took ", format_time(time.time() - start))
         log("")
-        output_df = pd.DataFrame({"WORD": word, "BASE_YEAR": base_years,
-                                  "OLD_CONTEXTS": old_contexts, "NEW_YEAR": new_years,
-                                  "NEW_CONTEXTS": new_contexts})
-        output_df.index.names = ["ID"]
-        output_df.to_csv('contexts_by_year.csv')
-        log('Contexts saved to contexts_by_year.csv')
+        # output_df = pd.DataFrame({"WORD": word, "BASE_YEAR": base_years,
+        #                           "OLD_CONTEXTS": old_contexts, "NEW_YEAR": new_years,
+        #                           "NEW_CONTEXTS": new_contexts})
+        # output_df.index.names = ["ID"]
+        # output_df.to_csv('contexts_by_year.csv')
+        # log('Contexts saved to contexts_by_year.csv')
+
+        return {self.years[0]: old_contexts[0], self.years[1]: new_contexts[0]}
 

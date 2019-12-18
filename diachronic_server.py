@@ -13,8 +13,11 @@ from functools import lru_cache
 import numpy as np
 import gensim
 import joblib
+import pickle
+import gzip
 
 from algos import ProcrustesAligner
+from creating_examples import GetExamples
 
 
 class WebVectorsThread(threading.Thread):
@@ -472,7 +475,18 @@ def classify_semantic_shifts(query):
 
     proba = shift_classifier.predict_proba([(word, model1, model2)])[0]
     label = shift_classifier.predict([(word, model1, model2)])[0]
-    return {"proba": str(proba), "label": str(label)}
+
+    years = [int(model1_name), int(model2_name)]
+    models = {int(model1_name): model1, int(model2_name): model2}
+    try:
+        pickle_file = gzip.open(root + config.get('Files and directories', 'pickles') + '{word}.pickle.gz'.format(word=word), 'rb')
+        pickle_data = pickle.load(pickle_file)
+        examples = GetExamples(word, pickle_data, years).create_examples(models, 1)
+    except FileNotFoundError:
+        examples = 'Contexts not found for this word.'
+
+    return {"proba": str(proba), "label": str(label), "examples": examples}
+
 
 operations = {
     '1': find_synonyms,

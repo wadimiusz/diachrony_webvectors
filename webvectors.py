@@ -13,6 +13,7 @@ import sys
 from collections import OrderedDict
 import csv
 import numpy as np
+import pandas as pd
 from flask import g
 from flask import render_template, Blueprint, redirect, Response
 from flask import request
@@ -504,7 +505,6 @@ def pairwise_page(lang):
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
     if request.method == 'POST':
-        print(request.form.getlist('pos')) # debug
         pos = request.form.getlist('pos')[0]
         models_row = {}
         inferred = set()
@@ -514,7 +514,6 @@ def pairwise_page(lang):
 
         message = {"operation": "5", "model1": model1, "model2": model2,
                    "n": 100, "pos": pos}
-        print(message)
         result = json.loads(serverquery(message).decode('utf-8'))
         frequencies[model1] = result['frequencies']
         models_row[model1] = result['neighbors']
@@ -942,12 +941,20 @@ def binary(lang):
         result = json.loads(serverquery(message).decode('utf-8'))
         label = result["label"]
         proba = float(result["proba"])
+        examples = result["examples"]
+        if type(examples) is dict:
+            df = pd.DataFrame(data=examples)
+            examples = [df.to_html(classes='data', header="true", index=False)]
+            examples_type = 1
+        else:
+            examples_type = 0
+
         return render_template("binary.html",
                                model1=model1, model2=model2,
                                other_lang=other_lang, languages=languages,
                                models=our_models, url=url,
                                label=label, proba="{:.2f}".format(proba),
-                               word=word)
+                               word=word, examples=examples, examples_type=examples_type)
 
 
 def generate(word, model, api_format):
