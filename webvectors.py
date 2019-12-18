@@ -933,6 +933,7 @@ def binary(lang):
                                models=our_models, url=url)
     else:
         word = request.form.getlist("word")[0]
+        word = process_query(word)
         model1 = request.form.getlist("model1")[0]
         model2 = request.form.getlist("model2")[0]
         message = {'operation': '7', 'word': word,
