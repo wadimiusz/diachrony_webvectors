@@ -5,6 +5,7 @@
 {% endblock title %}
 
 {% block content %}
+<p>{{strings['binary0']}}</>
 <div id="queryform">
 <form id="inputform" action="#" method=post>
         <div class="checkbox">
@@ -32,8 +33,13 @@
         </div>
 
             <div class="form-group">
-                <input class="typeahead"  type="text" id="query" name="word" value="{{ word }}" maxlength=100>
                     {{ strings['binary2'] }}
+                    {% if word %}
+                    <input class="typeahead"  type="text" id="query" name="word" value="{{ word }}" maxlength=100>
+                    {% else %}
+                    <input class="typeahead"  type="text" id="query" name="word" value="{{ strings['binary7'] }}" maxlength=100>
+                    {% endif %}
+                    
             </div>
         <button type="submit" class="btn btn-primary">{{strings['binary3']}}</button>
     </form>

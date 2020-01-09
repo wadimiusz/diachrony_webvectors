@@ -138,7 +138,7 @@ usermodel5,все еще обрабатывается. Приходите поп
 usermodel6,"Извините, идентификатор не&nbsp;распознан.","Unknown identifier, sorry."
 visual1,Визуализация семантических связей между словами,Visualizing word inter-relations
 visual2,Введите cлова через запятую. Мы&nbsp;построим карту их&nbsp;взаимного расположения в&nbsp;выбранной модели/моделях и&nbsp;отобразим двумерную проекцию этой карты (из&nbsp;векторного пространства высокой размерности).,"Enter a&nbsp;comma-separated list of&nbsp;words. We&nbsp;will build a&nbsp;map of&nbsp;their inter-relations in&nbsp;the chosen model(s), and return 2-dimensional version of&nbsp;this map (projected from high-dimensional vector space)."
-visual3,Визуализация взаимного расположения слов при помощи t-SNE,Visual representation of&nbsp;word relations using t-SNE
+visual3,Визуализация взаимного расположения слов,Visual representation of&nbsp;word relations
 visual4,Следующие слова неизвестны модели:,The following words were unknown to&nbsp;the model:
 visual5,&#8212;&nbsp;это алгоритм снижения размерности и&nbsp;визуализации высокоразмерных данных. Он&nbsp;разработан Лоренсом ван дер Маатеном и&nbsp;описан в&nbsp;этой статье:,"is&nbsp;an&nbsp;algorithm for dimensionality reduction and visualization of&nbsp;high-dimensional datasets, developed by&nbsp;Laurens van der Maaten and described in&nbsp;this paper:"
 visual6,Визуализация отношений между словами; по&nbsp;клику доступна полноразмерная версия,Plot for word relations; click for full-size image
@@ -170,11 +170,13 @@ pairwise4,Найти сдвиги,Find shifts
 pairwise5,Топ сдвигов для моделей:,Top shifts for models:
 pairwise6,Части речи:,Parts of speech:
 pairwise7,Все части речи,All parts of speech
-pairwise8,"Выберите из списка два временных периода, чтобы узнать слова, употребление которых изменилось особенно сильно.","Select two time periods to learn which words have experiences most significant change in usage."
+pairwise8,"Выберите из списка два временных периода, чтобы найти слова, употребление которых изменилось особенно сильно.","Select two time periods to learn which words have experienced most significant change in usage."
 pairwise9,"Узнать наиболее изменившиеся слова","Extract shifted words"
+binary0,"Классификатор сдвигов определяет, произошел ли сдвиг в значении выбранного слова между двумя выбранными годами.","The shift classifier tries to detect whether your query word has experienced a semantic shift within the chosen pair of years."
 binary1,Классификация семантических сдвигов,Semantic shifts classification
-binary2,Введите слово,Enter your word
+binary2,Введите слово:,Enter your word:
 binary3,Классифицировать,Classify
 binary4,Это слово не претерпело значительных изменений.,This word has experienced no significant semantic shifts.
 binary5,Это слово претерпело семантическое изменение.,This word has experienced a semantic shift.
 binary6,Уровень непохожести слова в выбранных моделях:,Difference in word meaning across the chosen models:
+binary7,формирование,формирование

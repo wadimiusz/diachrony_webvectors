@@ -438,9 +438,9 @@ def pairwise_page(lang):
 
     return render_template('pairwise.html', models=our_models, tags=tags, other_lang=other_lang,
                        languages=languages, url=url, usermodels=[defaultmodel],
-                       tags2show=exposed_tags,
-                       checked_model1=list(our_models.keys())[-2],
-                       checked_model2=list(our_models.keys())[-1])
+                       tags2show=exposed_tags, userpos=['NOUN'],
+                       checked_model1=list(our_models.keys())[-7],
+                       checked_model2=list(our_models.keys())[-6])
 
 
 @wvectors.route(url + '<lang:lang>/visual/', methods=['GET', 'POST'])
@@ -837,8 +837,8 @@ def binary(lang):
     if request.method == "GET":
         return render_template("binary.html", other_lang=other_lang,
                                languages=languages,
-                               model1=list(our_models.keys())[-2],
-                               model2=list(our_models.keys())[-1],
+                               model1=list(our_models.keys())[-6],
+                               model2=list(our_models.keys())[-5],
                                models=our_models, url=url)
     else:
         word = request.form.getlist("word")[0]
