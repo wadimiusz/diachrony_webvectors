@@ -53,7 +53,7 @@ home3,Посмотреть эволюцию слова,Trace semantic trajectory
 home4,Семантические аналоги для,Semantic associates for
 home5,вычисленные на&nbsp;модели,computed&nbsp;on
 home6,&#8217;You shall know a&nbsp;word by&nbsp;the company it&nbsp;keeps.&#8217; (Firth 1957).,&#8217;You shall know a&nbsp;word by&nbsp;the company it&nbsp;keeps.&#8217; (Firth 1957)
-home7,свобода,свобода
+home7,Крым,Крым
 similar0,Araneum fastText,Araneum fastText
 similar1,Семантические сдвиги в русских новостях,Semantic shifts in Russian news
 similar2,"Введите русское слово, и Shiftry покажет его семантическую траекторию по выбранным годам.","Enter a&nbsp;Russian word, and Shiftry will show its semantic trajectory across the chosen years."
@@ -87,7 +87,7 @@ similar29,Косинусная близость,Cosine similarity
 similar30,Нет близких слов с&nbsp;такой частью речи,No&nbsp;similar words with this tag
 similar31,История запросов близости,Similarity queries history
 similar32,Слова нет в словаре модели; вектор восстановлен из формы слова.,The word is out of model vocabulary; its embedding is inferred from its characters.
-similar33,Тайга,Taiga
+similar33,"Ниже вы найдёте списки ближайших ассоциатов этого слова для каждого года. Если в этом году произошел семантический сдвиг, Shiftry покажет его значимость.","Below, you will find lists of its nearest neighbors in each year, and detected semantic shifts with their degrees (if any)."
 similar34,"Для каждого слова показана его часть речи (если в модели они размечены).","Parts of speech are shown for each word, if present in the model."
 similar35,Есть сдвиг!,Shift found!
 similar36,Сдвига нет.,No shift found.

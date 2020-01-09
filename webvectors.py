@@ -164,7 +164,7 @@ def process_query(userquery):
                     pos_tag = poses[0]
                 else:
                     pos_tag = poses[-1]
-                query = userquery.replace(' ', '::') + '_' + pos_tag
+                query = userquery.replace(' ', '::').lower() + '_' + pos_tag
     return query
 
 
@@ -241,97 +241,6 @@ def word2vec2tensor(alias, vectorlist, wordlist, classes):
 
     return user_link
 
-
-@wvectors.route(url + '<lang:lang>/misc/', methods=['GET', 'POST'])
-def misc_page(lang):
-    g.lang = lang
-    s = set()
-    s.add(lang)
-    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
-    g.strings = language_dicts[lang]
-
-    if request.method == 'POST':
-        input_data = 'dummy'
-        try:
-            input_data = request.form['query']
-        except:
-            pass
-        # Similarity queries
-        if input_data != 'dummy':
-            if ' ' in input_data.strip():
-                input_data = input_data.strip()
-                if input_data.endswith(','):
-                    input_data = input_data[:-1]
-                cleared_data = []
-                sim_history = request.form['sim_history']
-                if not sim_history.strip():
-                    sim_history = []
-                else:
-                    sim_history = json.loads(sim_history)
-                model_value = request.form.getlist('simmodel')
-                if len(model_value) < 1:
-                    model = defaultmodel
-                else:
-                    model = model_value[0]
-                if not model.strip() in our_models:
-                    return render_template(
-                        'home.html', other_lang=other_lang, languages=languages, url=url,
-                        usermodels=model_value)
-                for query in input_data.split(','):
-                    if '' not in query.strip():
-                        continue
-                    query = query.split()
-                    words = []
-                    for w in query[:2]:
-                        if w.replace('_', '').replace('-', '').replace('::', '').isalnum():
-                            w = process_query(w)
-                            if "Incorrect tag!" in w:
-                                error_value = "Incorrect tag!"
-                                return render_template('similar.html', error_sim=error_value,
-                                                       models=our_models, other_lang=other_lang,
-                                                       languages=languages, url=url,
-                                                       usermodels=model_value,
-                                                       tags2show=exposed_tags)
-                            if model_props[model]['tags'] == 'False':
-                                words.append(w.split('_')[0].strip())
-                            else:
-                                words.append(w.strip())
-                    if len(words) == 2:
-                        cleared_data.append((words[0].strip(), words[1].strip()))
-                if len(cleared_data) == 0:
-                    error_value = "Incorrect query!"
-                    return render_template(
-                        "similar.html", error_sim=error_value, other_lang=other_lang,
-                        languages=languages, url=url, usermodels=model_value,
-                        tags2show=exposed_tags)
-                message = {'operation': '2', 'query': cleared_data, 'model': model}
-                result = json.loads(serverquery(message).decode('utf-8'))
-                cleared_data = [' '.join(el) for el in cleared_data]
-                if "Unknown to the model" in result:
-                    return render_template("similar.html", error_sim=result["Unknown to the model"],
-                                           other_lang=other_lang, languages=languages,
-                                           models=our_models, tags2show=exposed_tags, tags=tags,
-                                           query=cleared_data, url=url, usermodels=model_value)
-                sim_history.append(result['similarities'])
-                if len(sim_history) > 10:
-                    sim_history = sim_history[-10:]
-                str_sim_history = (json.dumps(sim_history, ensure_ascii=False))
-                return render_template('similar.html', value=result['similarities'], model=model,
-                                       query=cleared_data, models=our_models, tags=tags,
-                                       other_lang=other_lang, tags2show=exposed_tags,
-                                       languages=languages, url=url, usermodels=model_value,
-                                       sim_hist=sim_history, str_sim_history=str_sim_history,
-                                       frequencies=result['frequencies'])
-            else:
-                error_value = "Incorrect query!"
-                return render_template("similar.html", error_sim=error_value, models=our_models,
-                                       tags=tags, tags2show=exposed_tags, other_lang=other_lang,
-                                       languages=languages, url=url, usermodels=[defaultmodel])
-    return render_template('similar.html', models=our_models, tags=tags, other_lang=other_lang,
-                           languages=languages, url=url, usermodels=[defaultmodel],
-                           tags2show=exposed_tags)
-
-
 @wvectors.route(url + '<lang:lang>/associates/', methods=['GET', 'POST'])
 @wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
 @wvectors.route(url + '<lang:lang>/', methods=["GET", "POST"])
@@ -385,7 +294,7 @@ def associates_page(lang):
             labels, probas = list(), list()
             for model1, model2 in zip(model_value,model_value[1:]):
                 message = {'operation': '7', 'word': query,
-                           'model1': model1, "model2": model2}
+                        'model1': model1, "model2": model2, 'with_examples': False}
                 result = json.loads(serverquery(message).decode('utf-8'))
                 if query + " is unknown to the model" in result:
                     error_value = "Unknown word"
@@ -483,7 +392,7 @@ def associates_page(lang):
                                    tags=tags, url=url, usermodels=[defaultmodel],
                                    tags2show=exposed_tags)
     return render_template('associates.html', models=our_models, tags=tags, other_lang=other_lang,
-                           languages=languages, url=url, usermodels=[defaultmodel],
+                           languages=languages, url=url, usermodels=['2012', '2013', '2014', '2015'],
                            tags2show=exposed_tags)
 
 
@@ -937,7 +846,7 @@ def binary(lang):
         model1 = request.form.getlist("model1")[0]
         model2 = request.form.getlist("model2")[0]
         message = {'operation': '7', 'word': word,
-                   'model1': model1, "model2": model2}
+                'model1': model1, "model2": model2, 'with_examples': True}
 
         result = json.loads(serverquery(message).decode('utf-8'))
         label = result["label"]

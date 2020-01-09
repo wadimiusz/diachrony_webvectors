@@ -45,7 +45,7 @@ def tsne_semantic_shifts(result, fname):
         :model_number
     ]:
         plot.annotate(
-            label,
+                label.replace('::', ' '),
             xy=(x, y),
             weight="bold",
             xytext=(-len(label) * 4.5, 4),
@@ -57,7 +57,7 @@ def tsne_semantic_shifts(result, fname):
         model_number:
     ]:
         plot.annotate(
-            label, xy=(x, y), xytext=(-len(label) * 4.5, 4), textcoords="offset points"
+                label.replace('::', ' '), xy=(x, y), xytext=(-len(label) * 4.5, 4), textcoords="offset points"
         )
 
     plot.xlim(x_coordinates.min() - 10, x_coordinates.max() + 10)

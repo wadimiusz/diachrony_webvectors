@@ -15,6 +15,7 @@
         <div class="form-group">
           <!-- Caption ("Enter a word..." ) -->
           <p>{{strings['similar2']}}</p>
+          <p>{{strings['similar33']}}</p>
           <!-- If there was a request, it's shown in the field, else the default "computer_NOUN" is shown -->
           {%- if list_value %}
           <input type="text" class="typeahead" id="query" name="list_query" value="{{ word }}" maxlength=100>
@@ -62,9 +63,11 @@
     <!-- Featuring results -->
     {% if list_value -%}
     <!-- Word trajectory -->
+    <center>
     <a href="{{ url }}data/images/tsne_shift/{{ fname }}.png" target="_blank">
-    <img class="img-responsive" src = "{{ url }}data/images/tsne_shift/{{ fname }}.png" alt = "Word trajectory" title = "Word trajectory">
+    <img class="img-responsive" src = "{{ url }}data/images/tsne_shift/{{ fname }}.png" alt = "Word trajectory" title = "Word trajectory" style="max-width: 700px;">
     </a>
+    </center>
     <!-- Title "Semantic associates for", "strong" means "bold" -->
     <h3>
       <strong>
@@ -106,9 +109,7 @@
         <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>
                 {% if loop.index > 1 %}
       {% if labels[loop.index-2] == "1" %}
-      ({{ strings['similar35'] }} {{ strings['similar37'] }} {{'%0.2f' % probas[loop.index-2] }})
-      {% elif labels[loop.index-2] == "0" %}
-      ({{ strings['similar36'] }} {{ strings['similar37'] }} {{'%0.2f' % probas[loop.index-2] }})
+      {{ strings['similar35'] }} ({{'%0.2f' % probas[loop.index-2] }})
       {% endif %}
       {% endif %}
 

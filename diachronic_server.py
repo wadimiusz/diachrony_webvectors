@@ -170,8 +170,8 @@ def find_synonyms(query):
         results['frequencies'][res[0]] = (freq, tier)
     raw_vector = model[qf]
     results['vector'] = raw_vector.tolist()
-    print("SYNONYM", results['neighbors']) # debug
-    print("SYNONYM FREQUENCIES", results['frequencies']) # debug
+    # print("SYNONYM", results['neighbors']) # debug
+    # print("SYNONYM FREQUENCIES", results['frequencies']) # debug
     return results
 
 
@@ -431,7 +431,7 @@ def multiple_neighbors(query):
     for year, model in enumerate(model_list):
         if target_word not in model:
             continue
-        similar_words = model.most_similar(target_word, topn=6)
+        similar_words = model.most_similar(target_word, topn=7)
         for similar_word in similar_words:
             similar_word = similar_word[0]
             freq, tier = frequency(similar_word, model_year_list[year])
@@ -461,6 +461,7 @@ def multiple_neighbors(query):
 
 
 def classify_semantic_shifts(query):
+    with_examples = query['with_examples']
     word = query["word"]
     model1_name = query["model1"]
     model2_name = query["model2"]
@@ -478,12 +479,15 @@ def classify_semantic_shifts(query):
 
     years = [int(model1_name), int(model2_name)]
     models = {int(model1_name): model1, int(model2_name): model2}
-    try:
-        pickle_file = gzip.open(root + config.get('Files and directories', 'pickles') + '{word}.pickle.gz'.format(word=word), 'rb')
-        pickle_data = pickle.load(pickle_file)
-        examples = GetExamples(word, pickle_data, years).create_examples(models, 1)
-    except FileNotFoundError:
-        examples = 'Contexts not found for this word.'
+    if with_examples:
+        try:
+            pickle_file = gzip.open(root + config.get('Files and directories', 'pickles') + '{word}.pickle.gz'.format(word=word), 'rb')
+            pickle_data = pickle.load(pickle_file)
+            examples = GetExamples(word, pickle_data, years).create_examples(models, 1)
+        except FileNotFoundError:
+            examples = 'Contexts not found for this word.'
+    else:
+        examples = None
 
     return {"proba": str(proba), "label": str(label), "examples": examples}
 
