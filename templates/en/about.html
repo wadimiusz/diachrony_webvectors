@@ -1,10 +1,28 @@
 {% extends "base.html" %}
 {%- block title %}
-     <title>WebVectors: About</title>
+     <title>About ShiftRy</title>
  {%- endblock title %}
 
 
-
 {% block content %}
-        <h1>About</h1>
+<img class="pull-right img-rounded img-responsive" title="ShiftRy" alt="ShiftRy" src="/data/images/shiftry.png"/>
+        <h1>About ShiftRy</h1>
+<p>
+<i>ShiftRy</i> is a web service for analyzing diachronic changes in the usage of words occurring in news texts from Russian mass media.
+For that, we employ diachronic word embedding models trained on large Russian news corpora from 2010 up to 2019.</p>
+<p>
+You can <a href="/">explore the semantic shifts history of any given query word</a>, or <a href="/en/pairwise/">browse the lists of words ranked by the degree of their semantic drift</a> in any couple of years.
+Visualizations of the words' trajectories through time are provided.
+<p>Users can <a href="/en/binary/">obtain corpus examples with the query word before and after the semantic shift</a>.</p>
+<p>We plan to update <i>ShiftRy</i> yearly.</p>
+
+<hr/>
+
+<p><i>ShiftRy</i> is created by:</p>
+<ul>
+<li><p><a href="https://www.mn.uio.no/ifi/english/people/aca/andreku/" target="_blank">Andrey Kutuzov</a> (University of Oslo)</p></li>
+<li><p>Vadim Fomin (Higher School of Economics, Sberbank)</p></li>
+<li><p>Vladislav Mikhailov (Higher School of Economics, Sberbank)</p></li>
+<li><p>Julia Rodina (Higher School of Economics)</p></li>
+</ul>
 {% endblock %}
