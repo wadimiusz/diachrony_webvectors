@@ -10,10 +10,10 @@ config = configparser.RawConfigParser()
 config.read('webvectors.cfg')
 url = config.get('Other', 'url')
 
-app_syn = Flask(__name__, static_url_path='/data/')
+app_syn = Flask(__name__, static_url_path='/var/www/html/histgeo/data')
 
 
-@app_syn.route(url + 'data/<path:query>')
+@app_syn.route(url + 'data/<path:query>/')
 def send_js(query):
     return send_from_directory('data/', query)
 
