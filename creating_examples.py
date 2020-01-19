@@ -1,3 +1,4 @@
+import random
 import pandas as pd
 import numpy as np
 from utils import log, format_time
@@ -26,7 +27,7 @@ class GetExamples:
         feature_vec = np.average(feature_matrix, axis=0)
         return feature_vec
 
-    def create_examples(self, models, method):
+    def create_examples(self, models, method, max_sample_size=5000):
 
         pickle = self.pickle
 
@@ -48,6 +49,11 @@ class GetExamples:
         except KeyError:
             raise KeyError("Problem with", word, "because not enough samples found")
 
+        if len(old_samples) > max_sample_size:
+            old_samples = random.sample(old_samples, max_sample_size)
+        if len(new_samples) > max_sample_size:
+            new_samples = random.sample(old_samples, max_sample_size)
+
         model1 = models.get(self.years[0])
         model2 = models.get(self.years[1])
 
@@ -59,12 +65,10 @@ class GetExamples:
             old_sample_vec = GetExamples.avg_feature_vector(old_sample[0], model=model1)
             if old_sample_vec is not None:
                 old_samples_vec[nr, :] = old_sample_vec
-
         for nr, new_sample in enumerate(new_samples):
             new_sample_vec = GetExamples.avg_feature_vector(new_sample[0], model=model2)
             if new_sample_vec is not None:
                 new_samples_vec[nr, :] = new_sample_vec
-
         # Calculate all pairwise cosine distances at once:
         distances = spatial.distance.cdist(old_samples_vec, new_samples_vec, 'cosine')
 

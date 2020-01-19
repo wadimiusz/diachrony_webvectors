@@ -15,7 +15,6 @@ import gensim
 import joblib
 import pickle
 import gzip
-
 from algos import ProcrustesAligner
 from creating_examples import GetExamples
 
