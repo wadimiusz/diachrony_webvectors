@@ -30,7 +30,8 @@ def tsne_semantic_shifts(result, fname):
 
     perplexity = int(len(word_list) ** 0.5)
 
-    embedding = TSNE(n_components=2, random_state=0, learning_rate=150, init="pca", perplexity=perplexity)
+    embedding = TSNE(n_components=2, random_state=0, learning_rate=150, init="pca",
+                     perplexity=perplexity)
     np.set_printoptions(suppress=True)
     y = embedding.fit_transform(np.array(vector_list))
 
@@ -41,24 +42,14 @@ def tsne_semantic_shifts(result, fname):
     plot.scatter(x_coordinates, y_coordinates)
     plot.axis("off")
 
-    for label, x, y in list(zip(word_list, x_coordinates, y_coordinates))[
-        :model_number
-    ]:
-        plot.annotate(
-                label.replace('::', ' '),
-            xy=(x, y),
-            weight="bold",
-            xytext=(-len(label) * 4.5, 4),
-            fontsize=12,
-            textcoords="offset points",
-        )
+    for label, x, y in list(zip(word_list, x_coordinates, y_coordinates))[:model_number]:
+        plot.annotate(label.replace('::', ' '),
+                      xy=(x, y), weight="bold", xytext=(-len(label) * 4.5, 4),
+                      fontsize=12, textcoords="offset points")
 
-    for label, x, y in list(zip(word_list, x_coordinates, y_coordinates))[
-        model_number:
-    ]:
-        plot.annotate(
-                label.replace('::', ' '), xy=(x, y), xytext=(-len(label) * 4.5, 4), textcoords="offset points"
-        )
+    for label, x, y in list(zip(word_list, x_coordinates, y_coordinates))[model_number:]:
+        plot.annotate(label.replace('::', ' '), xy=(x, y), xytext=(-len(label) * 4.5, 4),
+                      textcoords="offset points")
 
     plot.xlim(x_coordinates.min() - 10, x_coordinates.max() + 10)
     plot.ylim(y_coordinates.min() - 10, y_coordinates.max() + 10)

@@ -1,29 +1,28 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import configparser
 import codecs
+import configparser
+import csv
 import hashlib
 import json
 import logging
-import os
 import re
 import socket  # for sockets
 import sys
 from collections import OrderedDict
-import csv
+
 import numpy as np
+import os
 import pandas as pd
 from flask import g
 from flask import render_template, Blueprint, redirect, Response
 from flask import request
+
 from plotting import embed, singularplot, tsne_semantic_shifts
 from sparql import getdbpediaimage
 # import strings data from respective module
 from strings_reader import language_dicts
-
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 languages = '/'.join(list(language_dicts.keys())).upper()
 
@@ -241,6 +240,7 @@ def word2vec2tensor(alias, vectorlist, wordlist, classes):
 
     return user_link
 
+
 @wvectors.route(url + '<lang:lang>/associates/', methods=['GET', 'POST'])
 @wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
 @wvectors.route(url + '<lang:lang>/', methods=["GET", "POST"])
@@ -292,9 +292,9 @@ def associates_page(lang):
             inferred = set()
             frequencies = {}
             labels, probas = list(), list()
-            for model1, model2 in zip(model_value,model_value[1:]):
+            for model1, model2 in zip(model_value, model_value[1:]):
                 message = {'operation': '7', 'word': query,
-                        'model1': model1, "model2": model2, 'with_examples': False}
+                           'model1': model1, "model2": model2, 'with_examples': False}
                 result = json.loads(serverquery(message).decode('utf-8'))
                 if query + " is unknown to the model" in result:
                     error_value = "Unknown word"
@@ -363,7 +363,8 @@ def associates_page(lang):
             #    img_path = os.path.join("data/images/heatmaps", fname)
             #    plt.savefig(img_path)
 
-            trajectory_message = {'operation': '6', 'query': query, 'pos': pos, 'model': model_value}
+            trajectory_message = {'operation': '6', 'query': query, 'pos': pos,
+                                  'model': model_value}
             trajectory_result = json.loads(serverquery(trajectory_message).decode('utf-8'))
 
             if query + " is unknown to the model" in trajectory_result:
@@ -392,7 +393,8 @@ def associates_page(lang):
                                    tags=tags, url=url, usermodels=[defaultmodel],
                                    tags2show=exposed_tags)
     return render_template('associates.html', models=our_models, tags=tags, other_lang=other_lang,
-                           languages=languages, url=url, usermodels=['2012', '2013', '2014', '2015'],
+                           languages=languages, url=url,
+                           usermodels=['2012', '2013', '2014', '2015'],
                            tags2show=exposed_tags)
 
 
@@ -437,10 +439,10 @@ def pairwise_page(lang):
                                visible_neighbors=10, checked_model1=model1, checked_model2=model2)
 
     return render_template('pairwise.html', models=our_models, tags=tags, other_lang=other_lang,
-                       languages=languages, url=url, usermodels=[defaultmodel],
-                       tags2show=exposed_tags, userpos=['NOUN'],
-                       checked_model1=list(our_models.keys())[-7],
-                       checked_model2=list(our_models.keys())[-6])
+                           languages=languages, url=url, usermodels=[defaultmodel],
+                           tags2show=exposed_tags, userpos=['NOUN'],
+                           checked_model1=list(our_models.keys())[-7],
+                           checked_model2=list(our_models.keys())[-6])
 
 
 @wvectors.route(url + '<lang:lang>/visual/', methods=['GET', 'POST'])
@@ -846,7 +848,7 @@ def binary(lang):
         model1 = request.form.getlist("model1")[0]
         model2 = request.form.getlist("model2")[0]
         message = {'operation': '7', 'word': word,
-                'model1': model1, "model2": model2, 'with_examples': True}
+                   'model1': model1, "model2": model2, 'with_examples': True}
 
         result = json.loads(serverquery(message).decode('utf-8'))
         label = result["label"]

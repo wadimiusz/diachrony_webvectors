@@ -1,10 +1,8 @@
 import random
-import pandas as pd
-import numpy as np
-from utils import log, format_time
 import time
+import numpy as np
 from scipy import spatial
-from tqdm import tqdm
+from utils import log, format_time
 
 
 class GetExamples:
@@ -71,6 +69,9 @@ class GetExamples:
                 new_samples_vec[nr, :] = new_sample_vec
         # Calculate all pairwise cosine distances at once:
         distances = spatial.distance.cdist(old_samples_vec, new_samples_vec, 'cosine')
+
+        five_old_samples = None
+        five_new_samples = None
 
         if method == 1:
 

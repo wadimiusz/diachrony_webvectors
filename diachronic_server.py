@@ -95,8 +95,8 @@ for m in our_models:
     models_dic[m].init_sims(replace=True)
     print("Model", m, "from file", modelfile, "loaded successfully.", file=sys.stderr)
 
-
 shift_classifier = joblib.load("clf.pkl")
+
 
 # Vector functions
 
@@ -406,7 +406,6 @@ def find_shifts(query):
     return results
 
 
-
 def multiple_neighbors(query):
     """
     :target_word: str
@@ -440,6 +439,7 @@ def multiple_neighbors(query):
                     (lemma, similar_word_pos) = similar_word.split("_")
                 except ValueError:
                     lemma = similar_word
+                    similar_word_pos = None
                 if lemma not in word_list:
                     # filter words by pos-tag
                     if pos == "ALL" or (similar_word_pos and pos == similar_word_pos):
@@ -480,7 +480,9 @@ def classify_semantic_shifts(query):
     models = {int(model1_name): model1, int(model2_name): model2}
     if with_examples:
         try:
-            pickle_file = gzip.open(root + config.get('Files and directories', 'pickles') + '{word}.pickle.gz'.format(word=word), 'rb')
+            pickle_file = gzip.open(
+                root + config.get('Files and directories', 'pickles') + '{word}.pickle.gz'.format(
+                    word=word), 'rb')
             pickle_data = pickle.load(pickle_file)
             examples = GetExamples(word, pickle_data, years).create_examples(models, 1)
         except FileNotFoundError:
