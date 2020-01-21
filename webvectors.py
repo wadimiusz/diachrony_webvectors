@@ -847,6 +847,10 @@ def binary(lang):
         word = process_query(word)
         model1 = request.form.getlist("model1")[0]
         model2 = request.form.getlist("model2")[0]
+        if word == "Incorrect tag!":
+            error_value = "Incorrect tag!"
+            return render_template('binary.html', error=error_value, model1=model1, model2=model2,
+                    other_lang=other_lang, languages=languages, models=our_models, url=url)
         message = {'operation': '7', 'word': word,
                    'model1': model1, "model2": model2, 'with_examples': True}
 

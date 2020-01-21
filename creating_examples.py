@@ -50,7 +50,7 @@ class GetExamples:
         if len(old_samples) > max_sample_size:
             old_samples = random.sample(old_samples, max_sample_size)
         if len(new_samples) > max_sample_size:
-            new_samples = random.sample(old_samples, max_sample_size)
+            new_samples = random.sample(new_samples, max_sample_size)
 
         model1 = models.get(self.years[0])
         model2 = models.get(self.years[1])

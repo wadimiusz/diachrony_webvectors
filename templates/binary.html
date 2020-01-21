@@ -45,6 +45,20 @@
     </form>
 </div>
 
+ {% if error -%}
+    <p> <span style = "font-size:larger;"><strong>
+      {% if 'Incorrect tag' in error -%}
+      {{strings['similar22']}}
+      {%- elif 'Incorrect query' in error -%}
+      {{strings['similar21']}}
+      {%- else -%}
+      {{strings['similar18']}} {{ word }}
+      {%- endif %}
+      </strong></span>
+    <p>
+      {% endif -%}
+
+
 
 {% if label == "1" %}
 <p><large><b>{{ strings['binary5'] }}</b></large></p>
