@@ -2,8 +2,6 @@
 
 import sys
 from smart_open import open
-from gensim.models.word2vec import LineSentence
-from gensim.models.phrases import Phrases, Phraser
 
 
 def check_word(token, pos, nofunc=None, nopunct=True, noshort=True, stopwords=None):
@@ -29,45 +27,6 @@ def num_replace(word):
     return nw
 
 
-def convert(word):
-    parts = word.split(':::')
-    poses = [p.split('_')[-1] for p in parts]
-    tokens = [p.split('_')[0] for p in parts]
-    if 'X' in poses:
-        newpos = 'X'
-    elif 'PROPN' in poses:
-        newpos = 'PROPN'
-    else:
-        newpos = poses[-1]
-    newword = '::'.join(tokens) + '_' + newpos
-    return newword
-
-
-def bigrammer(source_file, outfile, mincount=100, threshold=0.99, scoring='npmi',
-              commonfile='common_tagged.txt'):
-    """
-    :param source_file:
-    :param outfile:
-    :param mincount:
-    :param threshold:
-    :param scoring:
-    :param commonfile:
-    :return:
-    """
-    common = set([word.strip() for word in open(commonfile, 'r').readlines()])
-    data = LineSentence(source_file)
-    bigram_transformer = Phrases(sentences=data, min_count=mincount, threshold=threshold,
-                                 scoring=scoring, max_vocab_size=400000000, delimiter=b':::',
-                                 progress_per=100000, common_terms=common)
-    bigrams = Phraser(bigram_transformer)
-    tempfile = open(outfile, 'a')
-    print('Writing bigrammed text to %s' % outfile, file=sys.stderr)
-    for i in bigrams[data]:
-        tempfile.write(' '.join(i) + '\n')
-    tempfile.close()
-    return len(bigrams.phrasegrams)
-
-
 def clean_token(token, misc):
     """
     :param token:
@@ -82,6 +41,7 @@ def clean_token(token, misc):
 
 def clean_lemma(lemma, pos, lowercase=True):
     """
+    :param lowercase:
     :param lemma:
     :param pos:
     :return:
@@ -104,6 +64,7 @@ def clean_lemma(lemma, pos, lowercase=True):
 
 def extract_proper(source_file, outfile, sentencebreaks=True, entities=None, lowercase=True):
     """
+    :param lowercase:
     :param source_file:
     :param outfile:
     :param sentencebreaks:
@@ -121,13 +82,16 @@ def extract_proper(source_file, outfile, sentencebreaks=True, entities=None, low
     memory = []
     mem_case = None
     mem_number = None
+    current_sentence = None
 
     for line in open(source_file, 'r'):
         if line.startswith('#'):
+            if line.startswith('# text ='):
+                current_sentence = line.strip()[9:]
             continue
         if not line.strip():
             if sentencebreaks:
-                tempfile0.write('\n')
+                tempfile0.write('\t' + current_sentence + '\n')
             named = False
             if memory:
                 past_lemma = '::'.join(memory)
@@ -165,7 +129,6 @@ def extract_proper(source_file, outfile, sentencebreaks=True, entities=None, low
                     past_lemma = '::'.join(memory)
                     memory = []
                     tempfile0.write(past_lemma + '_PROPN ')  # Lemmas and POS tags
-                    tempfile0.write('\n')
             else:
                 named = False
                 past_lemma = '::'.join(memory)
@@ -181,7 +144,5 @@ def extract_proper(source_file, outfile, sentencebreaks=True, entities=None, low
                 memory = []
                 tempfile0.write(past_lemma + '_PROPN ')  # Lemmas and POS tags
                 tempfile0.write('%s_%s ' % (lemma, pos))  # Lemmas and POS tags
-        if 'SpacesAfter=\\n' in misc or 'SpacesAfter=\s\\n' in misc:
-            tempfile0.write('\n')
     tempfile0.close()
     return nr_lines
