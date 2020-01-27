@@ -293,7 +293,8 @@ def associates_page(lang, word):
                 if request.method == "POST":
                     pos_value = request.form.getlist('pos')
                 else:
-                    pos_value = "ALL"
+                    pos_value = ["ALL"]
+
                 if len(pos_value) < 1:
                     pos = query.split('_')[-1]
                 else:
