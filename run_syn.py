@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # coding: utf-8
-
 from flask import Flask, url_for, send_from_directory
 from lang_converter import LangConverter
 from webvectors import *
