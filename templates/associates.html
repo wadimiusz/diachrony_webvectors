@@ -127,7 +127,7 @@
         <ol id="{{ model }}" style="font-size: larger;" type="1">
           {%- for res in list_value[model] if res != "Incorrect tag!" %}
           <li data-word="{{res[0]}}" class="frequency-item-{{frequencies[model][res[0]][1]}}">
-          <a href="{{ url }}{{lang}}/{{ model }}/{{res[0]}}/"
+          <a href="{{ url }}{{lang}}/{{res[0]}}/"
           title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[model][res[0]][0]}}"
           class="frequency-{{frequencies[model][res[0]][1]}}">
           {{res[0].split('_')[0].replace('::', ' ')}}

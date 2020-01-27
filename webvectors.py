@@ -241,29 +241,44 @@ def word2vec2tensor(alias, vectorlist, wordlist, classes):
     return user_link
 
 
-@wvectors.route(url + '<lang:lang>/associates/', methods=['GET', 'POST'])
-@wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
-@wvectors.route(url + '<lang:lang>/', methods=["GET", "POST"])
-def associates_page(lang):
+@wvectors.route(url + '<lang:lang>/associates/', methods=['GET', 'POST'],
+                defaults={'word': None})
+@wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'],
+                defaults={'word': None})
+@wvectors.route(url + '<lang:lang>/', methods=["GET", "POST"],
+                defaults={'word': None})
+@wvectors.route(url + '<lang:lang>/associates/<string:word>/',
+                methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/similar/<string:word>/', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/<string:word>/', methods=["GET", "POST"])
+def associates_page(lang, word):
     global our_models
     g.lang = lang
     s = set()
     s.add(lang)
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
-    if request.method == 'POST':
+    if request.method == 'POST' or word is not None:
         list_data = 'dummy'
-        try:
-            list_data = request.form['list_query']
-        except:
-            pass
+        if request.method == 'POST':
+            try:
+                list_data = request.form['list_query']
+            except:
+                pass
+        else:
+            list_data = word
+
         # Nearest associates queries
         if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').replace('::', ''). \
                 replace(' ', '').isalnum():
             list_data = list_data.strip()
             query = process_query(list_data)
 
-            model_value = request.form.getlist('model')
+            if request.method == "POST":
+                model_value = request.form.getlist('model')
+            else:
+                model_value = ["2012", "2013", "2014", "2015"]
+
             if len(model_value) < 1:
                 model_value = [defaultmodel]
 
@@ -275,7 +290,10 @@ def associates_page(lang):
                                        usermodels=model_value)
             userpos = []
             if tags:
-                pos_value = request.form.getlist('pos')
+                if request.method == "POST":
+                    pos_value = request.form.getlist('pos')
+                else:
+                    pos_value = "ALL"
                 if len(pos_value) < 1:
                     pos = query.split('_')[-1]
                 else:
@@ -392,6 +410,7 @@ def associates_page(lang):
             return render_template("associates.html", error=error_value, models=our_models,
                                    tags=tags, url=url, usermodels=[defaultmodel],
                                    tags2show=exposed_tags)
+
     return render_template('associates.html', models=our_models, tags=tags, other_lang=other_lang,
                            languages=languages, url=url,
                            usermodels=['2012', '2013', '2014', '2015'],
