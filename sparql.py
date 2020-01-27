@@ -4,6 +4,7 @@
 from SPARQLWrapper import SPARQLWrapper, JSON
 import codecs
 import configparser
+import urllib
 
 config = configparser.RawConfigParser()
 config.read('webvectors.cfg')
@@ -34,7 +35,7 @@ def getdbpediaimage(query, cache):
         sparql.setReturnFormat(JSON)
         try:
             results = sparql.query().convert()
-        except TimeoutError:
+        except urllib.error.HTTPError:
             return None
         if len(results["results"]["bindings"]) > 0:
             image = results["results"]["bindings"][0]["pic"]["value"]
