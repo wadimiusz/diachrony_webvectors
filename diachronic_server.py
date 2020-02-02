@@ -484,9 +484,15 @@ def classify_semantic_shifts(query):
                 root + config.get('Files and directories', 'pickles') + '{word}.pickle.gz'.format(
                     word=word), 'rb')
             pickle_data = pickle.load(pickle_file)
-            examples = GetExamples(word, pickle_data, years).create_examples(models, 1)
+            examples = GetExamples(word, years).create_examples(models, [pickle_data], 1)
         except FileNotFoundError:
-            examples = 'Contexts not found for this word.'
+            corpora_csv_1 = gzip.open(
+                root + config.get('Files and directories', 'corpora') + '{year1}_contexts.csv.gz'.format(
+                    year1=years[0]), 'r')
+            corpora_csv_2 = gzip.open(
+                root + config.get('Files and directories', 'corpora') + '{year2}_contexts.csv.gz'.format(
+                    year2=years[1]), 'r')
+            examples = GetExamples(word, years).create_examples(models, [corpora_csv_1, corpora_csv_2], 2)
     else:
         examples = None
 

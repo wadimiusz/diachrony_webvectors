@@ -1,14 +1,14 @@
 import random
 import time
 import numpy as np
+import pandas as pd
 from scipy import spatial
 from utils import log, format_time
 
 
 class GetExamples:
-    def __init__(self, word, pickle, years):
+    def __init__(self, word, years):
         self.word = word
-        self.pickle = pickle
         self.years = years
 
     @staticmethod
@@ -25,9 +25,7 @@ class GetExamples:
         feature_vec = np.average(feature_matrix, axis=0)
         return feature_vec
 
-    def create_examples(self, models, method, max_sample_size=5000):
-
-        pickle = self.pickle
+    def create_examples(self, models, files, method, max_sample_size=5000):
 
         old_contexts = list()
         new_contexts = list()
@@ -37,23 +35,59 @@ class GetExamples:
 
         word = self.word
 
+        model1 = models.get(self.years[0])
+        model2 = models.get(self.years[1])
+
         start = time.time()
 
         log("Finding samples...")
-        try:
-            old_samples = pickle.get(self.years[0])
-            new_samples = pickle.get(self.years[1])
 
-        except KeyError:
-            raise KeyError("Problem with", word, "because not enough samples found")
+        old_samples = None
+        new_samples = None
 
-        if len(old_samples) > max_sample_size:
-            old_samples = random.sample(old_samples, max_sample_size)
-        if len(new_samples) > max_sample_size:
-            new_samples = random.sample(new_samples, max_sample_size)
+        if method == 1:
+            pickle = files[0]
 
-        model1 = models.get(self.years[0])
-        model2 = models.get(self.years[1])
+            try:
+                old_samples = pickle.get(self.years[0])
+                new_samples = pickle.get(self.years[1])
+
+            except KeyError:
+                raise KeyError("Problem with", word, "because not enough samples found")
+
+            if len(old_samples) > max_sample_size:
+                old_samples = random.sample(old_samples, max_sample_size)
+            if len(new_samples) > max_sample_size:
+                new_samples = random.sample(new_samples, max_sample_size)
+
+        # elif method == 2:
+        #     most_distant_ids = np.unravel_index(np.argsort(distances, axis=None), distances.shape)
+        #     old_samples_ids = set()
+        #     new_samples_ids = set()
+        #     for i in range(0, len(most_distant_ids[0])):
+        #         old_samples_ids.add(most_distant_ids[0][i])
+        #         new_samples_ids.add(most_distant_ids[1][i])
+        #         if len(new_samples_ids) == 5:
+        #             break
+        #     five_old_samples = [old_samples[i][1] for i in list(old_samples_ids)]
+        #     five_new_samples = [new_samples[i][1] for i in list(new_samples_ids)]
+
+        elif method == 2:
+            corpora_1 = pd.read_csv(files[0], index_col='ID')
+            corpora_2 = pd.read_csv(files[1], index_col='ID')
+            old_samples = list()
+            new_samples = list()
+            try:
+                for idx, lemmas, raw in corpora_1[['LEMMAS', 'RAW']].itertuples():
+                    if word in lemmas:
+                        old_samples.append([lemmas.split(), raw])
+
+                for idx, lemmas, raw in corpora_2[['LEMMAS', 'RAW']].itertuples():
+                    if word in lemmas:
+                        new_samples.append([lemmas.split(), raw])
+
+            except ValueError:
+                raise ValueError("Problem with", word, year, "because not enough samples found")
 
         # Keep matrices of sentence vectors for future usage:
         old_samples_vec = np.zeros((len(old_samples), model1.vector_size), dtype='float32')
@@ -70,53 +104,36 @@ class GetExamples:
         # Calculate all pairwise cosine distances at once:
         distances = spatial.distance.cdist(old_samples_vec, new_samples_vec, 'cosine')
 
-        five_old_samples = None
-        five_new_samples = None
+        # Find the pair of most distant sentences:
+        most_distant_ids = np.unravel_index(np.argmax(distances), distances.shape)
 
-        if method == 1:
+        # This is for debugging:
 
-            # Find the pair of most distant sentences:
-            most_distant_ids = np.unravel_index(np.argmax(distances), distances.shape)
+        # max_distance = np.max(distances)
+        # most_distant_sentences = [old_samples[most_distant_ids[0]][1]]
+        # new_samples[most_distant_ids[1]][1]]
+        # print(most_distant_ids)
+        # print(max_distance)
+        # print(most_distant_sentences)
 
-            # This is for debugging:
+        # Reshaping most distant vectors a bit:
+        vector0 = old_samples_vec[most_distant_ids[0]]
+        vector0.shape = (1, model1.vector_size)
+        vector1 = new_samples_vec[most_distant_ids[1]]
+        vector1.shape = (1, model2.vector_size)
 
-            # max_distance = np.max(distances)
-            # most_distant_sentences = [old_samples[most_distant_ids[0]][1]]
-            # new_samples[most_distant_ids[1]][1]]
-            # print(most_distant_ids)
-            # print(max_distance)
-            # print(most_distant_sentences)
+        # Now we calculate distances within time bins...
+        old_distances = np.ravel(spatial.distance.cdist(vector0, old_samples_vec, 'cosine'))
+        new_distances = np.ravel(spatial.distance.cdist(vector1, new_samples_vec, 'cosine'))
 
-            # Reshaping most distant vectors a bit:
-            vector0 = old_samples_vec[most_distant_ids[0]]
-            vector0.shape = (1, model1.vector_size)
-            vector1 = new_samples_vec[most_distant_ids[1]]
-            vector1.shape = (1, model2.vector_size)
+        # ...and five vectors nearest to the sentence vectors which was most distant
+        # at the previous step. This vector itself is included in these 5, of course:
+        old_nearest_ids = old_distances.argsort()[:6]
+        new_nearest_ids = new_distances.argsort()[:6]
 
-            # Now we calculate distances within time bins...
-            old_distances = np.ravel(spatial.distance.cdist(vector0, old_samples_vec, 'cosine'))
-            new_distances = np.ravel(spatial.distance.cdist(vector1, new_samples_vec, 'cosine'))
-
-            # ...and five vectors nearest to the sentence vectors which was most distant
-            # at the previous step. This vector itself is included in these 5, of course:
-            old_nearest_ids = old_distances.argsort()[:6]
-            new_nearest_ids = new_distances.argsort()[:6]
-
-            # Extracting actual sentences corresponding to these vectors:
-            five_old_samples = [old_samples[i][1] for i in old_nearest_ids]
-            five_new_samples = [new_samples[i][1] for i in new_nearest_ids]
-
-        elif method == 2:
-            most_distant_ids = np.unravel_index(np.argsort(distances, axis=None), distances.shape)
-            old_samples_ids = set()
-            new_samples_ids = set()
-            for i in range(0, len(most_distant_ids[0])):
-                old_samples_ids.add(most_distant_ids[0][i])
-                new_samples_ids.add(most_distant_ids[1][i])
-                if len(new_samples_ids) == 5:
-                    break
-            five_old_samples = [old_samples[i][1] for i in list(old_samples_ids)]
-            five_new_samples = [new_samples[i][1] for i in list(new_samples_ids)]
+        # Extracting actual sentences corresponding to these vectors:
+        five_old_samples = [old_samples[i][1] for i in old_nearest_ids]
+        five_new_samples = [new_samples[i][1] for i in new_nearest_ids]
 
         old_contexts.append(five_old_samples)
         new_contexts.append(five_new_samples)
