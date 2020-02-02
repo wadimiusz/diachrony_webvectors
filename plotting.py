@@ -24,9 +24,14 @@ def tsne_semantic_shifts(result, fname):
     """
     :result: a dictionary containing word_list and vector_list from aligned models
     """
+    pos = result["pos"]
     word_list = result["word_list"]
     vector_list = result["vector_list"]
     model_number = result["model_number"]
+    is_shift = result["is_shift"]
+    
+    if not is_shift:
+        return
 
     perplexity = int(len(word_list) ** 0.5)
 
@@ -63,7 +68,7 @@ def tsne_semantic_shifts(result, fname):
             arrowprops=dict(arrowstyle="-|>", color="indianred"),
         )
     plot.savefig(
-        root + "data/images/tsne_shift/" + fname + ".png", dpi=150, bbox_inches="tight"
+        root + "data/images/tsne_shift/" + "_".join([fname, pos]) + ".png", dpi=150, bbox_inches="tight"
     )
     plot.close()
     plot.clf()
