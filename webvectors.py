@@ -241,32 +241,139 @@ def word2vec2tensor(alias, vectorlist, wordlist, classes):
     return user_link
 
 
-@wvectors.route(url + '<lang:lang>/associates/', methods=['GET', 'POST'],
-                defaults={'word': None})
-@wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'],
-                defaults={'word': None})
-@wvectors.route(url + '<lang:lang>/', methods=["GET", "POST"],
-                defaults={'word': None})
-@wvectors.route(url + '<lang:lang>/associates/<string:word>/',
-                methods=['GET', 'POST'])
-@wvectors.route(url + '<lang:lang>/similar/<string:word>/', methods=['GET', 'POST'])
-@wvectors.route(url + '<lang:lang>/<string:word>/', methods=["GET", "POST"])
-def associates_page(lang, word):
+@wvectors.route(url + '<lang:lang>/<string:word>/')
+def word_page(lang, word):
+    global our_models
+    g.lang = lang
+    s = set()
+    s.add(lang)
+    other_lang = list(set(language_dicts.keys()) - s)[
+        0]  # works only for two languages
+    g.strings = language_dicts[lang]
+    query = process_query(word)
+    model_value = sorted(our_models.keys())
+    userpos = []
+    pos = "ALL"
+
+    images = {query.split('_')[0]: None}
+    models_row = {}
+    inferred = set()
+    frequencies = {}
+    labels, probas = list(), list()
+    for model1, model2 in zip(model_value, model_value[1:]):
+        message = {'operation': '7', 'word': query,
+                   'model1': model1, "model2": model2, 'with_examples': False}
+        result = json.loads(serverquery(message).decode('utf-8'))
+        if query + " is unknown to the model" in result:
+            error_value = "Unknown word"
+            return render_template("wordpage.html",
+                                   error=error_value,
+                                   models=our_models,
+                                   tags=tags, url=url,
+                                   usermodels=[defaultmodel],
+                                   tags2show=exposed_tags)
+        label = result["label"]
+        proba = float(result["proba"])
+        labels.append(label)
+        probas.append(proba)
+
+    for model in model_value:
+        if not model.strip() in our_models:
+            return render_template('home.html', other_lang=other_lang,
+                                   languages=languages,
+                                   url=url, usermodels=model_value)
+        if model_props[model]['tags'] == 'False':
+            model_query = query.split('_')[0]
+            message = {'operation': '1', 'query': model_query, 'pos': 'ALL',
+                       'model': model, 'nr_neighbors': 30}
+        else:
+            model_query = query
+            message = {'operation': '1', 'query': model_query, 'pos': pos,
+                       'model': model,
+                       'nr_neighbors': 30}
+        result = json.loads(serverquery(message).decode('utf-8'))
+        frequencies[model] = result['frequencies']
+        if model_query != query:
+            frequencies[model][query] = frequencies[model][model_query]
+        if model_query + " is unknown to the model" in result:
+            models_row[model] = "Unknown!"
+            continue
+        elif 'No results' in result:
+            models_row[model] = 'No results!'
+            continue
+        else:
+            for word in result['neighbors']:
+                images[word[0].split('_')[0]] = None
+            models_row[model] = result['neighbors']
+            if dbpedia:
+                try:
+                    images = get_images(images)
+                except TimeoutError:
+                    pass
+            if 'inferred' in result:
+                inferred.add(model)
+
+    m = hashlib.md5()
+    hashword = ":".join(
+        [",".join([str(i) for i in j]) for j in model_value] + [query])
+    hashword = hashword.encode('ascii', 'backslashreplace')
+    m.update(hashword)
+
+    if not os.path.isdir("data/images/heatmaps"):
+        os.mkdir("data/images/heatmaps")
+
+    fname = m.hexdigest()
+
+    trajectory_message = {'operation': '6', 'query': query, 'pos': pos,
+                          'model': model_value}
+    trajectory_result = json.loads(
+        serverquery(trajectory_message).decode('utf-8'))
+
+    if query + " is unknown to the model" in trajectory_result:
+        error_value = "Unknown word"
+        return render_template("wordpage.html",
+                               error=error_value,
+                               models=our_models,
+                               tags=tags, url=url,
+                               usermodels=[defaultmodel],
+                               tags2show=exposed_tags)
+
+    if not os.path.exists(root + 'data/images/tsne_shift'):
+        os.makedirs(root + 'data/images/tsne_shift')
+    if trajectory_result['word_list']:
+        tsne_semantic_shifts(trajectory_result, fname)
+
+    return render_template('wordpage.html', list_value=models_row,
+                           word=query, pos=pos,
+                           number=len(model_value), wordimages=images,
+                           models=our_models,
+                           tags=tags, other_lang=other_lang,
+                           languages=languages,
+                           tags2show=exposed_tags, url=url,
+                           usermodels=model_value,
+                           userpos=userpos, inferred=inferred,
+                           frequencies=frequencies,
+                           visible_neighbors=10, fname=fname, labels=labels,
+                           probas=probas)
+
+
+
+@wvectors.route(url + '<lang:lang>/associates/', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
+@wvectors.route(url + '<lang:lang>/', methods=["GET", "POST"])
+def associates_page(lang):
     global our_models
     g.lang = lang
     s = set()
     s.add(lang)
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
-    if request.method == 'POST' or word is not None:
+    if request.method == 'POST':
         list_data = 'dummy'
-        if request.method == 'POST':
-            try:
-                list_data = request.form['list_query']
-            except:
-                pass
-        else:
-            list_data = word
+        try:
+            list_data = request.form['list_query']
+        except:
+            pass
 
         # Nearest associates queries
         if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').replace('::', ''). \
@@ -274,10 +381,7 @@ def associates_page(lang, word):
             list_data = list_data.strip()
             query = process_query(list_data)
 
-            if request.method == "POST":
-                model_value = request.form.getlist('model')
-            else:
-                model_value = ["2012", "2013", "2014", "2015"]
+            model_value = request.form.getlist('model')
 
             if len(model_value) < 1:
                 model_value = [defaultmodel]
@@ -290,10 +394,7 @@ def associates_page(lang, word):
                                        usermodels=model_value)
             userpos = []
             if tags:
-                if request.method == "POST":
-                    pos_value = request.form.getlist('pos')
-                else:
-                    pos_value = ["ALL"]
+                pos_value = request.form.getlist('pos')
 
                 if len(pos_value) < 1:
                     pos = query.split('_')[-1]
@@ -867,6 +968,13 @@ def binary(lang):
         word = process_query(word)
         model1 = request.form.getlist("model1")[0]
         model2 = request.form.getlist("model2")[0]
+        if model1 == model2:
+            error_value = "Identical models"
+            return render_template('binary.html', error=error_value, model1=model1,
+                                   model2=model2,
+                                   other_lang=other_lang, languages=languages,
+                                   models=our_models, url=url)
+
         if word == "Incorrect tag!":
             error_value = "Incorrect tag!"
             return render_template('binary.html', error=error_value, model1=model1, model2=model2,
@@ -875,6 +983,14 @@ def binary(lang):
                    'model1': model1, "model2": model2, 'with_examples': True}
 
         result = json.loads(serverquery(message).decode('utf-8'))
+        if word + " is unknown to the model" in result:
+            error_value = "Unknown word"
+            return render_template("binary.html",
+                                   error=error_value,
+                                   models=our_models,
+                                   tags=tags, url=url,
+                                   usermodels=[defaultmodel],
+                                   tags2show=exposed_tags)
         label = result["label"]
         proba = float(result["proba"])
         examples = result["examples"]

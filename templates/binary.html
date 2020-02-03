@@ -51,6 +51,8 @@
       {{strings['similar22']}}
       {%- elif 'Incorrect query' in error -%}
       {{strings['similar21']}}
+      {%- elif 'Identical models' in error -%}
+      {{strings['binary8']}}
       {%- else -%}
       {{strings['similar18']}} {{ word }}
       {%- endif %}
