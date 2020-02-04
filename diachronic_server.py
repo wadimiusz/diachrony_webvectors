@@ -469,8 +469,8 @@ def multiple_neighbors(query):
         "pos": pos,
         "word_list": word_list,
         "vector_list": vector_list,
-        "model_number": actual_years,
-        "is_shift": is_shift
+        "model_number": actual_years
+        # "is_shift": is_shift
     }
 
     return result
