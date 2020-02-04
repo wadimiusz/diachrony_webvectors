@@ -17,6 +17,7 @@ import pickle
 import gzip
 from algos import ProcrustesAligner
 from creating_examples import GetExamples
+from itertools import combinations
 
 
 class WebVectorsThread(threading.Thread):
@@ -427,10 +428,10 @@ def multiple_neighbors(query):
 
     if target_word.count("_") == 0:
         return {target_word + " is unknown to the model": True}
-    
+
     model_year_list = sorted(query["model"], reverse=True)
     model_list = [models_dic[year] for year in model_year_list]
-    is_shift = is_semantic_shift(target_word, model_list)
+    # is_shift = is_semantic_shift(target_word, model_list)
 
     word, target_word_pos = target_word.split('_')
     target_word = word.lower() + '_' + target_word_pos
