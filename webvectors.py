@@ -7,19 +7,21 @@ import csv
 import hashlib
 import json
 import logging
+import os
 import re
 import socket  # for sockets
 import sys
 from collections import OrderedDict
+from multiprocessing import Pool
+from itertools import product
 
 import numpy as np
-import os
 import pandas as pd
 from flask import g
 from flask import render_template, Blueprint, redirect, Response
 from flask import request
 
-from plotting import embed, singularplot, tsne_semantic_shifts
+from plotting import embed, tsne_semantic_shifts
 from sparql import getdbpediaimage
 # import strings data from respective module
 from strings_reader import language_dicts
@@ -260,13 +262,16 @@ def word_page(lang, word):
     inferred = set()
     frequencies = {}
     labels, probas = list(), list()
-    for model1, model2 in zip(model_value, model_value[1:]):
-        message = {'operation': '7', 'word': query,
-                   'model1': model1, "model2": model2, 'with_examples': False}
-        result = json.loads(serverquery(message).decode('utf-8'))
+    p = Pool(2)
+    results = p.imap_unordered(get_model_changes,
+                               [(model1, model2, query) for
+                                (model1, model2) in
+                                zip(model_value, model_value[1:])])
+    results = sorted(results)
+    for model1, model2, result in results:
         if query + " is unknown to the model" in result:
             error_value = "Unknown word"
-            return render_template("wordpage.html",
+            return render_template("associates.html",
                                    error=error_value,
                                    models=our_models,
                                    tags=tags, url=url,
@@ -282,16 +287,11 @@ def word_page(lang, word):
             return render_template('home.html', other_lang=other_lang,
                                    languages=languages,
                                    url=url, usermodels=model_value)
-        if model_props[model]['tags'] == 'False':
-            model_query = query.split('_')[0]
-            message = {'operation': '1', 'query': model_query, 'pos': 'ALL',
-                       'model': model, 'nr_neighbors': 30}
-        else:
-            model_query = query
-            message = {'operation': '1', 'query': model_query, 'pos': pos,
-                       'model': model,
-                       'nr_neighbors': 30}
-        result = json.loads(serverquery(message).decode('utf-8'))
+
+    results = p.imap_unordered(get_model_neighbors,
+                               [(x, query, pos) for x in model_value])
+    results = sorted(results)
+    for model, result, model_query in results:
         frequencies[model] = result['frequencies']
         if model_query != query:
             frequencies[model][query] = frequencies[model][model_query]
@@ -357,6 +357,27 @@ def word_page(lang, word):
                            probas=probas)
 
 
+def get_model_neighbors(args):
+    model, query, pos = args
+    if model_props[model]['tags'] == 'False':
+        model_query = query.split('_')[0]
+        message = {'operation': '1', 'query': model_query, 'pos': 'ALL',
+                   'model': model, 'nr_neighbors': 30}
+    else:
+        model_query = query
+        message = {'operation': '1', 'query': model_query, 'pos': pos,
+                   'model': model,
+                   'nr_neighbors': 30}
+    result = json.loads(serverquery(message).decode('utf-8'))
+    return model, result, model_query
+
+
+def get_model_changes(args):
+    model1, model2, query = args
+    message = {'operation': '7', 'word': query,
+               'model1': model1, "model2": model2, 'with_examples': False}
+    result = json.loads(serverquery(message).decode('utf-8'))
+    return model1, model2, result
 
 @wvectors.route(url + '<lang:lang>/associates/', methods=['GET', 'POST'])
 @wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
@@ -412,10 +433,13 @@ def associates_page(lang):
             inferred = set()
             frequencies = {}
             labels, probas = list(), list()
-            for model1, model2 in zip(model_value, model_value[1:]):
-                message = {'operation': '7', 'word': query,
-                           'model1': model1, "model2": model2, 'with_examples': False}
-                result = json.loads(serverquery(message).decode('utf-8'))
+            p = Pool(2)
+            results = p.imap_unordered(get_model_changes,
+                                       [(model1, model2, query) for
+                                        (model1, model2) in
+                                        zip(model_value, model_value[1:])])
+            results = sorted(results)
+            for model1, model2, result in results:
                 if query + " is unknown to the model" in result:
                     error_value = "Unknown word"
                     return render_template("associates.html",
@@ -433,15 +457,10 @@ def associates_page(lang):
                 if not model.strip() in our_models:
                     return render_template('home.html', other_lang=other_lang, languages=languages,
                                            url=url, usermodels=model_value)
-                if model_props[model]['tags'] == 'False':
-                    model_query = query.split('_')[0]
-                    message = {'operation': '1', 'query': model_query, 'pos': 'ALL',
-                               'model': model, 'nr_neighbors': 30}
-                else:
-                    model_query = query
-                    message = {'operation': '1', 'query': model_query, 'pos': pos, 'model': model,
-                               'nr_neighbors': 30}
-                result = json.loads(serverquery(message).decode('utf-8'))
+
+            results = p.imap_unordered(get_model_neighbors, [(x, query, pos) for x in model_value])
+            results = sorted(results)
+            for model, result, model_query in results:
                 frequencies[model] = result['frequencies']
                 if model_query != query:
                     frequencies[model][query] = frequencies[model][model_query]

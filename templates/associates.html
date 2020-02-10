@@ -74,7 +74,7 @@
         {{strings['similar16']}}
         <!-- When the cursor hovers over the word we can see pos and frequency (title).
           The word's color depends on its frequency.-->
-        <a href="{{ url }}{{lang}}/{{ usermodels[0] }}/{{word}}"
+        <a href="{{ url }}{{lang}}/{{word}}"
         title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[usermodels[0]][word][0]}}"
         class="frequency-{{frequencies[usermodels[0]][word][1]}}">
         <i>{{ word.split('_')[0].replace('::', ' ') }}</i></a>
