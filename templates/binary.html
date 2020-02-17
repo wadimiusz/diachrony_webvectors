@@ -70,11 +70,37 @@
 <p>{{ strings['binary6'] }} {{ proba }}</p>
 {% endif %}
 {% if examples_type == 1 %}
-{% for table in examples %}
-            {{ table|safe }}
-{% endfor %}
+<table class="table table-striped">
+  {% for key, values in examples.items() %}
+    <thead>
+      <tr>
+        <th>#</th>
+        <th> {{ key }} </th>
+      </tr>
+    </thead>
+    <tr>
+      <th scope="row">1</th>
+      <td> {{ values[0] }} </td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td> {{ values[1] }} </td>
+    </tr>>
+    <tr>
+      <th scope="row">3</th>
+      <td> {{ values[2] }} </td>
+    </tr>>
+    <tr>
+      <th scope="row">4</th>
+      <td> {{ values[3] }} </td>
+    </tr>>
+    <tr>
+      <th scope="row">5</th>
+      <td> {{ values[4] }} </td>
+    </tr>>
+  {% endfor %}
+</table>
 {% elif examples_type == 0 %}
 <p><b>{{ examples }}</b></p>
 {% endif %}
-
 {% endblock %}
