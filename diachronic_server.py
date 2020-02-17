@@ -406,12 +406,10 @@ def find_shifts(query):
     return results
 
 
-def is_semantic_shift(word, model_list):
-    for model_pair in combinations(model_list, 2):
-        label = shift_classifier.predict(
-            [(word, model_pair[0], model_pair[1])]
-        )[0]
-        proba, label = semantic_shift_predict([(word, model_pair[0], model_pair[1])])
+def is_semantic_shift(word, model_names):
+    for model_pair in combinations(model_names, 2):
+        proba, label = semantic_shift_predict(word, model_pair[0],
+                                              model_pair[1])
         if int(label) == 1:
             return True
     return False
@@ -431,7 +429,7 @@ def multiple_neighbors(query):
 
     model_year_list = sorted(query["model"], reverse=True)
     model_list = [models_dic[year] for year in model_year_list]
-    # is_shift = is_semantic_shift(target_word, model_list)
+    # is_shift = is_semantic_shift(target_word, model_year_list)
 
     word, target_word_pos = target_word.split('_')
     target_word = word.lower() + '_' + target_word_pos
