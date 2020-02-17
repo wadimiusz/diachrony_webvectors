@@ -41,7 +41,6 @@ def clientthread(connect, addres):
         if not data:
             break
         query = json.loads(data.decode('utf-8'))
-        print(query)
         output = operations[query['operation']](query)
         now = datetime.datetime.now()
         print(now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t',
@@ -444,12 +443,15 @@ def multiple_neighbors(query):
     for year, model in enumerate(model_list):
         if target_word not in model:
             continue
-        similar_words = model.most_similar(target_word, topn=7)
+        similar_words = model.most_similar(target_word, topn=10)
+        neighbours_counter = 0
         for similar_word in similar_words:
+            if neighbours_counter > 4:
+                continue
             similar_word = similar_word[0]
             freq, tier = frequency(similar_word, model_year_list[year])
             # filter words of low frequency
-            if tier != "low":
+            if freq > 20:
                 try:
                     (lemma, similar_word_pos) = similar_word.split("_")
                 except ValueError:
@@ -459,6 +461,7 @@ def multiple_neighbors(query):
                     # filter words by pos-tag
                     if pos == "ALL" or (similar_word_pos and pos == similar_word_pos):
                         word_list.append(lemma)
+                        neighbours_counter += 1
                         # get the most recent meaning
                         for recent_model in model_list:
                             if similar_word in recent_model:
