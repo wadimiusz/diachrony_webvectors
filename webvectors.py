@@ -488,7 +488,7 @@ def associates_page(lang):
             #             models_row.items()]
             # heatmap = get_heatmap(neighbors)
             m = hashlib.md5()
-            hashword = ":".join([",".join([str(i) for i in j]) for j in model_value] + [query])
+            hashword = ":".join([",".join([str(i) for i in j]) for j in model_value] + [query, pos])
             hashword = hashword.encode('ascii', 'backslashreplace')
             m.update(hashword)
 
