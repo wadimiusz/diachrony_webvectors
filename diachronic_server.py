@@ -412,6 +412,7 @@ def is_semantic_shift(word, model_list):
         label = shift_classifier.predict(
             [(word, model_pair[0], model_pair[1])]
         )[0]
+        proba, label = semantic_shift_predict([(word, model_pair[0], model_pair[1])])
         if int(label) == 1:
             return True
     return False
@@ -476,6 +477,15 @@ def multiple_neighbors(query):
     return result
 
 
+@lru_cache(2048)
+def semantic_shift_predict(word, model1_name, model2_name):
+    model1 = models_dic[model1_name]
+    model2 = models_dic[model2_name]
+    proba = shift_classifier.predict_proba([(word, model1, model2)])[0]
+    label = int(proba > 0.5)
+    return proba, label
+
+
 def classify_semantic_shifts(query):
     with_examples = query['with_examples']
     word = query["word"]
@@ -490,8 +500,7 @@ def classify_semantic_shifts(query):
     if word not in model2:
         return {word + " is unknown to the model": True}
 
-    proba = shift_classifier.predict_proba([(word, model1, model2)])[0]
-    label = shift_classifier.predict([(word, model1, model2)])[0]
+    proba, label = semantic_shift_predict(word, model1_name, model2_name)
 
     years = [int(model1_name), int(model2_name)]
     models = {int(model1_name): model1, int(model2_name): model2}
