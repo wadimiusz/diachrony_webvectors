@@ -41,7 +41,6 @@ def clientthread(connect, addres):
         if not data:
             break
         query = json.loads(data.decode('utf-8'))
-        print(query)
         output = operations[query['operation']](query)
         now = datetime.datetime.now()
         print(now.strftime("%Y-%m-%d %H:%M"), '\t', addres[0] + ':' + str(addres[1]), '\t',
@@ -407,11 +406,10 @@ def find_shifts(query):
     return results
 
 
-def is_semantic_shift(word, model_list):
-    for model_pair in combinations(model_list, 2):
-        label = shift_classifier.predict(
-            [(word, model_pair[0], model_pair[1])]
-        )[0]
+def is_semantic_shift(word, model_names):
+    for model_pair in combinations(model_names, 2):
+        proba, label = semantic_shift_predict(word, model_pair[0],
+                                              model_pair[1])
         if int(label) == 1:
             return True
     return False
@@ -431,7 +429,7 @@ def multiple_neighbors(query):
 
     model_year_list = sorted(query["model"], reverse=True)
     model_list = [models_dic[year] for year in model_year_list]
-    # is_shift = is_semantic_shift(target_word, model_list)
+    # is_shift = is_semantic_shift(target_word, model_year_list)
 
     word, target_word_pos = target_word.split('_')
     target_word = word.lower() + '_' + target_word_pos
@@ -444,12 +442,15 @@ def multiple_neighbors(query):
     for year, model in enumerate(model_list):
         if target_word not in model:
             continue
-        similar_words = model.most_similar(target_word, topn=7)
+        similar_words = model.most_similar(target_word, topn=10)
+        neighbours_counter = 0
         for similar_word in similar_words:
+            if neighbours_counter > 4:
+                continue
             similar_word = similar_word[0]
             freq, tier = frequency(similar_word, model_year_list[year])
             # filter words of low frequency
-            if tier != "low":
+            if freq > 20:
                 try:
                     (lemma, similar_word_pos) = similar_word.split("_")
                 except ValueError:
@@ -459,6 +460,7 @@ def multiple_neighbors(query):
                     # filter words by pos-tag
                     if pos == "ALL" or (similar_word_pos and pos == similar_word_pos):
                         word_list.append(lemma)
+                        neighbours_counter += 1
                         # get the most recent meaning
                         for recent_model in model_list:
                             if similar_word in recent_model:
@@ -476,6 +478,15 @@ def multiple_neighbors(query):
     return result
 
 
+@lru_cache(2048)
+def semantic_shift_predict(word, model1_name, model2_name):
+    model1 = models_dic[model1_name]
+    model2 = models_dic[model2_name]
+    proba = shift_classifier.predict_proba([(word, model1, model2)])[0]
+    label = int(proba > 0.5)
+    return proba, label
+
+
 def classify_semantic_shifts(query):
     with_examples = query['with_examples']
     word = query["word"]
@@ -490,8 +501,7 @@ def classify_semantic_shifts(query):
     if word not in model2:
         return {word + " is unknown to the model": True}
 
-    proba = shift_classifier.predict_proba([(word, model1, model2)])[0]
-    label = shift_classifier.predict([(word, model1, model2)])[0]
+    proba, label = semantic_shift_predict(word, model1_name, model2_name)
 
     years = [int(model1_name), int(model2_name)]
     models = {int(model1_name): model1, int(model2_name): model2}
