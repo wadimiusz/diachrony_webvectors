@@ -12,8 +12,6 @@ import re
 import socket  # for sockets
 import sys
 from collections import OrderedDict
-from multiprocessing import Pool
-from itertools import product
 
 import numpy as np
 import pandas as pd
@@ -262,11 +260,9 @@ def word_page(lang, word):
     inferred = set()
     frequencies = {}
     labels, probas = list(), list()
-    p = Pool(2)
-    results = p.imap_unordered(get_model_changes,
-                               [(model1, model2, query) for
-                                (model1, model2) in
-                                zip(model_value, model_value[1:])])
+    results = map(get_model_changes,
+                  [(model1, model2, query) for (model1, model2) in
+                   zip(model_value, model_value[1:])])
     results = sorted(results)
     for model1, model2, result in results:
         if query + " is unknown to the model" in result:
@@ -287,9 +283,7 @@ def word_page(lang, word):
             return render_template('home.html', other_lang=other_lang,
                                    languages=languages,
                                    url=url, usermodels=model_value)
-
-    results = p.imap_unordered(get_model_neighbors,
-                               [(x, query, pos) for x in model_value])
+    results = map(get_model_neighbors, [(x, query, pos) for x in model_value])
     results = sorted(results)
     for model, result, model_query in results:
         frequencies[model] = result['frequencies']
@@ -433,11 +427,9 @@ def associates_page(lang):
             inferred = set()
             frequencies = {}
             labels, probas = list(), list()
-            p = Pool(2)
-            results = p.imap_unordered(get_model_changes,
-                                       [(model1, model2, query) for
-                                        (model1, model2) in
-                                        zip(model_value, model_value[1:])])
+            results = map(get_model_changes,
+                          [(model1, model2, query) for (model1, model2) in
+                           zip(model_value, model_value[1:])])
             results = sorted(results)
             for model1, model2, result in results:
                 if query + " is unknown to the model" in result:
@@ -458,7 +450,7 @@ def associates_page(lang):
                     return render_template('home.html', other_lang=other_lang, languages=languages,
                                            url=url, usermodels=model_value)
 
-            results = p.imap_unordered(get_model_neighbors, [(x, query, pos) for x in model_value])
+            results = map(get_model_neighbors, [(x, query, pos) for x in model_value])
             results = sorted(results)
             for model, result, model_query in results:
                 frequencies[model] = result['frequencies']
