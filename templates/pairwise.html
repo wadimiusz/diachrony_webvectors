@@ -107,7 +107,7 @@
         <ol id="{{ checked_model1 }}" style="font-size: larger;" type="1">
           {%- for res in list_value[checked_model1] if res != "Incorrect tag!" %}
           <li data-word="{{res[0]}}" class="frequency-item-{{frequencies[checked_model1][res[0]][1]}}">
-          <a href="{{ url }}{{lang}}/{{ checked_model1 }}/{{res[0]}}/"
+          <a href="{{ url }}{{lang}}/{{res[0]}}/"
           title="{{strings['synraw15']}} {{ res[0].split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[checked_model1][res[0]][0]}}"
           class="frequency-{{frequencies[checked_model1][res[0]][1]}}">
           {{res[0].split('_')[0].replace('::', ' ')}}
