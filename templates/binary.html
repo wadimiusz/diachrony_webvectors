@@ -74,30 +74,14 @@
   {% for key, values in examples.items() %}
     <thead>
       <tr>
-        <th> </th>
         <th> {{ key }} </th>
       </tr>
     </thead>
+    {% for value in values %}
     <tr>
-      <th scope="row">1</th>
-      <td> {{ values[0]|safe }} </td>
+      <td> {{ value|safe }} </td>
     </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td> {{ values[1]|safe }} </td>
-    </tr>>
-    <tr>
-      <th scope="row">3</th>
-      <td> {{ values[2]|safe }} </td>
-    </tr>>
-    <tr>
-      <th scope="row">4</th>
-      <td> {{ values[3]|safe }} </td>
-    </tr>>
-    <tr>
-      <th scope="row">5</th>
-      <td> {{ values[4]|safe }} </td>
-    </tr>>
+    {% endfor %}
   {% endfor %}
 </table>
 {% elif examples_type == 0 %}
