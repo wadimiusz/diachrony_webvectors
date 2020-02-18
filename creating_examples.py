@@ -145,8 +145,8 @@ class GetExamples:
 
         # ...and five vectors nearest to the sentence vectors which was most distant
         # at the previous step. This vector itself is included in these 5, of course:
-        old_nearest_ids = old_distances.argsort()[:6]
-        new_nearest_ids = new_distances.argsort()[:6]
+        old_nearest_ids = old_distances.argsort()[:5]
+        new_nearest_ids = new_distances.argsort()[:5]
 
         # Extracting actual sentences corresponding to these vectors:
         five_old_samples = [old_samples[i][1] for i in old_nearest_ids]
