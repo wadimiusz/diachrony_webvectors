@@ -71,7 +71,9 @@
 {% endif %}
 {% if examples_type == 1 %}
 <p>{{ strings['binary9'] }}
-  <a href="{{ url }}{{lang}}/{{ word }}"><b>{{ word }}</b></a>:</p>
+  <a href="{{ url }}{{lang}}/{{ word }}"><b>
+    {{ word.split('_')[0] }} <sub style="font-size:50%;">{{word.split('_')[-1]}}</sub></b>
+  </a>:</p>
 <table class="table table-striped">
   {% for key, values in examples.items() %}
     <thead>
