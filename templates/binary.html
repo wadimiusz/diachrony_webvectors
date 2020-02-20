@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-<p>{{strings['binary0']}}</>
+<p>{{strings['binary0']}}</p>
 <div id="queryform">
 <form id="inputform" action="#" method=post>
         <div class="checkbox">
@@ -70,6 +70,8 @@
 <p>{{ strings['binary6'] }} {{ proba }}</p>
 {% endif %}
 {% if examples_type == 1 %}
+<p>{{ strings['binary9'] }}
+  <a href="{{ url }}{{lang}}/{{ word }}"><b>{{ word }}</b></a>:</p>
 <table class="table table-striped">
   {% for key, values in examples.items() %}
     <thead>

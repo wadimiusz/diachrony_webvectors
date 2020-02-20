@@ -46,7 +46,7 @@ calc32,"Вы&nbsp;также можете попробовать более сл
 calc33,mother,mother
 calc34,daughter,daughter
 calc35,father,father
-description1,"Shiftry: семантические сдвиги в русских новостях","Shiftry: semantic shifts in Russian news"
+description1,Shiftry: семантические сдвиги в русских новостях,Shiftry: semantic shifts in Russian news
 home1,Shiftry: Семантические изменения в текстах русских новостей,Shiftry: semantic shifts in Russian news
 home2,"Введите слово, чтобы получить список из&nbsp;10&nbsp;его ближайших семантических аналогов (квази-синонимов). <br/>Будет использована модель, обученная на русской Википедии и Национальном корпусе русского языка; другие модели вы можете найти на вкладке <a href=""associates/"">Похожие слова</a>.","Enter a&nbsp;word to&nbsp;produce a&nbsp;list of&nbsp;its 10&nbsp;nearest semantic associates.<br/>English Wikipedia model will be&nbsp;used; for other models, visit <a href=""associates"">Similar Words</a> tab."
 home3,Посмотреть эволюцию слова,Trace semantic trajectory!
@@ -88,7 +88,7 @@ similar30,Нет близких слов с&nbsp;такой частью реч�
 similar31,История запросов близости,Similarity queries history
 similar32,Слова нет в словаре модели; вектор восстановлен из формы слова.,The word is out of model vocabulary; its embedding is inferred from its characters.
 similar33,"Ниже вы найдёте списки ближайших ассоциатов этого слова для каждого года. Если в этом году произошел семантический сдвиг, Shiftry покажет его значимость.","Below, you will find lists of its nearest neighbors in each year, and detected semantic shifts with their degrees (if any)."
-similar34,"Для каждого слова показана его часть речи (если в модели они размечены).","Parts of speech are shown for each word, if present in the model."
+similar34,Для каждого слова показана его часть речи (если в модели они размечены).,"Parts of speech are shown for each word, if present in the model."
 similar35,Есть сдвиг!,Shift found!
 similar36,Сдвига нет.,No shift found.
 similar37,Расстояние:,Distance:
@@ -170,9 +170,9 @@ pairwise4,Найти сдвиги,Find shifts
 pairwise5,Топ сдвигов для моделей:,Top shifts for models:
 pairwise6,Части речи:,Parts of speech:
 pairwise7,Все части речи,All parts of speech
-pairwise8,"Выберите из списка два временных периода, чтобы найти слова, употребление которых изменилось особенно сильно.","Select two time periods to learn which words have experienced most significant change in usage."
-pairwise9,"Узнать наиболее изменившиеся слова","Extract shifted words"
-binary0,"Классификатор сдвигов определяет, произошел ли сдвиг в значении выбранного слова между двумя выбранными годами.","The shift classifier tries to detect whether your query word has experienced a semantic shift within the chosen pair of years."
+pairwise8,"Выберите из списка два временных периода, чтобы найти слова, употребление которых изменилось особенно сильно.",Select two time periods to learn which words have experienced most significant change in usage.
+pairwise9,Узнать наиболее изменившиеся слова,Extract shifted words
+binary0,"Классификатор сдвигов определяет, произошел ли сдвиг в значении выбранного слова между двумя выбранными годами.",The shift classifier tries to detect whether your query word has experienced a semantic shift within the chosen pair of years.
 binary1,Классификация семантических сдвигов,Semantic shifts classification
 binary2,Введите слово:,Enter your word:
 binary3,Классифицировать,Classify
@@ -181,3 +181,4 @@ binary5,Это слово претерпело семантическое изм
 binary6,Уровень непохожести слова в выбранных моделях:,Difference in word meaning across the chosen models:
 binary7,Крым,Крым
 binary8,Нельзя выбрать две одинаковые модели!,You cannot chose the same models!
+binary9,Примеры из корпуса для слова ,Contexts from corpora for the word 
