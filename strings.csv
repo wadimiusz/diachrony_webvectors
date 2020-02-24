@@ -117,19 +117,7 @@ synraw12,Это слово в&nbsp;других моделях,This word in&nbsp
 synraw13,в&nbsp;НКРЯ,in&nbsp;the RNC
 synraw14,частота в корпусе,occurrences in the corpus
 synraw15,часть речи, part of speech
-upload10,"Когда обучение закончится, вы&nbsp;сможете скачать вашу модель здесь:","When the training is&nbsp;finished, you can download your model here:"
-upload11,Размерность векторов:,Vector size:
-upload12,Алгоритм обучения:,Training mode:
-upload13,Размер симметричного окна:,Symmetric window size:
-upload1,Обучите свою модель,Train your model
-upload2,Загрузите свой корпус!,Upload your own corpus!
-upload3,"Введите URL, с&nbsp;которого можно загрузить ваш обучающий корпус. Корпус должен представлять собой txt-файл в&nbsp;кодировке UTF-8 (без некорректных символов), упакованный gzip, и&nbsp;содержащий одно предложение на&nbsp;каждой строке.",Enter a&nbsp;direct URL from where your training corpus can be&nbsp;downloaded. It&nbsp;should be&nbsp;a&nbsp;gzipped plain text UTF-8 (with no&nbsp;incorrect characters) document with one sentence per line.
-upload4,Обработать,Process
-upload5,Ваш файл,Your file from
-upload6,отправлен в&nbsp;очередь на&nbsp;загрузку и&nbsp;обучение.,was put into downloading and training queue.
-upload7,Ваш идентификатор обучения&nbsp;&#8212;,Your training identifier&nbsp;is
-upload8,"Пожалуйста, сохраните его в&nbsp;надежном месте.","Please, write it&nbsp;down somewhere."
-upload9,"Обучение вашей модели займет некоторое время. Типичная скорость обработки&nbsp;&#8212; около 50&nbsp;тысяч слов в&nbsp;секунду (иногда чуть медленнее, в&nbsp;зависимости от&nbsp;многих факторов).",It&nbsp;will take a&nbsp;while to&nbsp;train your model. General safe rule of&nbsp;thumb as&nbsp;for processing speed is&nbsp;approximately 50&nbsp;thousand words a&nbsp;second (plus some additional time for various system pipelines).
+synraw16,Семантическая траектория слова,Semantic trajectory of
 usermodel1,"Модели, созданные пользователями",User-generated models
 usermodel2,Обучение модели на&nbsp;вашем корпусе завершено,Model training on&nbsp;your corpus has finished.
 usermodel3,Здесь вы&nbsp;можете скачать вашу модель в&nbsp;бинарном формате Word2Vec (правая кнопка на&nbsp;ссылке&nbsp;&#8212; Скачать как):,Here you can download your model in&nbsp;binary Word2Vec format (right-click on&nbsp;the link below and press Save Link&nbsp;As):
