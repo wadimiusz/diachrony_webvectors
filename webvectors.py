@@ -265,28 +265,17 @@ def word_page(lang, word):
                    zip(model_value, model_value[1:])])
     results = sorted(results)
 
-    num_of_ok_results = 0
     for model1, model2, result in results:
         if query + " is unknown to the model" in result:
-            label = ""
+            label = "0"
             proba = None
         else:
             label = result["label"]
             proba = float(result["proba"])
 
-            num_of_ok_results += 1
-
         labels.append(label)
         probas.append(proba)
 
-    if num_of_ok_results < 2:
-        error_value = "Unknown word"
-        return render_template("wordpage.html",
-                               error=error_value,
-                               models=our_models,
-                               tags=tags, url=url,
-                               usermodels=[defaultmodel],
-                               tags2show=exposed_tags)
 
     for model in model_value:
         if not model.strip() in our_models:
@@ -295,6 +284,7 @@ def word_page(lang, word):
                                    url=url, usermodels=model_value)
     results = map(get_model_neighbors, [(x, query, pos) for x in model_value])
     results = sorted(results)
+    ok_models = list()
     for model, result, model_query in results:
         frequencies[model] = result['frequencies']
         if model_query != query:
@@ -309,6 +299,7 @@ def word_page(lang, word):
             for word in result['neighbors']:
                 images[word[0].split('_')[0]] = None
             models_row[model] = result['neighbors']
+            ok_models.append(model)
             if dbpedia:
                 try:
                     images = get_images(images)
@@ -323,17 +314,25 @@ def word_page(lang, word):
     hashword = hashword.encode('ascii', 'backslashreplace')
     m.update(hashword)
 
+    if len(ok_models) < 1:
+        error_value = "Unknown word"
+        return render_template("wordpage.html",
+                               error=error_value,
+                               models=our_models,
+                               tags=tags, url=url,
+                               usermodels=[defaultmodel],
+                               tags2show=exposed_tags)
+
     if not os.path.isdir("data/images/heatmaps"):
         os.mkdir("data/images/heatmaps")
 
     fname = m.hexdigest()
 
     trajectory_message = {'operation': '6', 'query': query, 'pos': pos,
-                          'model': model_value}
+                          'model': ok_models}
     trajectory_result = json.loads(
         serverquery(trajectory_message).decode('utf-8'))
 
-    print(trajectory_result)
     if query + " is unknown to the model" in trajectory_result:
         error_value = "Unknown word"
         return render_template("wordpage.html",
