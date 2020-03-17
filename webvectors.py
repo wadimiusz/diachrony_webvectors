@@ -264,19 +264,29 @@ def word_page(lang, word):
                   [(model1, model2, query) for (model1, model2) in
                    zip(model_value, model_value[1:])])
     results = sorted(results)
+
+    num_of_ok_results = 0
     for model1, model2, result in results:
         if query + " is unknown to the model" in result:
-            error_value = "Unknown word"
-            return render_template("associates.html",
-                                   error=error_value,
-                                   models=our_models,
-                                   tags=tags, url=url,
-                                   usermodels=[defaultmodel],
-                                   tags2show=exposed_tags)
-        label = result["label"]
-        proba = float(result["proba"])
+            label = ""
+            proba = None
+        else:
+            label = result["label"]
+            proba = float(result["proba"])
+
+            num_of_ok_results += 1
+
         labels.append(label)
         probas.append(proba)
+
+    if num_of_ok_results < 2:
+        error_value = "Unknown word"
+        return render_template("wordpage.html",
+                               error=error_value,
+                               models=our_models,
+                               tags=tags, url=url,
+                               usermodels=[defaultmodel],
+                               tags2show=exposed_tags)
 
     for model in model_value:
         if not model.strip() in our_models:
@@ -323,6 +333,7 @@ def word_page(lang, word):
     trajectory_result = json.loads(
         serverquery(trajectory_message).decode('utf-8'))
 
+    print(trajectory_result)
     if query + " is unknown to the model" in trajectory_result:
         error_value = "Unknown word"
         return render_template("wordpage.html",
