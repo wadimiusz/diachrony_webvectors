@@ -46,7 +46,7 @@ calc32,"Вы&nbsp;также можете попробовать более сл
 calc33,mother,mother
 calc34,daughter,daughter
 calc35,father,father
-description1,"Shiftry: семантические сдвиги в русских новостях","Shiftry: semantic shifts in Russian news"
+description1,Shiftry: семантические сдвиги в русских новостях,Shiftry: semantic shifts in Russian news
 home1,Shiftry: Семантические изменения в текстах русских новостей,Shiftry: semantic shifts in Russian news
 home2,"Введите слово, чтобы получить список из&nbsp;10&nbsp;его ближайших семантических аналогов (квази-синонимов). <br/>Будет использована модель, обученная на русской Википедии и Национальном корпусе русского языка; другие модели вы можете найти на вкладке <a href=""associates/"">Похожие слова</a>.","Enter a&nbsp;word to&nbsp;produce a&nbsp;list of&nbsp;its 10&nbsp;nearest semantic associates.<br/>English Wikipedia model will be&nbsp;used; for other models, visit <a href=""associates"">Similar Words</a> tab."
 home3,Посмотреть эволюцию слова,Trace semantic trajectory!
@@ -88,7 +88,7 @@ similar30,Нет близких слов с&nbsp;такой частью реч�
 similar31,История запросов близости,Similarity queries history
 similar32,Слова нет в словаре модели; вектор восстановлен из формы слова.,The word is out of model vocabulary; its embedding is inferred from its characters.
 similar33,"Ниже вы найдёте списки ближайших ассоциатов этого слова для каждого года. Если в этом году произошел семантический сдвиг, Shiftry покажет его значимость.","Below, you will find lists of its nearest neighbors in each year, and detected semantic shifts with their degrees (if any)."
-similar34,"Для каждого слова показана его часть речи (если в модели они размечены).","Parts of speech are shown for each word, if present in the model."
+similar34,Для каждого слова показана его часть речи (если в модели они размечены).,"Parts of speech are shown for each word, if present in the model."
 similar35,Есть сдвиг!,Shift found!
 similar36,Сдвига нет.,No shift found.
 similar37,Расстояние:,Distance:
@@ -117,19 +117,7 @@ synraw12,Это слово в&nbsp;других моделях,This word in&nbsp
 synraw13,в&nbsp;НКРЯ,in&nbsp;the RNC
 synraw14,частота в корпусе,occurrences in the corpus
 synraw15,часть речи, part of speech
-upload10,"Когда обучение закончится, вы&nbsp;сможете скачать вашу модель здесь:","When the training is&nbsp;finished, you can download your model here:"
-upload11,Размерность векторов:,Vector size:
-upload12,Алгоритм обучения:,Training mode:
-upload13,Размер симметричного окна:,Symmetric window size:
-upload1,Обучите свою модель,Train your model
-upload2,Загрузите свой корпус!,Upload your own corpus!
-upload3,"Введите URL, с&nbsp;которого можно загрузить ваш обучающий корпус. Корпус должен представлять собой txt-файл в&nbsp;кодировке UTF-8 (без некорректных символов), упакованный gzip, и&nbsp;содержащий одно предложение на&nbsp;каждой строке.",Enter a&nbsp;direct URL from where your training corpus can be&nbsp;downloaded. It&nbsp;should be&nbsp;a&nbsp;gzipped plain text UTF-8 (with no&nbsp;incorrect characters) document with one sentence per line.
-upload4,Обработать,Process
-upload5,Ваш файл,Your file from
-upload6,отправлен в&nbsp;очередь на&nbsp;загрузку и&nbsp;обучение.,was put into downloading and training queue.
-upload7,Ваш идентификатор обучения&nbsp;&#8212;,Your training identifier&nbsp;is
-upload8,"Пожалуйста, сохраните его в&nbsp;надежном месте.","Please, write it&nbsp;down somewhere."
-upload9,"Обучение вашей модели займет некоторое время. Типичная скорость обработки&nbsp;&#8212; около 50&nbsp;тысяч слов в&nbsp;секунду (иногда чуть медленнее, в&nbsp;зависимости от&nbsp;многих факторов).",It&nbsp;will take a&nbsp;while to&nbsp;train your model. General safe rule of&nbsp;thumb as&nbsp;for processing speed is&nbsp;approximately 50&nbsp;thousand words a&nbsp;second (plus some additional time for various system pipelines).
+synraw16,Семантическая траектория слова,Semantic trajectory of
 usermodel1,"Модели, созданные пользователями",User-generated models
 usermodel2,Обучение модели на&nbsp;вашем корпусе завершено,Model training on&nbsp;your corpus has finished.
 usermodel3,Здесь вы&nbsp;можете скачать вашу модель в&nbsp;бинарном формате Word2Vec (правая кнопка на&nbsp;ссылке&nbsp;&#8212; Скачать как):,Here you can download your model in&nbsp;binary Word2Vec format (right-click on&nbsp;the link below and press Save Link&nbsp;As):
@@ -170,9 +158,9 @@ pairwise4,Найти сдвиги,Find shifts
 pairwise5,Топ сдвигов для моделей:,Top shifts for models:
 pairwise6,Части речи:,Parts of speech:
 pairwise7,Все части речи,All parts of speech
-pairwise8,"Выберите из списка два временных периода, чтобы найти слова, употребление которых изменилось особенно сильно.","Select two time periods to learn which words have experienced most significant change in usage."
-pairwise9,"Узнать наиболее изменившиеся слова","Extract shifted words"
-binary0,"Классификатор сдвигов определяет, произошел ли сдвиг в значении выбранного слова между двумя выбранными годами.","The shift classifier tries to detect whether your query word has experienced a semantic shift within the chosen pair of years."
+pairwise8,"Выберите из списка два временных периода, чтобы найти слова, употребление которых изменилось особенно сильно.",Select two time periods to learn which words have experienced most significant change in usage.
+pairwise9,Узнать наиболее изменившиеся слова,Extract shifted words
+binary0,"Классификатор сдвигов определяет, произошел ли сдвиг в значении выбранного слова между двумя выбранными годами.",The shift classifier tries to detect whether your query word has experienced a semantic shift within the chosen pair of years.
 binary1,Классификация семантических сдвигов,Semantic shifts classification
 binary2,Введите слово:,Enter your word:
 binary3,Классифицировать,Classify
@@ -181,3 +169,4 @@ binary5,Это слово претерпело семантическое изм
 binary6,Уровень непохожести слова в выбранных моделях:,Difference in word meaning across the chosen models:
 binary7,Крым,Крым
 binary8,Нельзя выбрать две одинаковые модели!,You cannot chose the same models!
+binary9,Примеры из корпуса для слова ,Contexts from corpora for the word 

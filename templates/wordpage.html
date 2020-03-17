@@ -8,7 +8,10 @@
 {%- block content %}
 <div class="row">
   <div class="col-md-10">
-    <h2>{{strings['similar1']}}</h2>
+    <h2>{{strings['synraw16']}} <a href="{{ url }}{{lang}}/{{word}}"
+        title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[usermodels[0]][word][0]}}"
+        class="frequency-{{frequencies[usermodels[0]][word][1]}}">
+        <i>{{ word.split('_')[0].replace('::', ' ') }}</i></a></h2>
     <!-- Request field -->
     <!-- Featuring results -->
     {% if list_value -%}

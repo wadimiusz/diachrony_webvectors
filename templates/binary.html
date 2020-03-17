@@ -5,7 +5,7 @@
 {% endblock title %}
 
 {% block content %}
-<p>{{strings['binary0']}}</>
+<p>{{strings['binary0']}}</p>
 <div id="queryform">
 <form id="inputform" action="#" method=post>
         <div class="checkbox">
@@ -63,18 +63,32 @@
 
 
 {% if label == "1" %}
-<p><large><b>{{ strings['binary5'] }}</b></large></p>
+<h2><large><b>{{ strings['binary5'] }}</b></large></h2>
 <p>{{ strings['binary6'] }} {{ proba }}</p>
 {% elif label == "0" %}
 <p><large><b>{{ strings['binary4'] }}</b></large></p>
 <p>{{ strings['binary6'] }} {{ proba }}</p>
 {% endif %}
 {% if examples_type == 1 %}
-{% for table in examples %}
-            {{ table|safe }}
-{% endfor %}
+<h2>{{ strings['binary9'] }}
+  <a href="{{ url }}{{lang}}/{{ word }}" target="_blank"><b>
+    {{ word.split('_')[0] }} <sub style="font-size:50%;">{{word.split('_')[-1]}}</sub></b>
+  </a>:</h2>
+<table class="table table-striped">
+  {% for key, values in examples.items() %}
+    <thead>
+      <tr>
+        <th> <h3>{{ key }}</h3> </th>
+      </tr>
+    </thead>
+    {% for value in values %}
+    <tr>
+      <td> {{ value|safe }} </td>
+    </tr>
+    {% endfor %}
+  {% endfor %}
+</table>
 {% elif examples_type == 0 %}
 <p><b>{{ examples }}</b></p>
 {% endif %}
-
 {% endblock %}

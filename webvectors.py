@@ -947,8 +947,8 @@ def binary(lang):
         proba = float(result["proba"])
         examples = result["examples"]
         if type(examples) is dict:
-            df = pd.DataFrame(data=examples)
-            examples = [df.to_html(classes='data', header="true", index=False)]
+            # df = pd.DataFrame(data=examples)
+            # examples = [df.to_html(classes='data', header="true", index=False)]
             examples_type = 1
         else:
             examples_type = 0

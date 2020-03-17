@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 from scipy import spatial
 from utils import log, format_time
+from nltk.stem.snowball import RussianStemmer
+from nltk.tokenize import word_tokenize
 
 
 class GetExamples:
@@ -25,6 +27,18 @@ class GetExamples:
         feature_vec = np.average(feature_matrix, axis=0)
         return feature_vec
 
+    @staticmethod
+    def bold_word(samples_list, stem):
+
+        for i, sentence in enumerate(samples_list):
+            tokens = sentence.split()  # word_tokenize(sentence)
+            for k, token in enumerate(tokens):
+                if stem in token.lower():
+                    tokens[k] = '<b><i>'+token+'</i></b>'
+            samples_list[i] = ' '.join(tokens)
+
+        return samples_list
+
     def create_examples(self, models, files, method, max_sample_size=5000):
 
         old_contexts = list()
@@ -34,6 +48,9 @@ class GetExamples:
         # new_years = list()
 
         word = self.word
+
+        stemmer = RussianStemmer()
+        stem = stemmer.stem(word.split('_')[0])
 
         model1 = models.get(self.years[0])
         model2 = models.get(self.years[1])
@@ -128,12 +145,15 @@ class GetExamples:
 
         # ...and five vectors nearest to the sentence vectors which was most distant
         # at the previous step. This vector itself is included in these 5, of course:
-        old_nearest_ids = old_distances.argsort()[:6]
-        new_nearest_ids = new_distances.argsort()[:6]
+        old_nearest_ids = old_distances.argsort()[:5]
+        new_nearest_ids = new_distances.argsort()[:5]
 
         # Extracting actual sentences corresponding to these vectors:
         five_old_samples = [old_samples[i][1] for i in old_nearest_ids]
         five_new_samples = [new_samples[i][1] for i in new_nearest_ids]
+
+        five_old_samples = GetExamples.bold_word(five_old_samples, stem)
+        five_new_samples = GetExamples.bold_word(five_new_samples, stem)
 
         old_contexts.append(five_old_samples)
         new_contexts.append(five_new_samples)
