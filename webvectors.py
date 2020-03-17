@@ -443,15 +443,11 @@ def associates_page(lang):
             results = sorted(results)
             for model1, model2, result in results:
                 if query + " is unknown to the model" in result:
-                    error_value = "Unknown word"
-                    return render_template("associates.html",
-                                           error=error_value,
-                                           models=our_models,
-                                           tags=tags, url=url,
-                                           usermodels=[defaultmodel],
-                                           tags2show=exposed_tags)
-                label = result["label"]
-                proba = float(result["proba"])
+                    label = "0"
+                    proba = 0.0
+                else:
+                    label = result["label"]
+                    proba = float(result["proba"])
                 labels.append(label)
                 probas.append(proba)
 
@@ -462,6 +458,7 @@ def associates_page(lang):
 
             results = map(get_model_neighbors, [(x, query, pos) for x in model_value])
             results = sorted(results)
+            ok_models = list()
             for model, result, model_query in results:
                 frequencies[model] = result['frequencies']
                 if model_query != query:
@@ -476,6 +473,7 @@ def associates_page(lang):
                     for word in result['neighbors']:
                         images[word[0].split('_')[0]] = None
                     models_row[model] = result['neighbors']
+                    ok_models.append(model)
                     if dbpedia:
                         try:
                             images = get_images(images)
@@ -504,8 +502,18 @@ def associates_page(lang):
             #    img_path = os.path.join("data/images/heatmaps", fname)
             #    plt.savefig(img_path)
 
+
+            if len(ok_models) == 0:
+                error_value = "Unknown word"
+                return render_template("associates.html",
+                                       error=error_value,
+                                       models=our_models,
+                                       tags=tags, url=url,
+                                       usermodels=[defaultmodel],
+                                       tags2show=exposed_tags)
+
             trajectory_message = {'operation': '6', 'query': query, 'pos': pos,
-                                  'model': model_value}
+                                  'model': ok_models}
             trajectory_result = json.loads(serverquery(trajectory_message).decode('utf-8'))
 
             if query + " is unknown to the model" in trajectory_result:
