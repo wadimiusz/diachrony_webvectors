@@ -93,7 +93,10 @@
         If there are relevant images, they are pulled from Wikipedia with the links to the articles. -->
     <div class="row" id="result" data-result ='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
       <div class="col-md-4">
-        <h4><strong><a href="{{ url }}{{lang}}/models#{{checked_model1}}">{{ strings[models[checked_model1]]}}</a></strong></h4>
+        <h4><strong>
+	<a href="{{ url }}{{lang}}/models#{{checked_model1}}">{{ strings[models[checked_model1]]}}</a> --->
+	<a href="{{ url }}{{lang}}/models#{{checked_model2}}">{{ strings[models[checked_model2]]}}</a>
+	</strong></h4>
         {%- if checked_model1 in inferred %}
         <i>{{strings['similar32']}}</i>
         {%- endif %}

@@ -728,7 +728,7 @@ def binary(lang):
                                model2=list(our_models.keys())[-6],
                                models=our_models, url=url)
     else:
-        if request.form("word"):  # First time click
+        if request.form.getlist("word"):  # First time click
             word = request.form.getlist("word")[0]
             word = process_query(word)
             model1 = request.form.getlist("model1")[0]
@@ -753,13 +753,13 @@ def binary(lang):
             if word + " is unknown to the model" in result:
                 error_value = "Unknown word"
                 return render_template("binary.html",
-                                       error=error_value,
+                                       error=error_value, word=word,
                                        models=our_models,
                                        tags=tags, url=url,
                                        usermodels=[defaultmodel],
                                        tags2show=exposed_tags)
         else:  # User presses the 'Confirm' button to wait longer for the results
-            word, model1, model2 = request.form.getlist("confirm")
+            word, model1, model2 = request.form.get("confirm").split()
             message = {'operation': '7', 'word': word, 'model1': model1, "model2": model2,
                        'with_examples': "slow"}
             result = json.loads(serverquery(message).decode('utf-8'))

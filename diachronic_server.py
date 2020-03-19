@@ -511,15 +511,15 @@ def classify_semantic_shifts(query):
     models = {int(model1_name): model1, int(model2_name): model2}
     if with_examples == 'slow':
         corpora_csv_1 = open(path.join(
-            [root, CORPORA, '{year1}_contexts.csv.gz'.format(year1=years[0])]), 'r')
-        corpora_csv_2 = open(path.join([
-            root, CORPORA, '{year2}_contexts.csv.gz'.format(year2=years[1])]), 'r')
+            root, CORPORA, '{year1}_contexts.csv.gz'.format(year1=years[0])), 'r')
+        corpora_csv_2 = open(path.join(
+            root, CORPORA, '{year2}_contexts.csv.gz'.format(year2=years[1])), 'r')
         examples = GetExamples(word, years).create_examples(models,
                                                             [corpora_csv_1, corpora_csv_2], 2)
     elif with_examples:
         try:
             pickle_file = open(path.join(
-                [root, PICKLES, '{word}.pickle.gz'.format(word=word)]), 'rb')
+                root, PICKLES, '{word}.pickle.gz'.format(word=word)), 'rb')
             pickle_data = pickle.load(pickle_file)
             examples = GetExamples(word, years).create_examples(models, [pickle_data], 1)
         except FileNotFoundError:

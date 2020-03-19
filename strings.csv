@@ -164,8 +164,8 @@ binary0,"Классификатор сдвигов определяет, про�
 binary1,Классификация семантических сдвигов,Semantic shifts classification
 binary2,Введите слово:,Enter your word:
 binary3,Классифицировать,Classify
-binary4,Это слово не претерпело значительных изменений.,This word has experienced no significant semantic shifts.
-binary5,Это слово претерпело семантическое изменение.,This word has experienced a semantic shift.
+binary4,Это слово не претерпело значительных изменений в,This word has experienced no significant semantic shifts in
+binary5,Это слово претерпело семантическое изменение в,This word has experienced a semantic shift in
 binary6,Уровень непохожести слова в выбранных моделях:,Difference in word meaning across the chosen models:
 binary7,Крым,Крым
 binary8,Нельзя выбрать две одинаковые модели!,You cannot chose the same models!
