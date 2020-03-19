@@ -61,7 +61,6 @@
       {% endif -%}
 
 
-
 {% if label == "1" %}
 <h2><large><b>{{ strings['binary5'] }}</b></large></h2>
 <p>{{ strings['binary6'] }} {{ proba }}</p>
@@ -89,6 +88,11 @@
   {% endfor %}
 </table>
 {% elif examples_type == 0 %}
-<p><b>{{ examples }}</b></p>
+<p><b>{{ strings['binary5'] }}</b></p>
+<form id="confirmform" action="#" method=post>
+    <button type="submit" class="btn btn-primary" name="confirm" value="{{ [word, model1, model2] }}">
+        {{ strings['binary11'] }}
+    </button>
+</form>
 {% endif %}
 {% endblock %}

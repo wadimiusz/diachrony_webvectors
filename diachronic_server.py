@@ -14,10 +14,11 @@ import numpy as np
 import gensim
 import joblib
 import pickle
-import gzip
 from algos import ProcrustesAligner
 from creating_examples import GetExamples
 from itertools import combinations
+from os import path
+from smart_open import open
 
 
 class WebVectorsThread(threading.Thread):
@@ -60,6 +61,9 @@ root = config.get('Files and directories', 'root')
 HOST = config.get('Sockets', 'host')  # Symbolic name meaning all available interfaces
 PORT = config.getint('Sockets', 'port')  # Arbitrary non-privileged port
 tags = config.getboolean('Tags', 'use_tags')
+PICKLES = config.get('Files and directories', 'pickles')
+CORPORA = config.get('Files and directories', 'corpora')
+
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -505,26 +509,24 @@ def classify_semantic_shifts(query):
 
     years = [int(model1_name), int(model2_name)]
     models = {int(model1_name): model1, int(model2_name): model2}
-    if with_examples:
+    if with_examples == 'slow':
+        corpora_csv_1 = open(path.join(
+            [root, CORPORA, '{year1}_contexts.csv.gz'.format(year1=years[0])]), 'r')
+        corpora_csv_2 = open(path.join([
+            root, CORPORA, '{year2}_contexts.csv.gz'.format(year2=years[1])]), 'r')
+        examples = GetExamples(word, years).create_examples(models,
+                                                            [corpora_csv_1, corpora_csv_2], 2)
+    elif with_examples:
         try:
-            pickle_file = gzip.open(
-                root + config.get('Files and directories', 'pickles') + '{word}.pickle.gz'.format(
-                    word=word), 'rb')
+            pickle_file = open(path.join(
+                [root, PICKLES, '{word}.pickle.gz'.format(word=word)]), 'rb')
             pickle_data = pickle.load(pickle_file)
             examples = GetExamples(word, years).create_examples(models, [pickle_data], 1)
         except FileNotFoundError:
-            corpora_csv_1 = gzip.open(
-                root + config.get('Files and directories', 'corpora') + '{year1}_contexts.csv.gz'.format(
-                    year1=years[0]), 'r')
-            corpora_csv_2 = gzip.open(
-                root + config.get('Files and directories', 'corpora') + '{year2}_contexts.csv.gz'.format(
-                    year2=years[1]), 'r')
-            examples = GetExamples(word, years).create_examples(models, [corpora_csv_1, corpora_csv_2], 2)
+            examples = None
     else:
         examples = None
-
     return {"proba": str(proba), "label": str(label), "examples": examples}
-
 
 operations = {
     '1': find_synonyms,
