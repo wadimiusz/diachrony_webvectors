@@ -164,9 +164,11 @@ binary0,"Классификатор сдвигов определяет, про�
 binary1,Классификация семантических сдвигов,Semantic shifts classification
 binary2,Введите слово:,Enter your word:
 binary3,Классифицировать,Classify
-binary4,Это слово не претерпело значительных изменений.,This word has experienced no significant semantic shifts.
-binary5,Это слово претерпело семантическое изменение.,This word has experienced a semantic shift.
+binary4,Это слово не претерпело значительных изменений в,This word has experienced no significant semantic shifts in
+binary5,Это слово претерпело семантическое изменение в,This word has experienced a semantic shift in
 binary6,Уровень непохожести слова в выбранных моделях:,Difference in word meaning across the chosen models:
 binary7,Крым,Крым
 binary8,Нельзя выбрать две одинаковые модели!,You cannot chose the same models!
-binary9,Примеры из корпуса для слова ,Contexts from corpora for the word 
+binary9,Примеры из корпуса для слова ,Contexts from corpora for the word
+binary10,Примеры из корпуса для этого слова не закэшированы. Вы хотите всё равно найти их? Поиск может занять от 30 до 60 секунд.,Contexts from corpora for this word are not cached. Do you want to see them anyway? Searching can take from 30 to 60 seconds.
+binary11,Найти примеры!,Look up contexts!

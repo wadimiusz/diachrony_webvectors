@@ -12,9 +12,7 @@ import re
 import socket  # for sockets
 import sys
 from collections import OrderedDict
-
 import numpy as np
-import pandas as pd
 from flask import g
 from flask import render_template, Blueprint, redirect, Response
 from flask import request
@@ -276,7 +274,6 @@ def word_page(lang, word):
         labels.append(label)
         probas.append(proba)
 
-
     for model in model_value:
         if not model.strip() in our_models:
             return render_template('home.html', other_lang=other_lang,
@@ -383,6 +380,7 @@ def get_model_changes(args):
     result = json.loads(serverquery(message).decode('utf-8'))
     return model1, model2, result
 
+
 @wvectors.route(url + '<lang:lang>/associates/', methods=['GET', 'POST'])
 @wvectors.route(url + '<lang:lang>/similar/', methods=['GET', 'POST'])
 @wvectors.route(url + '<lang:lang>/', methods=["GET", "POST"])
@@ -394,11 +392,7 @@ def associates_page(lang):
     other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
     if request.method == 'POST':
-        list_data = 'dummy'
-        try:
-            list_data = request.form['list_query']
-        except:
-            pass
+        list_data = request.form['list_query']
 
         # Nearest associates queries
         if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').replace('::', ''). \
@@ -501,7 +495,6 @@ def associates_page(lang):
             #    sns.heatmap(heatmap, xticklabels=labels, yticklabels=labels)
             #    img_path = os.path.join("data/images/heatmaps", fname)
             #    plt.savefig(img_path)
-
 
             if len(ok_models) == 0:
                 error_value = "Unknown word"
@@ -720,195 +713,6 @@ def visual_page(lang):
                            languages=languages, url=url, usermodels=[defaultmodel])
 
 
-@wvectors.route(url + '<lang:lang>/calculator/', methods=['GET', 'POST'])
-def finder(lang):
-    g.lang = lang
-    s = set()
-    s.add(lang)
-    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
-    g.strings = language_dicts[lang]
-
-    if request.method == 'POST':
-        positive_data = ''
-        positive2_data = ''
-        negative_data = ''
-        positive1_data = ''
-        negative1_data = ''
-        try:
-            positive_data = request.form['positive']
-            positive2_data = request.form['positive2']
-            negative_data = request.form['negative']
-        except:
-            pass
-        try:
-            positive1_data = request.form['positive1']
-            negative1_data = request.form['negative1']
-        except:
-            pass
-        # Analogical inference
-        if negative_data != '' and positive_data != '' and positive2_data != '':
-            positive_data_list = [positive_data, positive2_data]
-            negative_list = []
-            if len(negative_data.strip()) > 1:
-                if negative_data.strip().replace('_', '').replace('-', ''). \
-                        replace('::', '').replace(' ', '').isalnum():
-                    negative_list = [process_query(negative_data)]
-
-            positive_list = []
-            for w in positive_data_list:
-                if len(w) > 1 and w.replace('_', '').replace('-', '').replace('::', ''). \
-                        replace(' ', '').isalnum():
-                    positive_list.append(process_query(w))
-
-            calcmodel_value = request.form.getlist('calcmodel')
-            if len(calcmodel_value) < 1:
-                calcmodel_value = [defaultmodel]
-
-            if len(positive_list) < 2 or len(negative_list) == 0:
-                error_value = "Incorrect query!"
-                return render_template("calculator.html", error=error_value, models=our_models,
-                                       other_lang=other_lang, languages=languages, url=url,
-                                       usermodels=calcmodel_value, tags2show=exposed_tags)
-            if "Incorrect tag!" in negative_list or "Incorrect tag!" in positive_list:
-                error_value = "Incorrect tag!"
-                return render_template('calculator.html', error=error_value, models=our_models,
-                                       tags2show=exposed_tags, other_lang=other_lang,
-                                       languages=languages, url=url, usermodels=calcmodel_value)
-            userpos = []
-            if tags:
-                calcpos_value = request.form.getlist('pos')
-                if len(calcpos_value) < 1:
-                    pos = defaulttag
-                else:
-                    pos = calcpos_value[0]
-                if pos != 'ALL':
-                    userpos.append(pos)
-            else:
-                pos = 'ALL'
-
-            models_row = {}
-            images = {}
-            frequencies = {}
-            for model in calcmodel_value:
-                if not model.strip() in our_models:
-                    return render_template('home.html', other_lang=other_lang, languages=languages,
-                                           models=our_models, url=url, usermodels=calcmodel_value)
-                if model_props[model]['tags'] == 'False':
-                    message = {'operation': '3', 'query':
-                        [[w.split('_')[0] for w in positive_list],
-                         [w.split('_')[0] for w in negative_list]], 'pos': 'ALL',
-                               'model': model, 'nr_neighbors': 30}
-                else:
-                    message = {'operation': '3', 'query': [positive_list, negative_list],
-                               'pos': pos, 'model': model, 'nr_neighbors': 30}
-                result = json.loads(serverquery(message).decode('utf-8'))
-                frequencies[model] = result['frequencies']
-                if 'No results' in result:
-                    models_row[model] = ["No similar words with this tag."]
-                    continue
-                if "Unknown to the model" in result:
-                    models_row[model] = [result["Unknown to the model"] + 'is unknown to the model']
-                    continue
-                for word in result['neighbors']:
-                    images[word[0].split('_')[0]] = None
-                models_row[model] = result['neighbors']
-                if dbpedia:
-                    try:
-                        images = get_images(images)
-                    except TimeoutError:
-                        pass
-            return render_template('calculator.html', analogy_value=models_row, pos=pos,
-                                   plist=positive_list, userpos=userpos, nlist=negative_list,
-                                   wordimages=images, models=our_models, tags=tags,
-                                   tags2show=exposed_tags, other_lang=other_lang,
-                                   languages=languages, url=url, usermodels=calcmodel_value,
-                                   frequencies=frequencies, visible_neighbors=5)
-
-        # Calculator
-        if positive1_data != '':
-            negative_list = [process_query(w) for w in negative1_data.split() if
-                             len(w) > 1 and
-                             w.replace('_', '').replace('-', '').replace('::', '').isalnum()][:10]
-            positive_list = [process_query(w) for w in positive1_data.split() if
-                             len(w) > 1 and
-                             w.replace('_', '').replace('-', '').replace('::', '').isalnum()][:10]
-
-            calcmodel_value = request.form.getlist('calcmodel')
-            if len(calcmodel_value) < 1:
-                calcmodel_value = [defaultmodel]
-
-            if len(positive_list) == 0:
-                error_value = "Incorrect query!"
-                return render_template("calculator.html", calc_error=error_value,
-                                       other_lang=other_lang, tags2show=exposed_tags,
-                                       languages=languages, models=our_models, url=url,
-                                       usermodels=calcmodel_value)
-            if "Incorrect tag!" in negative_list or "Incorrect tag!" in positive_list:
-                error_value = "Incorrect tag!"
-                return render_template('calculator.html', calc_error=error_value,
-                                       other_lang=other_lang, tags2show=exposed_tags,
-                                       languages=languages, models=our_models, url=url,
-                                       usermodels=calcmodel_value)
-            userpos = []
-            if tags:
-                calcpos_value = request.form.getlist('calcpos')
-                if len(calcpos_value) < 1:
-                    pos = defaulttag
-                else:
-                    pos = calcpos_value[0]
-                if pos != 'ALL':
-                    userpos.append(pos)
-            else:
-                pos = 'ALL'
-
-            models_row = {}
-            images = {}
-            frequencies = {}
-            for model in calcmodel_value:
-                if not model.strip() in our_models:
-                    return render_template('home.html', other_lang=other_lang, languages=languages,
-                                           models=our_models, url=url, usermodels=calcmodel_value)
-                if model_props[model]['tags'] == 'False':
-                    message = {'operation': '3', 'query':
-                        [[w.split('_')[0] for w in positive_list],
-                         [w.split('_')[0] for w in negative_list]], 'pos': 'ALL',
-                               'model': model, 'nr_neighbors': 30}
-                else:
-                    message = {'operation': '3', 'query': [positive_list, negative_list],
-                               'pos': pos, 'model': model, 'nr_neighbors': 30}
-                result = json.loads(serverquery(message).decode('utf-8'))
-                frequencies[model] = result['frequencies']
-                if "No results" in result:
-                    models_row[model] = ["No similar words with this tag."]
-                    continue
-                if "Unknown to the model" in result:
-                    models_row[model] = [result["Unknown to the model"] + 'is unknown to the model']
-                    continue
-                for word in result['neighbors']:
-                    images[word[0].split('_')[0]] = None
-                models_row[model] = result['neighbors']
-                if dbpedia:
-                    try:
-                        images = get_images(images)
-                    except TimeoutError:
-                        pass
-            return render_template('calculator.html', calc_value=models_row, pos=pos,
-                                   plist2=positive_list, tags2show=exposed_tags,
-                                   nlist2=negative_list, wordimages=images, models=our_models,
-                                   tags=tags, userpos=userpos, other_lang=other_lang,
-                                   languages=languages, url=url, usermodels=calcmodel_value,
-                                   frequencies=frequencies, visible_neighbors=5)
-
-        else:
-            error_value = "Incorrect query!"
-            return render_template("calculator.html", error=error_value, models=our_models,
-                                   tags=tags, tags2show=exposed_tags, other_lang=other_lang,
-                                   languages=languages, url=url, usermodels=[defaultmodel])
-    return render_template("calculator.html", models=our_models, tags=tags, other_lang=other_lang,
-                           tags2show=exposed_tags, languages=languages, url=url,
-                           usermodels=[defaultmodel])
-
-
 @wvectors.route(url + '<lang:lang>/binary/', methods=["GET", "POST"])
 def binary(lang):
     g.lang = lang
@@ -924,39 +728,45 @@ def binary(lang):
                                model2=list(our_models.keys())[-6],
                                models=our_models, url=url)
     else:
-        word = request.form.getlist("word")[0]
-        word = process_query(word)
-        model1 = request.form.getlist("model1")[0]
-        model2 = request.form.getlist("model2")[0]
-        if model1 == model2:
-            error_value = "Identical models"
-            return render_template('binary.html', error=error_value, model1=model1,
-                                   model2=model2,
-                                   other_lang=other_lang, languages=languages,
-                                   models=our_models, url=url)
+        if request.form.getlist("word"):  # First time click
+            word = request.form.getlist("word")[0]
+            word = process_query(word)
+            model1 = request.form.getlist("model1")[0]
+            model2 = request.form.getlist("model2")[0]
+            if model1 == model2:
+                error_value = "Identical models"
+                return render_template('binary.html', error=error_value, model1=model1,
+                                       model2=model2,
+                                       other_lang=other_lang, languages=languages,
+                                       models=our_models, url=url)
 
-        if word == "Incorrect tag!":
-            error_value = "Incorrect tag!"
-            return render_template('binary.html', error=error_value, model1=model1, model2=model2,
-                    other_lang=other_lang, languages=languages, models=our_models, url=url)
-        message = {'operation': '7', 'word': word,
-                   'model1': model1, "model2": model2, 'with_examples': True}
+            if word == "Incorrect tag!":
+                error_value = "Incorrect tag!"
+                return render_template('binary.html', error=error_value, model1=model1,
+                                       model2=model2,
+                                       other_lang=other_lang, languages=languages,
+                                       models=our_models, url=url)
+            message = {'operation': '7', 'word': word,
+                       'model1': model1, "model2": model2, 'with_examples': True}
 
-        result = json.loads(serverquery(message).decode('utf-8'))
-        if word + " is unknown to the model" in result:
-            error_value = "Unknown word"
-            return render_template("binary.html",
-                                   error=error_value,
-                                   models=our_models,
-                                   tags=tags, url=url,
-                                   usermodels=[defaultmodel],
-                                   tags2show=exposed_tags)
+            result = json.loads(serverquery(message).decode('utf-8'))
+            if word + " is unknown to the model" in result:
+                error_value = "Unknown word"
+                return render_template("binary.html",
+                                       error=error_value, word=word,
+                                       models=our_models,
+                                       tags=tags, url=url,
+                                       usermodels=[defaultmodel],
+                                       tags2show=exposed_tags)
+        else:  # User presses the 'Confirm' button to wait longer for the results
+            word, model1, model2 = request.form.get("confirm").split()
+            message = {'operation': '7', 'word': word, 'model1': model1, "model2": model2,
+                       'with_examples': "slow"}
+            result = json.loads(serverquery(message).decode('utf-8'))
         label = result["label"]
         proba = float(result["proba"])
         examples = result["examples"]
         if type(examples) is dict:
-            # df = pd.DataFrame(data=examples)
-            # examples = [df.to_html(classes='data', header="true", index=False)]
             examples_type = 1
         else:
             examples_type = 0
