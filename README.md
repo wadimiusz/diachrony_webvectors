@@ -7,7 +7,7 @@ The service can be either integrated into _Apache_ web server as a WSGI applicat
 
 ## Brief installation instructions
 
-0. Clone _ShiftRy_ git repository (_git clone https://github.com/wadimiusz/diachrony_webvectors) into a directory acessible by your web server.
+0. Clone _ShiftRy_ git repository (_git clone https://github.com/wadimiusz/diachrony_webvectors_) into a directory acessible by your web server.
 1. Install _Apache_ for Apache integration or _Gunicorn_ for standalone server.
 2. Install all the Python requirements (_pip install -r requirements.txt_)
 3. If you want to use PoS tagging for user queries, install [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/), [Freeling](http://nlp.lsi.upc.edu/freeling/) or other PoS-tagger of your choice.
