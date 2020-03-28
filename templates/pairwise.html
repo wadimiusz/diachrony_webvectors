@@ -57,9 +57,6 @@
           <label>
           <input type="radio" name="pos" {% if not userpos %}checked{% endif %} value="ALL"> {{strings['similar14']}}
           </label>
-          <label>
-          <input type="radio" name="pos" {% if 'Q' in userpos %}checked{% endif %} value="Q"> {{strings['similar19']}}
-          </label>
         </div>
         {%- endif %}
         <!-- Button "Find similar words!" is placed in <form> to be able to send data to the server -->
