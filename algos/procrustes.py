@@ -28,9 +28,9 @@ def smart_procrustes_align_gensim(base_embed: gensim.models.KeyedVectors,
     other_word2idx = {word: num for num, word in other_idx2word.items()}
 
     base_shared_indices = [base_word2idx[word] for word in
-                           tqdm(shared_vocab)]  # remember to remove tqdm
+                           shared_vocab]  # remember to remove tqdm
     other_shared_indices = [other_word2idx[word] for word in
-                            tqdm(shared_vocab)]  # remember to remove tqdm
+                            shared_vocab]  # remember to remove tqdm
 
     base_vecs = base_embed.syn0norm
     other_vecs = other_embed.syn0norm
