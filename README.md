@@ -1,11 +1,13 @@
-# webvectors
-_Webvectors_ is a toolkit to serve distributional semantic models (particularly, continuous word embeddings, as in _word2vec_) over the web, making it easy to demonstrate models to general public. It is written in Python, and uses _Flask_ and _Gensim_ under the hood.
+# Shiftry
+This repo contains the source code of [Shiftry](http://shiftry.rusvectores.org/). ShiftRy is a web service for analyzing diachronic changes in the usage of words occurring in news texts from Russian mass media. For that, we employ diachronic word embedding models trained on large Russian news corpora from 2010 up to 2019.
+ 
+ShiftRy is based on [_Webvectors_](https://github.com/akutuzov/webvectors). _Webvectors_ is a toolkit to serve distributional semantic models (particularly, continuous word embeddings, as in _word2vec_) over the web, making it easy to demonstrate models to general public. It is written in Python, and uses _Flask_ and _Gensim_ under the hood.
 
 The service can be either integrated into _Apache_ web server as a WSGI application or run as a standalone server using _Gunicorn_.
 
 ## Brief installation instructions
 
-0. Clone WebVectors git repository (_git clone https://github.com/akutuzov/webvectors.git_) into a directory acessible by your web server.
+0. Clone _ShiftRy_ git repository (_git clone https://github.com/wadimiusz/diachrony_webvectors_) into a directory acessible by your web server.
 1. Install _Apache_ for Apache integration or _Gunicorn_ for standalone server.
 2. Install all the Python requirements (_pip install -r requirements.txt_)
 3. If you want to use PoS tagging for user queries, install [Stanford CoreNLP](https://stanfordnlp.github.io/CoreNLP/), [Freeling](http://nlp.lsi.upc.edu/freeling/) or other PoS-tagger of your choice.
@@ -20,7 +22,7 @@ where **WEBNAME** is the alias for your service relative to the server root (web
 
 ### For all installation variants
 
-In all `*.wsgi` and `*.py` files in your _WebVectors_ directory, replace `webvectors.cfg` in the string
+In all `*.wsgi` and `*.py` files in your _ShiftRy_ directory, replace `webvectors.cfg` in the string
 `config.read('webvectors.cfg')`
 with the absolute path to the `webvectors.cfg` file.
 
@@ -86,7 +88,7 @@ Tune them as you wish. The main menu is defined at `base.html`.
 If you want query hints to work, do not forget to compile your own list of hints (JSON format). Example of such a list is given in data/example_vocab.json.
 Real URL of this list should be stated in data/hint.js.
 
-**Running WebVectors**
+**Running ShiftRy**
 
 Once you have modified all the settings according to your workflow, made sure the templates are OK for you and launched the models daemon, you are ready to actually start the service.
 If you use _Apache_ integration, simply restart/reload _Apache_.
