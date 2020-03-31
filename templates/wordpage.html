@@ -8,13 +8,13 @@
 {%- block content %}
 <div class="row">
   <div class="col-md-10">
+    <!-- Request field -->
+    <!-- Featuring results -->
+    {% if list_value -%}
     <h2>{{strings['synraw16']}} <a href="{{ url }}{{lang}}/{{word}}"
         title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[usermodels[0]][word][0]}}"
         class="frequency-{{frequencies[usermodels[0]][word][1]}}">
         <i>{{ word.split('_')[0].replace('::', ' ') }}</i></a></h2>
-    <!-- Request field -->
-    <!-- Featuring results -->
-    {% if list_value -%}
     <!-- Word trajectory -->
     <center>
     <a href="{{ url }}data/images/tsne_shift/{{ fname }}.png" target="_blank">
@@ -123,7 +123,7 @@
       {{strings['similar18']}} {{ word }}
       {%- endif %}
       </strong></span>
-    <p>
+    </p>
       {% endif -%}
   </div>
   <!-- class="col-md-10" ends -->

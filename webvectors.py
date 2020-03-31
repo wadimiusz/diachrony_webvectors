@@ -314,7 +314,7 @@ def word_page(lang, word):
     if len(ok_models) < 1:
         error_value = "Unknown word"
         return render_template("wordpage.html",
-                               error=error_value,
+                               error=error_value, word=query,
                                models=our_models,
                                tags=tags, url=url,
                                usermodels=[defaultmodel],
@@ -476,11 +476,6 @@ def associates_page(lang):
                     if 'inferred' in result:
                         inferred.add(model)
 
-            # models_row = OrderedDict(sorted(models_row.items(), key=lambda x: int(x[0])))
-
-            # neighbors = [[word for word, freq in neighbors] for year, neighbors in
-            #             models_row.items()]
-            # heatmap = get_heatmap(neighbors)
             m = hashlib.md5()
             hashword = ":".join([",".join([str(i) for i in j]) for j in model_value] + [query, pos])
             hashword = hashword.encode('ascii', 'backslashreplace')
@@ -490,11 +485,6 @@ def associates_page(lang):
                 os.mkdir("data/images/heatmaps")
 
             fname = m.hexdigest()
-            # if not os.path.exists(os.path.join("data/images/heatmaps", fname + ".png")):
-            #    labels = list(models_row.keys())
-            #    sns.heatmap(heatmap, xticklabels=labels, yticklabels=labels)
-            #    img_path = os.path.join("data/images/heatmaps", fname)
-            #    plt.savefig(img_path)
 
             if len(ok_models) == 0:
                 error_value = "Unknown word"
