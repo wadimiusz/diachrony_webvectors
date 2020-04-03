@@ -61,17 +61,14 @@
       {% endif -%}
 
 {% if label == "1" %}
+<h2><large><b>{{ strings['binary5'] }} {{ model1 }}-{{ model2 }}.</b></large></h2>
+<p>{{ strings['binary6'] }} {{ proba }}</p>
 <!-- Word trajectory -->
 <center>
 <a href="{{ url }}data/images/tsne_shift/{{ fname }}.png" target="_blank">
 <img class="img-responsive" src = "{{ url }}data/images/tsne_shift/{{ fname }}.png" alt = "Word trajectory" title = "Word trajectory" style="max-width: 700px;">
 </a>
 </center>
-{% endif %}
-
-{% if label == "1" %}
-<h2><large><b>{{ strings['binary5'] }} {{ model1 }}-{{ model2 }}.</b></large></h2>
-<p>{{ strings['binary6'] }} {{ proba }}</p>
 {% elif label == "0" %}
 <p><large><b>{{ strings['binary4'] }} {{ model1}}-{{ model2  }}.</b></large></p>
 <p>{{ strings['binary6'] }} {{ proba }}</p>
