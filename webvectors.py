@@ -761,6 +761,42 @@ def binary(lang):
         else:
             examples_type = 0
 
+        if label == "1":
+            ok_models = list()
+            for model in sorted(our_models.keys()):
+                message = {'operation': '4', 'query': word, 'model': model}
+                result = json.loads(serverquery(message).decode('utf-8'))
+                if word + " is unknown to the model" not in result:
+                    ok_models.append(model)
+
+            m = hashlib.md5()
+            hashword = ":".join(
+                [",".join([str(i) for i in j]) for j in ok_models] + [word])
+            hashword = hashword.encode('ascii', 'backslashreplace')
+            m.update(hashword)
+
+            if not os.path.isdir("data/images/heatmaps"):
+                os.mkdir("data/images/heatmaps")
+
+            fname = m.hexdigest()
+
+            trajectory_message = {'operation': '6', 'query': word, 'pos': "ALL",
+                                  'model': ok_models}
+            trajectory_result = json.loads(
+                serverquery(trajectory_message).decode('utf-8'))
+
+            if not os.path.exists(root + 'data/images/tsne_shift'):
+                os.makedirs(root + 'data/images/tsne_shift')
+            if trajectory_result['word_list']:
+                tsne_semantic_shifts(trajectory_result, fname)
+            return render_template("binary.html",
+                                   model1=model1, model2=model2,
+                                   other_lang=other_lang, languages=languages,
+                                   models=our_models, url=url,
+                                   label=label, proba="{:.2f}".format(proba),
+                                   word=word, examples=examples,
+                                   examples_type=examples_type, fname=fname)
+
         return render_template("binary.html",
                                model1=model1, model2=model2,
                                other_lang=other_lang, languages=languages,
