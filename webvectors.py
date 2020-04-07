@@ -762,12 +762,7 @@ def binary(lang):
             examples_type = 0
 
         if label == "1":
-            ok_models = list()
-            for model in sorted(our_models.keys()):
-                message = {'operation': '4', 'query': word, 'model': model}
-                result = json.loads(serverquery(message).decode('utf-8'))
-                if word + " is unknown to the model" not in result:
-                    ok_models.append(model)
+            ok_models = [model1, model2]
 
             m = hashlib.md5()
             hashword = ":".join(
