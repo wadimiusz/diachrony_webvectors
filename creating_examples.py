@@ -77,18 +77,6 @@ class GetExamples:
             if len(new_samples) > max_sample_size:
                 new_samples = random.sample(new_samples, max_sample_size)
 
-        # elif method == 2:
-        #     most_distant_ids = np.unravel_index(np.argsort(distances, axis=None), distances.shape)
-        #     old_samples_ids = set()
-        #     new_samples_ids = set()
-        #     for i in range(0, len(most_distant_ids[0])):
-        #         old_samples_ids.add(most_distant_ids[0][i])
-        #         new_samples_ids.add(most_distant_ids[1][i])
-        #         if len(new_samples_ids) == 5:
-        #             break
-        #     five_old_samples = [old_samples[i][1] for i in list(old_samples_ids)]
-        #     five_new_samples = [new_samples[i][1] for i in list(new_samples_ids)]
-
         elif method == 2:
             corpora_1 = pd.read_csv(files[0], index_col='ID')
             corpora_2 = pd.read_csv(files[1], index_col='ID')
@@ -96,12 +84,14 @@ class GetExamples:
             new_samples = list()
             try:
                 for idx, lemmas, raw in corpora_1[['LEMMAS', 'RAW']].itertuples():
-                    if word in lemmas:
-                        old_samples.append([lemmas.split(), raw])
+                    split_lemmas = lemmas.split()
+                    if word in split_lemmas:
+                        old_samples.append([split_lemmas, raw])
 
                 for idx, lemmas, raw in corpora_2[['LEMMAS', 'RAW']].itertuples():
-                    if word in lemmas:
-                        new_samples.append([lemmas.split(), raw])
+                    split_lemmas = lemmas.split()
+                    if word in split_lemmas:
+                        new_samples.append([split_lemmas, raw])
 
             except ValueError:
                 raise ValueError("Problem with", word, year, "because not enough samples found")
