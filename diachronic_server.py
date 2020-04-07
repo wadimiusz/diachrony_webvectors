@@ -483,11 +483,11 @@ def multiple_neighbors(query):
 
 
 @lru_cache(2048)
-def semantic_shift_predict(word, model1_name, model2_name):
+def semantic_shift_predict(word, model1_name, model2_name, threshold=0.6):
     model1 = models_dic[model1_name]
     model2 = models_dic[model2_name]
     proba = shift_classifier.predict_proba([(word, model1, model2)])[0]
-    label = int(proba > 0.5)
+    label = int(proba > threshold)
     return proba, label
 
 
