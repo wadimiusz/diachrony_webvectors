@@ -57,7 +57,7 @@
         Similarity is shown to the hundredth.
         If there are relevant images, they are pulled from Wikipedia with the links to the articles. -->
     <div class="row" id="result" data-result ='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
-      {% for model in list_value|sort -%}
+      {% for model in list_value|sort if list_value[model] != "Unknown!" -%}
       <div class="col-md-4">
         <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>
                 {% if loop.index > 1 %}
@@ -70,11 +70,8 @@
         {%- if model in inferred %}
         <i>{{strings['similar32']}}</i>
         {%- endif %}
-        <span style="font-size: larger;">
-        {% if list_value[model] == "Unknown!" -%}
-        {{ strings['similar18'] }} "{{ word }}" </span>
-        {% elif list_value[model] == "No results!"  -%} </span>
-        {{strings['similar23']}}
+        {% if list_value[model] == "No results!"  -%}
+        <span style="font-size: larger;">{{strings['similar23']}}</span>
         {% else -%}
         </span>
         <ol id="{{ model }}" style="font-size: larger;" type="1">
