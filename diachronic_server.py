@@ -159,7 +159,7 @@ def find_synonyms(query):
             results['neighbors'].append(i)
     else:
         counter = 0
-        for i in model.wv.most_similar(positive=qf, topn=30):
+        for i in model.wv.most_similar(positive=qf, topn=1000):
             if counter == nr_neighbors:
                 break
             if i[0].split('_')[-1] == pos:
@@ -446,7 +446,7 @@ def multiple_neighbors(query):
     for year, model in enumerate(model_list):
         if target_word not in model:
             continue
-        similar_words = model.most_similar(target_word, topn=10)
+        similar_words = model.most_similar(target_word, topn=1000)
         neighbours_counter = 0
         for similar_word in similar_words:
             if neighbours_counter > 4:
