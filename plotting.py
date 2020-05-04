@@ -24,6 +24,7 @@ def tsne_semantic_shifts(result, fname):
     """
     :result: a dictionary containing word_list and vector_list from aligned models
     """
+    np.random.seed(42)
     pos = result["pos"]
     word_list = result["word_list"]
     vector_list = result["vector_list"]
@@ -74,6 +75,7 @@ def pca_semantic_shifts(result, fname):
     """
     :result: a dictionary containing word_list and vector_list from aligned models
     """
+    np.random.seed(42)
     word_list = result["word_list"]
     vector_list = result["vector_list"]
     model_number = result["model_number"]
@@ -138,7 +140,8 @@ def singularplot(word, modelname, vector, fname):
 
 
 def embed(words, matrix, classes, usermodel, fname, kind='TSNE'):
-    perplexity = 6.0  # Should be smaller than the number of points!
+    np.random.seed(42)
+    perplexity = int(len(words) ** 0.5)
 
     if kind.lower() == "tsne":
         embedding = TSNE(n_components=2, perplexity=perplexity, metric='cosine', n_iter=500,

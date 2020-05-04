@@ -276,7 +276,7 @@ def word_page(lang, word):
 
     for model in model_value:
         if not model.strip() in our_models:
-            return render_template('home.html', other_lang=other_lang,
+            return render_template('associates.html', other_lang=other_lang,
                                    languages=languages,
                                    url=url, usermodels=model_value)
     results = map(get_model_neighbors, [(x, query, pos) for x in model_value])
@@ -447,7 +447,7 @@ def associates_page(lang):
 
             for model in model_value:
                 if not model.strip() in our_models:
-                    return render_template('home.html', other_lang=other_lang, languages=languages,
+                    return render_template('associates.html', other_lang=other_lang, languages=languages,
                                            url=url, usermodels=model_value)
 
             results = map(get_model_neighbors, [(x, query, pos) for x in model_value])
@@ -632,7 +632,7 @@ def visual_page(lang):
             frequencies = {}
             for model in model_value:
                 if not model.strip() in our_models:
-                    return render_template('home.html', other_lang=other_lang, languages=languages,
+                    return render_template('associates.html', other_lang=other_lang, languages=languages,
                                            url=url, usermodels=model_value)
                 frequencies[model] = {}
                 unknown[model] = set()
@@ -714,8 +714,8 @@ def binary(lang):
     if request.method == "GET":
         return render_template("binary.html", other_lang=other_lang,
                                languages=languages,
-                               model1=list(our_models.keys())[-7],
-                               model2=list(our_models.keys())[-6],
+                               model1=list(our_models.keys())[-3],
+                               model2=list(our_models.keys())[-2],
                                models=our_models, url=url)
     else:
         if request.form.getlist("word"):  # First time click
@@ -942,7 +942,6 @@ def about_page(lang):
 
 # redirecting requests with no lang:
 @wvectors.route(url + 'about/', methods=['GET', 'POST'])
-@wvectors.route(url + 'calculator/', methods=['GET', 'POST'])
 @wvectors.route(url + 'similar/', methods=['GET', 'POST'])
 @wvectors.route(url + 'associates/', methods=['GET', 'POST'])
 @wvectors.route(url + 'visual/', methods=['GET', 'POST'])
@@ -955,4 +954,4 @@ def redirect_main():
     else:
         if req[-1] != '/':
             req += '/'
-    return redirect(url + 'en' + req)
+    return redirect(url + 'ru' + req)

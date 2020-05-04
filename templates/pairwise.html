@@ -1,9 +1,18 @@
 <!-- This template extends the base.html template. -->
 {%- extends "base.html" -%}
+
+{% set meta_title = [strings['base3'], strings['similar1']]|join(': ')  %}
+
 <!-- The "block title" tag changes the title in the browser tab and the header on the page. -->
 {%- block title -%}
 <title>{{strings['base3']}}: {{strings['similar1']}}</title>
 {%- endblock title -%}
+
+{%- block metas -%}
+{{ super() }}
+{%- endblock metas -%}
+
+
 <!-- webpage content -->
 {%- block content %}
 <div class="row">
@@ -65,9 +74,11 @@
     </div>
     <!-- Featuring results -->
     {% if list_value -%}
+    <h2>{{strings['pairwise10']}}</h2>
+    <p><i>{{strings['pairwise11']}}</i></p>
     <!-- Title "Semantic associates for", "strong" means "bold" -->
     <!-- Checkbox for frequency selection-->
-    <div class="checkbox">
+    <div class="checkbox" id="frequencyCheck">
       <p><em>{{strings['frequency1']}}</em></p>
       <label class="frequency-high" title="{{strings['frequency5']}}">
       <input id="high" type="checkbox" checked>{{ strings['frequency2']}}</label>

@@ -7,11 +7,32 @@
   {%- block title %}
   <title>{{strings['base1']}}</title>
   {%- endblock title -%}
-  {%- block metas %}
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta charset="utf-8">
-  <meta name="description" content="{{strings['description1']}}">
-  {%- endblock metas -%}
+ {%- block metas %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="description" content="{{strings['description1']}}">
+    <meta name="keywords" content="semantic change, семантические изменения, diachronic language change, диахронические сдвиги, изменение значения, NLP, natural language processing, Russian, computational linguistics, компьютерная лингвистика, русский, обработка естественного языка" />
+    <link rel="shortcut icon" type="image/x-icon" href="https://shiftry.rusvectores.org/static/shiftry.ico"/>
+    <link rel="image_src" href="https://shiftry.rusvectores.org/data/images/shiftry.png" />
+    <link rel="canonical" href="https://shiftry.rusvectores.org/" />
+    <meta name="rights" content="Creative Commons Attribution-Share Alike 4.0 International" />
+    <link rel="shortlink" href="https://shiftry.rusvectores.org/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="{{strings['base3']}}" />
+    <meta property="og:url" content="https://shiftry.rusvectores.org/" />
+    <meta property="og:title" content="{{ meta_title }}" />
+    <meta property="og:description" content="{{strings['description1']}}" />
+    <meta property="og:image" content="https://shiftry.rusvectores.org/data/images/shiftry.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:url" content="https://shiftry.rusvectores.org/" />
+    <meta name="twitter:title" content="{{ meta_title }}" />
+    <meta name="twitter:description" content="{{strings['description1']}}" />
+    <meta name="twitter:image" content="https://shiftry.rusvectores.org/data/images/shiftry.png" />
+    <meta property="vk:image" content="https://shiftry.rusvectores.org/data/images/shiftry.png" />
+    <meta name="dcterms.title" content="{{ meta_title }}" />
+    <meta name="dcterms.description" content="{{strings['description1']}}" />
+{%- endblock metas %}
+
   {%- block styles %}
   <!-- Bootstrap -->
   <link href="{{ url }}data/css/bootstrap.min.css/" rel="stylesheet" media="screen">

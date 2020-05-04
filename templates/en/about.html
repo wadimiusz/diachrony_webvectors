@@ -8,28 +8,52 @@
 <img class="pull-right img-rounded img-responsive" title="ShiftRy" alt="ShiftRy" src="/data/images/shiftry.png"/>
         <h1>About ShiftRy</h1>
 <p>
-<i>ShiftRy</i> is a web service for analyzing diachronic changes in the usage of words occurring in news texts from Russian mass media.
+<i>ShiftRy</i> is a web service for analyzing diachronic changes in the usage of words occurring in news texts from Russian mass media. It is named after Shiftry pokemon, inspired by Japanese <a href="https://en.wikipedia.org/wiki/Tengu" target="_blank">Tengu</a>.
 For that, we employ diachronic word embedding models trained on large Russian news corpora from 2010 up to 2019.</p>
 <p>
 You can <a href="/">explore the semantic shifts history of any given query word</a>, or <a href="/en/pairwise/">browse the lists of words ranked by the degree of their semantic drift</a> in any couple of years.
 Visualizations of the words' trajectories through time are provided.
-<p>Users can <a href="/en/binary/">obtain corpus examples with the query word before and after the semantic shift</a>.</p>
+Users can <a href="/en/binary/">obtain corpus examples with the query word before and after the semantic shift</a>.</p>
 <p>We plan to update <i>ShiftRy</i> yearly.</p>
 
-<p>The models used on this site were trained upon news texts published by Russian media between 2010 and 2019. The full corpus for 10 years contains about 156 million tokens, with yearly sub-corpora sizes varying from 9 million (2014) to 20 million (2015) tokens.</p>
+<h2>Sources of news texts</h2>
+<ol>
+<li><p><a href="https://www.fontanka.ru/">Fontanka.ru</a></p></li>
+<li><p><a href="https://www.gazeta.ru/" target="_blank">Gazeta.ru</a></p></li>
+<li><p><a href="https://www.interfax.ru/" target="_blank">Interfax</a></p></li>
+<li><p><a href="https://iz.ru/" target="_blank">Izvestia</a></p></li>
+<li><p><a href="https://www.kp.ru/" target="_blank">Komsomolskaya Pravda</a></p></li>
+<li><p><a href="https://lenta.ru/" target="_blank">Lenta.ru</a></p></li>
+<li><p><a href="https://novayagazeta.ru/" target="_blank">Novaya Gazeta</a></p></li>
+<li><p><a href="https://nplus1.ru" target="_blank">N + 1</a></p></li>
+<li><p><a href="https://www.rbc.ru/" target="_blank">RBC</a></p></li>
+<li><p><a href="https://www.the-village.ru/" target="_blank">The Village</a></p></li>
+</ol>
 
-<p>The source code of this site is available <a href="https://github.com/wadimiusz/diachrony_webvectors">here</a>.</p>
 
-<p>Work on creating <i>ShiftRy</i> was a part of a Master's program in <a href="https://www.hse.ru/en/ma/ling/">Computational Linguistics</a> at the <a href="https://www.hse.ru/en/">Higher School of Economics.</a> Our papers on tracing semantic changes:</p>
-
+<h2 id="models">Diachronic word embeddings</h2>
+<p>The word embedding models used on this site were trained on news texts published by Russian media between 2010 and 2019. 
+The full corpus for 10 years contains about 156 million tokens, with yearly sub-corpora sizes varying from 9 million (2014) to 20 million (2015) tokens.
+All the models were aligned using Procrustes transformation and are fully compatible.</p>
+<p>Download diachronic embeddings:</p>
 <ul>
-    <li>Fomin, V., Bakshandaeva, D., Rodina, J., & Kutuzov, A. (2019).<a href="http://www.dialog-21.ru/media/4598/fominvplusetal-116.pdf">Tracing cultural diachronic semantic shifts in Russian using word embeddings: test sets and baselines.</a> In Proceedings of the International Conference “Dialog” (Issue 17) (RSUH) (Moscow) (pp. 213-227).</li>
-    <li>Rodina, J., Bakshandaeva, D., Fomin, V., Kutuzov, A., Touileb, S., & Velldal, E. (2019, August). <a href="https://www.aclweb.org/anthology/W19-4725/">Measuring diachronic evolution of evaluative adjectives with word embeddings: the case for English, Norwegian, and Russian.</a> In Proceedings of the 1st International Workshop on Computational Approaches to Historical Language Change (pp. 202-209).</li>
+<li> <a href="https://rusvectores.org/news_history/models/shiftry/2010_shiftry.vec.gz">2010</a> </li>
+<li> <a href="https://rusvectores.org/news_history/models/shiftry/2011_shiftry.vec.gz">2011</a> </li>
+<li> <a href="https://rusvectores.org/news_history/models/shiftry/2012_shiftry.vec.gz">2012</a> </li>
+<li> <a href="https://rusvectores.org/news_history/models/shiftry/2013_shiftry.vec.gz">2013</a> </li>
+<li> <a href="https://rusvectores.org/news_history/models/shiftry/2014_shiftry.vec.gz">2014</a> </li>
+<li> <a href="https://rusvectores.org/news_history/models/shiftry/2015_shiftry.vec.gz">2015</a> </li>
+<li> <a href="https://rusvectores.org/news_history/models/shiftry/2016_shiftry.vec.gz">2016</a> </li>
+<li> <a href="https://rusvectores.org/news_history/models/shiftry/2017_shiftry.vec.gz">2017</a> </li>
+<li> <a href="https://rusvectores.org/news_history/models/shiftry/2018_shiftry.vec.gz">2018</a> </li>
+<li> <a href="https://rusvectores.org/news_history/models/shiftry/2019_shiftry.vec.gz">2019</a> </li>
 </ul>
+
 <hr/>
+<h2><i>ShiftRy</i> creators</h2>
+<p>Creating <i>ShiftRy</i> was a part of a Master's program in <a href="https://www.hse.ru/en/ma/ling/">Computational Linguistics</a> at the <a href="https://www.hse.ru/en/">Higher School of Economics.</a>
+Project members:</p>
 
-
-<p><i>ShiftRy</i> is created by:</p>
 <ul>
 <li><p><a href="https://www.mn.uio.no/ifi/english/people/aca/andreku/" target="_blank">Andrey Kutuzov</a> (University of Oslo)</p></li>
 <li><p><a href="mailto:wadimiusz@gmail.com">Vadim Fomin</a> (Higher School of Economics)</p></li>
@@ -37,5 +61,15 @@ Visualizations of the words' trajectories through time are provided.
 <li><p><a href="mailto:julia.rodina97@gmail.com">Julia Rodina</a> (Higher School of Economics)</p></li>
 </ul>
 
+<p>Our papers on tracing semantic changes:</p>
+
+<ul>
+    <li>Fomin, V., Bakshandaeva, D., Rodina, J., & Kutuzov, A. (2019).<a href="http://www.dialog-21.ru/media/4598/fominvplusetal-116.pdf">Tracing cultural diachronic semantic shifts in Russian using word embeddings: test sets and baselines.</a> In Proceedings of the International Conference “Dialog” (Issue 17) (RSUH) (Moscow) (pp. 213-227).</li>
+    <li>Rodina, J., Bakshandaeva, D., Fomin, V., Kutuzov, A., Touileb, S., & Velldal, E. (2019, August). <a href="https://www.aclweb.org/anthology/W19-4725/">Measuring diachronic evolution of evaluative adjectives with word embeddings: the case for English, Norwegian, and Russian.</a> In Proceedings of the 1st International Workshop on Computational Approaches to Historical Language Change (pp. 202-209).</li>
+    <li>Andrey Kutuzov, Vadim Fomin, Vladislav Mikhailov, Julia Rodina (2020). <a href="https://shiftry.rusvectores.org/static/shiftry.pdf">ShiftRy: Web Service for Diachronic Analysis of Russian News</a>. In Proceedings of the International Conference “Dialog”</li>
+</ul>
+<hr/>
+
+<p>The source code of this site is available <a href="https://github.com/wadimiusz/diachrony_webvectors">here</a>.</p>
 
 {% endblock %}

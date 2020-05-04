@@ -1,7 +1,16 @@
 {% extends "base.html" %}
+{% set meta_title = [strings['base3'], strings['visual1']]|join(': ')  %}
+
 {% block title %}
 <title>{{strings['base3']}}: {{strings['visual1']}}</title>
 {% endblock title %}
+
+{%- block metas -%}
+{{ super() }}
+{%- endblock metas -%}
+
+
+
 {% block content %}
 <h1>{{strings['visual1']}}</h1>
 <form method=post>
@@ -52,7 +61,7 @@
   <button type="submit" class="btn btn-primary">{{strings['visual15']}}</button>
 </form>
 {% if visual %}
-<h3>{{strings['visual3']}}<sup>*</sup></h3>
+<h3>{{strings['visual3']}}</h3>
 {% for word in qwords %}
 <a href="{{ url }}{{lang}}/{{ visual|list|first }}/{{word}}/"
 {% if word in frequencies[visual|list|first] %}
@@ -65,9 +74,9 @@ title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}
 <div class="row">
   {% if viz_method == "PCA" %}
   <h2>PCA</h2>
-  {% for model in visual['pca'] %}
+  {% for model in visual['pca']|sort %}
   <div class="col-md-5">
-    <h3><strong><a href="{{ url }}{{lang}}/models/#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
+    <h3><strong><a href="{{ url }}{{lang}}/about#models/">{{ strings[models[model]] }}</a></strong></h3>
     {% if not 'Too few words' in visual[model] %}
     {% if l2c[model] %}
     <i><a target="_blank" title="{{strings['visual23']}}" href="{{ l2c[model] }}">
@@ -95,9 +104,9 @@ title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}
 <div class="row">
   {% if viz_method == "TSNE" %}
   <h1>TSNE</h1>
-  {% for model in visual['tsne'] %}
+  {% for model in visual['tsne']|sort %}
   <div class="col-md-5">
-    <h3><strong><a href="{{ url }}{{lang}}/models/#{{model}}">{{ strings[models[model]] }}</a></strong></h3>
+    <h3><strong><a href="{{ url }}{{lang}}/about#models/">{{ strings[models[model]] }}</a></strong></h3>
     {% if not 'Too few words' in visual[model] %}
     {% if l2c[model] %}
     <i><a target="_blank" title="{{strings['visual23']}}" href="{{ l2c[model] }}">
@@ -138,10 +147,4 @@ title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}
   </strong></span>
 </p>
 {% endif %}
-<hr/>
-<p><small><i>* <a href="https://lvdmaaten.github.io/tsne/"><b>t-SNE</b></a> {{strings['visual5']}}</i></small><br/>
-  <small><i>L.J.P. van der Maaten and G.E. Hinton. <a href="https://lvdmaaten.github.io/publications/papers/JMLR_2014.pdf">
-  Visualizing High-Dimensional Data Using t-SNE</a>.
-  Journal of Machine Learning Research 9(Nov):2579-2605, 2008</i></small>
-</p>
 {% endblock %}

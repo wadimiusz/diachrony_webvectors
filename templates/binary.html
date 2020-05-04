@@ -1,8 +1,15 @@
 {%- extends "base.html" -%}
 
+{% set meta_title = [strings['base3'], strings['binary1']]|join(': ')  %}
+
 {% block title%}
 <title>{{strings['base3']}}: {{ strings['binary1'] }}</title>
 {% endblock title %}
+
+{%- block metas -%}
+{{ super() }}
+{%- endblock metas -%}
+
 
 {% block content %}
 <p>{{strings['binary0']}}</p>
@@ -37,7 +44,7 @@
                     {% if word %}
                     <input class="typeahead"  type="text" id="query" name="word" value="{{ word }}" maxlength=100>
                     {% else %}
-                    <input class="typeahead"  type="text" id="query" name="word" value="{{ strings['binary7'] }}" maxlength=100>
+                    <input class="typeahead"  type="text" id="query" name="word" value="{{ strings['binary12'] }}" maxlength=100>
                     {% endif %}
                     
             </div>
@@ -59,27 +66,31 @@
       </strong></span>
     <p>
       {% endif -%}
-
 {% if label == "1" %}
+<img class="pull-right img-responsive" src="https://shiftry.rusvectores.org/data/images/shiftry.png" width=100 alt="{{ strings['similar35'] }}" title="{{ strings['similar35'] }}">
 <h2><large><b>{{ strings['binary5'] }} {{ model1 }}-{{ model2 }}.</b></large></h2>
+<a href="{{ url }}{{lang}}/{{ word }}" target="_blank"><b>
+    {{ word.split('_')[0] }} <sub style="font-size:50%;">{{word.split('_')[-1]}}</sub></b>
+  </a>
 <p>{{ strings['binary6'] }} {{ proba }}</p>
 <!-- Word trajectory -->
 <center>
 <a href="{{ url }}data/images/tsne_shift/{{ fname }}.png" target="_blank">
-<img class="img-responsive" src = "{{ url }}data/images/tsne_shift/{{ fname }}.png" alt = "Word trajectory" title = "Word trajectory" style="max-width: 700px;">
+<img class="img-responsive" src = "{{ url }}data/images/tsne_shift/{{ fname }}.png" alt = "{{ strings['synraw16'] }}" title = "{{ strings['synraw16'] }}" style="max-width: 700px;">
 </a>
 </center>
 {% elif label == "0" %}
 <p><large><b>{{ strings['binary4'] }} {{ model1}}-{{ model2  }}.</b></large></p>
 <p>{{ strings['binary6'] }} {{ proba }}</p>
 {% endif %}
+
 {% if examples_type == 1 %}
 <h2>{{ strings['binary9'] }}
   <a href="{{ url }}{{lang}}/{{ word }}" target="_blank"><b>
     {{ word.split('_')[0] }} <sub style="font-size:50%;">{{word.split('_')[-1]}}</sub></b>
   </a>:</h2>
 <table class="table table-striped">
-  {% for key, values in examples.items() %}
+  {% for key, values in examples.items()|sort %}
     <thead>
       <tr>
         <th> <h3>{{ key }}</h3> </th>

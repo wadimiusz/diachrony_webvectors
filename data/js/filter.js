@@ -52,17 +52,23 @@ function formResultsUsingFilterList(resultArray, maxNumber){
 };
 
 $(document).ready(function(){
-  const MAXNUM = $("#result").data("visible");
-  const RESULTS = $("#result").data("result");
-  const MODELS = Object.keys(RESULTS);
   const FREQUENCIES = ['high', 'mid', 'low'];
   const FILTER = 'freq';
-  
+  const RESULTS = $("#result").data("result");
+
+  if (RESULTS !== undefined){
+  const MAXNUM = $("#result").data("visible");
+  const MODELS = Object.keys(RESULTS);
+
   let sortedResults = (makeListForEachFrequency(RESULTS, FREQUENCIES, MODELS, FILTER));
   let output = checkFrequencyMakeOutput(sortedResults, FREQUENCIES, FILTER);
   formResultsUsingFilterList(output, MAXNUM);
-  $(".checkbox").change(function(){
+
+  $("#frequencyCheck").change(function(){
     let output = checkFrequencyMakeOutput(sortedResults, FREQUENCIES, FILTER);
     formResultsUsingFilterList(output, MAXNUM);
   });
+ };
 })
+
+
