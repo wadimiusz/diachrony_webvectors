@@ -115,7 +115,7 @@ def frequency(word, model):
     tier = 'mid'
     if relative > 0.0001:
         tier = 'high'
-    elif relative < 0.000005:
+    elif relative < 0.00005:
         tier = 'low'
     return wordfreq, tier
 
@@ -386,10 +386,8 @@ def find_shifts(query):
         matrix2[nr, :] = model2[word]
     sims = (matrix1 * matrix2).sum(axis=1)
     min_sims = np.argsort(sims)  # [:n]
-    print(min_sims)
     # min_sims = np.argsort(sims)[::-1][:n]
     # print(min_sims)
-    print(sims[min_sims[0]])
     results['neighbors'] = list()
     results['frequencies'] = dict()
     freq_type_num = {"low": 0, "mid": 0, "high": 0}

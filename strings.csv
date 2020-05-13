@@ -104,9 +104,9 @@ frequency1,Частотность слова:,Word frequency:
 frequency2,Высокая,High
 frequency3,Средняя,Medium
 frequency4,Низкая,Low
-frequency5,Высокочастотные слова: доля в корпусе выше 0.00001,Very frequent words: corpus ratio higher than 0.00001
-frequency6,Среднечастотные слова: доля в корпусе от 0.0000005 до 0.00001,Mid-frequent words: corpus ratio from 0.0000005 to 0.00001
-frequency7,Низкочастотные слова: доля в корпусе ниже 0.0000005,Rare words: corpus ratio less than 0.0000005
+frequency5,Высокочастотные слова: доля в корпусе выше 0.0001,Very frequent words: corpus ratio higher than 0.0001
+frequency6,Среднечастотные слова: доля в корпусе от 0.00005 до 0.0001,Mid-frequent words: corpus ratio from 0.00005 to 0.0001
+frequency7,Низкочастотные слова: доля в корпусе ниже 0.00005,Rare words: corpus ratio less than 0.00005
 pairwise1,Извлечение семантических сдвигов,Semantic shifts extraction
 pairwise2,Первый год,First year
 pairwise3,Второй год,Second year
