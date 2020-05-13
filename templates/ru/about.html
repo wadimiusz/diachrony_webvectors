@@ -7,20 +7,20 @@
 {% block content %}
 <img class="pull-right img-rounded img-responsive" title="ShiftRy" alt="ShiftRy" src="/data/images/shiftry.png"/>
         <h1>Что такое ShiftRy</h1>
-<p><i>ShiftRy</i> - это веб-сервис для анализа диахронических изменений в употреблении слов в российских новостях. Он назван в честь покемона Шифтри, внешне похожего на японских <a href="https://ru.wikipedia.org/wiki/%D0%A2%D1%8D%D0%BD%D0%B3%D1%83" target="_blank">тэнгу</a>.
-Мы используем диахронические дистрибутивные модели, обученные на большом русском новостном корпусе, включающем тексты с 2010 по 2019 годы.</p>
+<p><i>ShiftRy</i> - это веб-сервис для анализа диахронических изменений в употреблении слов в российских новостях. Он назван в честь покемона Шифтри (англ. shift - &laquo;сдвиг&raquo;), внешне похожего на японских <a href="https://ru.wikipedia.org/wiki/%D0%A2%D1%8D%D0%BD%D0%B3%D1%83" target="_blank">тэнгу</a>.
+Мы используем диахронические дистрибутивные модели, обученные на большом корпусе русскоязычных новостных текстов, опубликованных в период с 2010 по 2020 год.</p>
 <p>Вы можете <a href="/">исследовать историю семантических сдвигов любого заданного слова</a> или <a href="/ru/pairwise/">получить списки слов, упорядоченных по силе семантических изменений</a> между двумя данными годами.
-Также мы предоставляем визуализации "траекторий" слов через время, от одних значений к другим.
+Также мы предоставляем визуализации &laquo;траекторий&raquo; слов через время, от одних значений к другим.
 
 Возможно <a href="/ru/binary/">получить корпусные примеры употребления конкретного слова до и после семантического сдвига</a>.</p>
 <p>Мы планируем обновлять <i>ShiftRy</i> ежегодно.</p>
 
 <h2>Источники новостных текстов</h2>
 <ol>
-<li><p><a href="https://www.fontanka.ru/">Фонтанка</a></p></li>
-<li><p><a href="https://www.gazeta.ru/" target="_blank">Газета.ру</a></p></li>
-<li><p><a href="https://www.interfax.ru/" target="_blank">Интерфакс</a></p></li>
-<li><p><a href="https://iz.ru/" target="_blank">Известия</a></p></li>
+<li><p><a href="https://www.fontanka.ru/">Фонтанка</a> <i>(только до 2020)</i></p></li>
+<li><p><a href="https://www.gazeta.ru/" target="_blank">Газета.ру</a> <i>(только до 2020)</i></p></li>
+<li><p><a href="https://www.interfax.ru/" target="_blank">Интерфакс</a> <i>(только до 2020)</i></p></li>
+<li><p><a href="https://iz.ru/" target="_blank">Известия</a> <i>(только до 2020)</i></p></li>
 <li><p><a href="https://www.kp.ru/" target="_blank">Комсомольская правда</a></p></li>
 <li><p><a href="https://lenta.ru/" target="_blank">Лента.ру</a></p></li>
 <li><p><a href="https://novayagazeta.ru/" target="_blank">Новая Газета</a></p></li>
@@ -30,9 +30,9 @@
 </ol>
 
 <h2 id="models">Диахронические дистрибутивные модели</h2>
-<p>Векторные семантические модели (word embeddings), используемые на этом сайте, были обучены на новостных текстах, опубликованных российскими СМИ в период между 2010 и 2019 годами.
-Полный корпус за 10 лет содержит около 156 миллионов токенов, с годовыми размерами подкорпусов от 9 миллионов (2014) до 20 миллионов (2015) токенов.
-Модели были выровнены при помощи Procrustes transformation, и полностью совместимы друг с другом.</p>
+<p>Векторные семантические модели (word embeddings) на этом сайте были обучены на новостных текстах, опубликованных российскими СМИ в период между 2010 и 2020 годами.
+Полный корпус за 11 лет содержит около 185 миллионов слов, с годовыми размерами подкорпусов от 9 миллионов (2014) до 29 миллионов (2020) слов.
+Модели были выровнены при помощи <a target="_blank" href="https://en.wikipedia.org/wiki/Procrustes_transformation">Procrustes transformation</a>, и полностью совместимы друг с другом.</p>
 <p>Скачать модели:</p>
 <ul>
 <li> <a href="https://rusvectores.org/news_history/models/shiftry/2010_shiftry.vec.gz">2010 год</a> </li>
@@ -45,6 +45,7 @@
 <li> <a href="https://rusvectores.org/news_history/models/shiftry/2017_shiftry.vec.gz">2017 год</a> </li>
 <li> <a href="https://rusvectores.org/news_history/models/shiftry/2018_shiftry.vec.gz">2018 год</a> </li>
 <li> <a href="https://rusvectores.org/news_history/models/shiftry/2019_shiftry.vec.gz">2019 год</a> </li>
+<li> <a href="https://rusvectores.org/news_history/models/shiftry/2020_shiftry.vec.gz">2020 год</a> (до июня) </li>
 </ul>
 
 <hr/>
@@ -64,5 +65,4 @@
     <li>Rodina, J., Bakshandaeva, D., Fomin, V., Kutuzov, A., Touileb, S., & Velldal, E. (2019). <a href="https://www.aclweb.org/anthology/W19-4725/">Measuring diachronic evolution of evaluative adjectives with word embeddings: the case for English, Norwegian, and Russian.</a> In Proceedings of the 1st International Workshop on Computational Approaches to Historical Language Change (pp. 202-209).</li>
     <li>Andrey Kutuzov, Vadim Fomin, Vladislav Mikhailov, Julia Rodina (2020). <a href="https://shiftry.rusvectores.org/static/shiftry.pdf">ShiftRy: Web Service for Diachronic Analysis of Russian News</a>. In Proceedings of the International Conference “Dialog”</li>
 </ul>
-<p>Исходный код сайта доступен <a href="https://github.com/wadimiusz/diachrony_webvectors">здесь</a>.</p>
 {% endblock %}

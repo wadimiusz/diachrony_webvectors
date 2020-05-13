@@ -553,8 +553,15 @@ def pairwise_page(lang):
         models_row = {}
         inferred = set()
         frequencies = {}
-        model1 = request.form.getlist("model1")[0]
-        model2 = request.form.getlist("model2")[0]
+        models = request.form.getlist("models")
+        if len(models) != 2:
+            error_value = 'Select 2 years!'
+            return render_template("pairwise.html", error=error_value, models=our_models,
+                                   tags=tags, url=url, usermodels=[defaultmodel],
+                                   tags2show=exposed_tags, other_lang=other_lang,
+                                   languages=languages, userpos=pos, checked_model1=list(our_models.keys())[-8],
+                                   checked_model2=list(our_models.keys())[-7])
+        model1, model2 = models
 
         message = {"operation": "5", "model1": model1, "model2": model2,
                    "n": 100, "pos": pos}
@@ -565,8 +572,7 @@ def pairwise_page(lang):
             inferred.add(model1)
 
         return render_template('pairwise.html', list_value=models_row, pos=pos,
-                               number=2, models=our_models,
-                               tags=tags, other_lang=other_lang, languages=languages,
+                               models=our_models, tags=tags, other_lang=other_lang, languages=languages,
                                tags2show=exposed_tags, url=url,
                                userpos=pos, inferred=inferred, frequencies=frequencies,
                                visible_neighbors=10, checked_model1=model1, checked_model2=model2)
@@ -574,8 +580,8 @@ def pairwise_page(lang):
     return render_template('pairwise.html', models=our_models, tags=tags, other_lang=other_lang,
                            languages=languages, url=url, usermodels=[defaultmodel],
                            tags2show=exposed_tags, userpos=['NOUN'],
-                           checked_model1=list(our_models.keys())[-7],
-                           checked_model2=list(our_models.keys())[-6])
+                           checked_model1=list(our_models.keys())[-8],
+                           checked_model2=list(our_models.keys())[-7])
 
 
 @wvectors.route(url + '<lang:lang>/visual/', methods=['GET', 'POST'])

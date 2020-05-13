@@ -9,4 +9,4 @@ identifier	name	path	string	default	tags	algo	size
 2017	Russian News 2017	/mnt/data/NewsHistory/micro/models/aligned_to_2017/2017_rnc_incremental.model	similar2017	True	True	word2vec	18262075
 2018	Russian News 2018	/mnt/data/NewsHistory/micro/models/aligned_to_2017/2018_rnc_incremental.model	similar2018	True	True	word2vec	10442011
 2019	Russian News 2019	/mnt/data/NewsHistory/micro/models/aligned_to_2017/2019_rnc_incremental.model	similar2019	True	True	word2vec	10672777
-2019	Russian News 2020	/mnt/data/NewsHistory/micro/models/aligned_to_2017/2020_rnc_incremental.model	similar2020	True	True	word2vec	21218583
+2020	Russian News 2020	/mnt/data/NewsHistory/micro/models/aligned_to_2017/2020_rnc_incremental.model	similar2020	True	True	word2vec	21218583

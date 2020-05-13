@@ -29,7 +29,7 @@ p{
   color: #ecf0f1;
 }
 .navbar-primary .navbar-nav > li > a:hover, .navbar-primary .navbar-nav > li > a:focus {
-  color: #ecdbff;
+  color: brown;
 }
 .navbar-primary .navbar-nav > li > .dropdown-menu {
   background-color: brown;
