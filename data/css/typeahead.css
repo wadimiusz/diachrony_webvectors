@@ -1,7 +1,8 @@
 .typeahead,
 .tt-query,
 .tt-hint {
-  width: 350px;
+  width: 100%;
+  max-width: 450px;
   height: 40px;
   padding: 2px 12px;
   font-size: 20px;

@@ -8,6 +8,10 @@ p{
   font-size: 16px;
 }
 
+.input-group {
+ margin-bottom: 10px;
+}
+
 .navbar-primary {
   background-color: brown;
   border-color: #286090;

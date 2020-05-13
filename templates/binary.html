@@ -16,7 +16,7 @@
 <div id="queryform">
 <form id="inputform" action="#" method=post>
         <div class="checkbox">
-          <p><em>{{strings['pairwise2']}}</em></p>
+          <p>{{strings['pairwise2']}}</p>
           <fieldset>
             <!-- A cicle for models to work with -->
             {%- for m in models %}
@@ -28,7 +28,7 @@
         </div>
 
         <div class="checkbox">
-          <p><em>{{strings['pairwise3']}}</em></p>
+          <p>{{strings['pairwise3']}}</p>
           <fieldset>
             <!-- A cicle for models to work with -->
             {%- for m in models %}
@@ -42,9 +42,9 @@
             <div class="form-group">
                     {{ strings['binary2'] }}
                     {% if word %}
-                    <input class="typeahead"  type="text" id="query" name="word" value="{{ word }}" maxlength=100>
+                    <input class="typeahead"  type="text" id="query" name="word" value="{{ word }}" maxlength=40>
                     {% else %}
-                    <input class="typeahead"  type="text" id="query" name="word" value="{{ strings['binary12'] }}" maxlength=100>
+                    <input class="typeahead"  type="text" id="query" name="word" value="{{ strings['binary12'] }}" maxlength=40>
                     {% endif %}
                     
             </div>

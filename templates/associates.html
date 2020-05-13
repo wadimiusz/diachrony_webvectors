@@ -34,7 +34,7 @@
         </div>
         <!-- The checkbox for model selection -->
         <div class="checkbox">
-          <p><em>{{strings['similar3']}}</em></p>
+          <p>{{strings['similar3']}}</p>
           <fieldset>
             <!-- A cicle for models to work with -->
             {%- for m in models %}
@@ -48,7 +48,7 @@
         {% if tags -%}
         <!-- The header "Show only:" -->
         <div class="radio">
-          <p><em>{{strings['similar9']}}</em></p>
+          <p>{{strings['similar9']}}</p>
           <!-- radiobuttons for pos selection -->
           <!-- Within the cicle buttons with tags are added for the selected posses in the "tags.tsv" file. -->
           {%- for tag in tags2show %}
