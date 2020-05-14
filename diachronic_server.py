@@ -342,7 +342,6 @@ def multiple_neighbors(query):
 
     model_year_list = sorted(query["model"], reverse=True)
     model_list = [models_dic[year] for year in model_year_list]
-    # is_shift = is_semantic_shift(target_word, model_year_list)
 
     word, target_word_pos = target_word.split('_')
     target_word = word.lower() + '_' + target_word_pos
@@ -385,7 +384,6 @@ def multiple_neighbors(query):
         "word_list": word_list,
         "vector_list": vector_list,
         "model_number": actual_years
-        # "is_shift": is_shift
     }
 
     return result
@@ -407,6 +405,7 @@ def classify_semantic_shifts(query):
     model2_name = query["model2"]
     model1 = models_dic[model1_name]
     model2 = models_dic[model2_name]
+    frequencies = {model1_name: frequency(word, model1_name), model2_name: frequency(word, model2_name)}
 
     if word not in model1:
         return {word + " is unknown to the model": True}
@@ -435,7 +434,7 @@ def classify_semantic_shifts(query):
             examples = None
     else:
         examples = None
-    return {"proba": str(proba), "label": str(label), "examples": examples}
+    return {"proba": str(proba), "label": str(label), "examples": examples, "frequencies": frequencies}
 
 operations = {
     '1': find_synonyms,

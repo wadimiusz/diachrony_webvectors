@@ -35,8 +35,7 @@
         <!-- When the cursor hovers over the word we can see pos and frequency (title).
           The word's color depends on its frequency.-->
         <a href="{{ url }}{{lang}}/{{word}}"
-        title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[usermodels[0]][word][0]}}"
-        class="frequency-{{frequencies[usermodels[0]][word][1]}}">
+        title="{{strings['synraw15']}} {{ word.split('_')[-1] }}">
         <i>{{ word.split('_')[0].replace('::', ' ') }}</i></a>
       </strong>
     </h3>
@@ -65,7 +64,9 @@
     <div class="row" id="result" data-result ='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
       {% for model in list_value|sort if list_value[model] != "Unknown!" -%}
       <div class="col-md-4">
-        <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}">{{ strings[models[model]]}}</a>
+        <h4><strong><a href="{{ url }}{{lang}}/models#{{model}}" title="{{ word}} {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
+        class="frequency-{{frequencies[model][word][1]}}">
+        {{ strings[models[model]]}}</a>
                 {% if loop.index > 1 %}
       {% if labels[loop.index-2] == "1" %}
       <img class="pull-right img-responsive" src="https://shiftry.rusvectores.org/data/images/shiftry.png" width=50 alt="{{ strings['similar35'] }}" title="{{ strings['similar35'] }}">

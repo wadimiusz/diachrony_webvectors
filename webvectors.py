@@ -768,6 +768,7 @@ def binary(lang):
         label = result["label"]
         proba = float(result["proba"])
         examples = result["examples"]
+        frequencies = result["frequencies"]
         if type(examples) is dict:
             examples_type = 1
         else:
@@ -797,7 +798,7 @@ def binary(lang):
             if trajectory_result['word_list']:
                 tsne_semantic_shifts(trajectory_result, fname)
             return render_template("binary.html",
-                                   model1=model1, model2=model2,
+                                   model1=model1, model2=model2, frequencies=frequencies,
                                    other_lang=other_lang, languages=languages,
                                    models=our_models, url=url,
                                    label=label, proba="{:.2f}".format(proba),
@@ -805,7 +806,7 @@ def binary(lang):
                                    examples_type=examples_type, fname=fname)
 
         return render_template("binary.html",
-                               model1=model1, model2=model2,
+                               model1=model1, model2=model2, frequencies=frequencies,
                                other_lang=other_lang, languages=languages,
                                models=our_models, url=url,
                                label=label, proba="{:.2f}".format(proba),

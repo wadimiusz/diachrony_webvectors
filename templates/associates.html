@@ -82,8 +82,7 @@
         <!-- When the cursor hovers over the word we can see pos and frequency (title).
           The word's color depends on its frequency.-->
         <a href="{{ url }}{{lang}}/{{word}}"
-        title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[usermodels[0]][word][0]}}"
-        class="frequency-{{frequencies[usermodels[0]][word][1]}}">
+        title="{{strings['synraw15']}} {{ word.split('_')[-1] }}">
         <i>{{ word.split('_')[0].replace('::', ' ') }}</i></a>
       </strong>
       ({{ pos }})
@@ -113,7 +112,9 @@
     <div class="row" id="result" data-result ='{{ frequencies|tojson }}' data-visible="{{ visible_neighbors }}">
       {% for model in list_value|sort -%}
       <div class="col-md-4">
-        <h4><strong><a href="{{ url }}{{lang}}/about#models">{{ strings[models[model]]}}</a>
+        <h4><strong><a href="{{ url }}{{lang}}/about#models" title="{{ word}} {{strings['synraw14']}} {{ frequencies[model][word][0]}}"
+        class="frequency-{{frequencies[model][word][1]}}"
+	>{{ strings[models[model]]}}</a>
                 {% if loop.index > 1 %}
       {% if labels[loop.index-2] == "1" %}
       {{ strings['similar35'] }} ({{'%0.2f' % probas[loop.index-2] }})

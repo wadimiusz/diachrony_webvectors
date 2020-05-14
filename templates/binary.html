@@ -82,7 +82,7 @@
   {% for key, values in examples.items()|sort %}
     <thead>
       <tr>
-        <th> <h3>{{ key }}</h3> </th>
+        <th> <h3> <span class="frequency-{{frequencies[key][1]}}"> {{ key }} </span> </h3> ({{ strings['frequency1'] }} {{ frequencies[key][0]}}) </th>
       </tr>
     </thead>
     {% for value in values %}
