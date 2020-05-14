@@ -16,7 +16,6 @@ import numpy as np
 from flask import g
 from flask import render_template, Blueprint, redirect, Response
 from flask import request
-
 from plotting import embed, tsne_semantic_shifts
 from sparql import getdbpediaimage
 # import strings data from respective module
@@ -39,13 +38,11 @@ languages_list = config.get('Languages', 'interface_languages').split(',')
 
 if lemmatize:
     from lemmatizer import tag_ud
-
     tagger_port = config.getint('Sockets', 'tagger_port')
 
 tensorflow_integration = config.getboolean('Other', 'tensorflow_projector')
 if tensorflow_integration:
     from simplegist import Simplegist
-
     git_username = config.get('Other', 'git_username')
     git_token = config.get('Other', 'git_token')
     ghGist = Simplegist(username=git_username, api_token=git_token)
@@ -245,8 +242,7 @@ def word_page(lang, word):
     g.lang = lang
     s = set()
     s.add(lang)
-    other_lang = list(set(language_dicts.keys()) - s)[
-        0]  # works only for two languages
+    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
     g.strings = language_dicts[lang]
     query = process_query(word)
     model_value = sorted(our_models.keys())
@@ -320,9 +316,6 @@ def word_page(lang, word):
                                usermodels=[defaultmodel],
                                tags2show=exposed_tags)
 
-    if not os.path.isdir("data/images/heatmaps"):
-        os.mkdir("data/images/heatmaps")
-
     fname = m.hexdigest()
 
     trajectory_message = {'operation': '6', 'query': query, 'pos': pos,
@@ -395,8 +388,8 @@ def associates_page(lang):
         list_data = request.form['list_query']
 
         # Nearest associates queries
-        if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').replace('::', ''). \
-                replace(' ', '').isalnum():
+        if list_data != 'dummy' and list_data.replace('_', '').replace('-', '').\
+                replace('::', '').replace(' ', '').isalnum():
             list_data = list_data.strip()
             query = process_query(list_data)
 
@@ -447,8 +440,8 @@ def associates_page(lang):
 
             for model in model_value:
                 if not model.strip() in our_models:
-                    return render_template('associates.html', other_lang=other_lang, languages=languages,
-                                           url=url, usermodels=model_value)
+                    return render_template('associates.html', other_lang=other_lang, url=url,
+                                           languages=languages, usermodels=model_value)
 
             results = map(get_model_neighbors, [(x, query, pos) for x in model_value])
             results = sorted(results)
@@ -480,9 +473,6 @@ def associates_page(lang):
             hashword = ":".join([",".join([str(i) for i in j]) for j in model_value] + [query, pos])
             hashword = hashword.encode('ascii', 'backslashreplace')
             m.update(hashword)
-
-            if not os.path.isdir("data/images/heatmaps"):
-                os.mkdir("data/images/heatmaps")
 
             fname = m.hexdigest()
 
@@ -531,15 +521,6 @@ def associates_page(lang):
                            tags2show=exposed_tags)
 
 
-def get_jaccard_coeff(neighbors1, neighbors2):
-    return len(set(neighbors1).intersection(neighbors2)) / \
-           len(set(neighbors1).union(neighbors2))
-
-
-def get_heatmap(neighbors):
-    return [[get_jaccard_coeff(a, b) for b in neighbors] for a in neighbors]
-
-
 @wvectors.route(url + "<lang:lang>/pairwise/", methods=["GET", "POST"])
 def pairwise_page(lang):
     global our_models
@@ -557,9 +538,9 @@ def pairwise_page(lang):
         if len(models) != 2:
             error_value = 'Select 2 years!'
             return render_template("pairwise.html", error=error_value, models=our_models,
-                                   tags=tags, url=url, usermodels=[defaultmodel],
+                                   tags=tags, url=url, usermodels=[defaultmodel],  userpos=pos,
                                    tags2show=exposed_tags, other_lang=other_lang,
-                                   languages=languages, userpos=pos, checked_model1=list(our_models.keys())[-8],
+                                   languages=languages, checked_model1=list(our_models.keys())[-8],
                                    checked_model2=list(our_models.keys())[-7])
         model1, model2 = models
 
@@ -571,11 +552,11 @@ def pairwise_page(lang):
         if 'inferred' in result:
             inferred.add(model1)
 
-        return render_template('pairwise.html', list_value=models_row, pos=pos,
-                               models=our_models, tags=tags, other_lang=other_lang, languages=languages,
-                               tags2show=exposed_tags, url=url,
-                               userpos=pos, inferred=inferred, frequencies=frequencies,
-                               visible_neighbors=10, checked_model1=model1, checked_model2=model2)
+        return render_template('pairwise.html', list_value=models_row, pos=pos, userpos=pos,
+                               models=our_models, tags=tags, other_lang=other_lang, url=url,
+                               tags2show=exposed_tags, languages=languages,
+                               inferred=inferred, frequencies=frequencies, visible_neighbors=10,
+                               checked_model1=model1, checked_model2=model2)
 
     return render_template('pairwise.html', models=our_models, tags=tags, other_lang=other_lang,
                            languages=languages, url=url, usermodels=[defaultmodel],
@@ -638,8 +619,8 @@ def visual_page(lang):
             frequencies = {}
             for model in model_value:
                 if not model.strip() in our_models:
-                    return render_template('associates.html', other_lang=other_lang, languages=languages,
-                                           url=url, usermodels=model_value)
+                    return render_template('associates.html', other_lang=other_lang, url=url,
+                                           languages=languages, usermodels=model_value)
                 frequencies[model] = {}
                 unknown[model] = set()
                 words2vis = querywords
@@ -660,8 +641,6 @@ def visual_page(lang):
                     os.makedirs(root + 'data/images/pcaplots')
                 if not (os.access(root + 'data/images/tsneplots/' + plotfile_tsne, os.F_OK)
                         and os.access(root + 'data/images/tsneplots/' + plotfile_pca, os.F_OK)):
-                    # print('No previous image found', root + 'data/images/tsneplots/' + plotfile,
-                    #       file=sys.stderr)
                     vectors = []
                     for w in words2vis:
                         if model_props[model]['tags'] == 'False':
@@ -730,9 +709,9 @@ def binary(lang):
             models = request.form.getlist("models")
             if len(models) != 2:
                 error_value = 'Select 2 years!'
-                return render_template('binary.html', error=error_value, model1=list(our_models.keys())[-3],
-                               model2=list(our_models.keys())[-2], other_lang=other_lang, languages=languages,
-                                       models=our_models, url=url)
+                return render_template('binary.html', error=error_value, models=our_models, url=url,
+                                       other_lang=other_lang, model1=list(our_models.keys())[-3],
+                                       model2=list(our_models.keys())[-2], languages=languages)
 
             model1, model2 = models
             if model1 == model2:
@@ -930,17 +909,6 @@ def similarity_api(model, wordpair):
     return str(sim) + '\t' + cleanword0 + '\t' + cleanword1 + '\t' + model
 
 
-@wvectors.route(url + '<lang:lang>/models/')
-def models_page(lang):
-    g.lang = lang
-    s = set()
-    s.add(lang)
-    other_lang = list(set(language_dicts.keys()) - s)[0]  # works only for two languages
-    g.strings = language_dicts[lang]
-    return render_template(
-        '%s/models.html' % lang, other_lang=other_lang, languages=languages, url=url)
-
-
 @wvectors.route(url + '<lang:lang>/about/')
 def about_page(lang):
     g.lang = lang
@@ -957,8 +925,9 @@ def about_page(lang):
 @wvectors.route(url + 'about/', methods=['GET', 'POST'])
 @wvectors.route(url + 'similar/', methods=['GET', 'POST'])
 @wvectors.route(url + 'associates/', methods=['GET', 'POST'])
+@wvectors.route(url + 'pairwise/', methods=['GET', 'POST'])
+@wvectors.route(url + 'binary/', methods=['GET', 'POST'])
 @wvectors.route(url + 'visual/', methods=['GET', 'POST'])
-@wvectors.route(url + 'models/', methods=['GET', 'POST'])
 @wvectors.route(url, methods=['GET', 'POST'])
 def redirect_main():
     req = request.path.split('/')[-2]

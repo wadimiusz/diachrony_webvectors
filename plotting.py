@@ -25,7 +25,6 @@ def tsne_semantic_shifts(result, fname):
     :result: a dictionary containing word_list and vector_list from aligned models
     """
     np.random.seed(42)
-    pos = result["pos"]
     word_list = result["word_list"]
     vector_list = result["vector_list"]
     model_number = result["model_number"]

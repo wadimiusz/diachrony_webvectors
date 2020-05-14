@@ -1,3 +1,4 @@
+werkzeug
 joblib
 pandas
 flask

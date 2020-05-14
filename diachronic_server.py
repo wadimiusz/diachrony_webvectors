@@ -64,7 +64,6 @@ tags = config.getboolean('Tags', 'use_tags')
 PICKLES = config.get('Files and directories', 'pickles')
 CORPORA = config.get('Files and directories', 'corpora')
 
-
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 # Loading models
@@ -104,6 +103,26 @@ shift_classifier = joblib.load("clf.pkl")
 
 # Vector functions
 
+def find_variants(word, usermodel):
+    # Find variants of query word in the model
+    model = models_dic[usermodel]
+    results = None
+    candidates_set = set()
+    candidates_set.add(word.upper())
+    if tags and our_models[usermodel]['tags'] == 'True':
+        candidates_set.add(word.split('_')[0] + '_X')
+        candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
+        candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
+    else:
+        candidates_set.add(word.lower())
+        candidates_set.add(word.capitalize())
+    for candidate in candidates_set:
+        if candidate in model.wv.vocab:
+            results = candidate
+            break
+    return results
+
+
 def frequency(word, model):
     corpus_size = our_models[model]['corpus_size']
     if word not in models_dic[model].wv.vocab:
@@ -129,25 +148,11 @@ def find_synonyms(query):
     qf = q
     model = models_dic[usermodel]
     if qf not in model.wv.vocab:
-        candidates_set = set()
-        candidates_set.add(q.upper())
-        if tags and our_models[usermodel]['tags'] == 'True':
-            candidates_set.add(q.split('_')[0] + '_X')
-            if q.count("_") > 0:
-                candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
-                candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
-        else:
-            candidates_set.add(q.lower())
-            candidates_set.add(q.capitalize())
-        noresults = True
-        for candidate in candidates_set:
-            if candidate in model.wv.vocab:
-                qf = candidate
-                noresults = False
-                break
-        if noresults:
-            if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(qf):
+        qf = find_variants(qf, usermodel)
+        if not qf:
+            if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q):
                 results['inferred'] = True
+                qf = q
             else:
                 results[q + " is unknown to the model"] = True
                 results['frequencies'][q] = frequency(q, usermodel)
@@ -173,8 +178,6 @@ def find_synonyms(query):
         results['frequencies'][res[0]] = (freq, tier)
     raw_vector = model[qf]
     results['vector'] = raw_vector.tolist()
-    # print("SYNONYM", results['neighbors']) # debug
-    # print("SYNONYM FREQUENCIES", results['frequencies']) # debug
     return results
 
 
@@ -188,46 +191,20 @@ def find_similarity(query):
         qf1 = q1
         qf2 = q2
         if q1 not in model.wv.vocab:
-            candidates_set = set()
-            candidates_set.add(q1.upper())
-            if tags and our_models[usermodel]['tags'] == 'True':
-                candidates_set.add(q1.split('_')[0] + '_X')
-                candidates_set.add(q1.split('_')[0].lower() + '_' + q1.split('_')[1])
-                candidates_set.add(q1.split('_')[0].capitalize() + '_' + q1.split('_')[1])
-            else:
-                candidates_set.add(q1.lower())
-                candidates_set.add(q1.capitalize())
-            noresults = True
-            for candidate in candidates_set:
-                if candidate in model.wv.vocab:
-                    qf1 = candidate
-                    noresults = False
-                    break
-            if noresults:
-                if our_models[usermodel]['algo'] == 'fasttext':
+            qf1 = find_variants(qf1, usermodel)
+            if not qf1:
+                if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q1):
                     results['inferred'] = True
+                    qf1 = q1
                 else:
                     results["Unknown to the model"] = q1
                     return results
         if q2 not in model.wv.vocab:
-            candidates_set = set()
-            candidates_set.add(q2.upper())
-            if tags and our_models[usermodel]['tags'] == 'True':
-                candidates_set.add(q2.split('_')[0] + '_X')
-                candidates_set.add(q2.split('_')[0].lower() + '_' + q2.split('_')[1])
-                candidates_set.add(q2.split('_')[0].capitalize() + '_' + q2.split('_')[1])
-            else:
-                candidates_set.add(q2.lower())
-                candidates_set.add(q2.capitalize())
-            noresults = True
-            for candidate in candidates_set:
-                if candidate in model.wv.vocab:
-                    qf2 = candidate
-                    noresults = False
-                    break
-            if noresults:
-                if our_models[usermodel]['algo'] == 'fasttext':
+            qf2 = find_variants(qf2, usermodel)
+            if not qf2:
+                if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q2):
                     results['inferred'] = True
+                    qf2 = q2
                 else:
                     results["Unknown to the model"] = q2
                     return results
@@ -248,24 +225,11 @@ def vector(query):
     results['frequencies'][q] = frequency(q, usermodel)
     model = models_dic[usermodel]
     if q not in model.wv.vocab:
-        candidates_set = set()
-        candidates_set.add(q.upper())
-        if tags and our_models[usermodel]['tags'] == 'True':
-            candidates_set.add(q.split('_')[0] + '_X')
-            candidates_set.add(q.split('_')[0].lower() + '_' + q.split('_')[1])
-            candidates_set.add(q.split('_')[0].capitalize() + '_' + q.split('_')[1])
-        else:
-            candidates_set.add(q.lower())
-            candidates_set.add(q.capitalize())
-        noresults = True
-        for candidate in candidates_set:
-            if candidate in model.wv.vocab:
-                qf = candidate
-                noresults = False
-                break
-        if noresults:
-            if our_models[usermodel]['algo'] == 'fasttext':
+        qf = find_variants(qf, usermodel)
+        if not qf:
+            if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q):
                 results['inferred'] = True
+                qf = q
             else:
                 results[q + " is unknown to the model"] = True
                 return results
@@ -288,17 +252,14 @@ def find_shifts(query):
     pos = query.get("pos")
     n = query['n']
     results = {'frequencies': {}}
-    # procrustes_aligner = get_global_anchors_model(model1, model2)
     shared_voc = list(set.intersection(set(model1.index2word), set(model2.index2word)))
-    matrix1 = np.zeros((len(shared_voc), 300))
-    matrix2 = np.zeros((len(shared_voc), 300))
+    matrix1 = np.zeros((len(shared_voc), model1.vector_size))
+    matrix2 = np.zeros((len(shared_voc), model2.vector_size))
     for nr, word in enumerate(shared_voc):
         matrix1[nr, :] = model1[word]
         matrix2[nr, :] = model2[word]
     sims = (matrix1 * matrix2).sum(axis=1)
     min_sims = np.argsort(sims)  # [:n]
-    # min_sims = np.argsort(sims)[::-1][:n]
-    # print(min_sims)
     results['neighbors'] = list()
     results['frequencies'] = dict()
     freq_type_num = {"low": 0, "mid": 0, "high": 0}
@@ -405,7 +366,8 @@ def classify_semantic_shifts(query):
     model2_name = query["model2"]
     model1 = models_dic[model1_name]
     model2 = models_dic[model2_name]
-    frequencies = {model1_name: frequency(word, model1_name), model2_name: frequency(word, model2_name)}
+    frequencies = {model1_name: frequency(word, model1_name),
+                   model2_name: frequency(word, model2_name)}
 
     if word not in model1:
         return {word + " is unknown to the model": True}
@@ -434,7 +396,9 @@ def classify_semantic_shifts(query):
             examples = None
     else:
         examples = None
-    return {"proba": str(proba), "label": str(label), "examples": examples, "frequencies": frequencies}
+    return {"proba": str(proba), "label": str(label), "examples": examples,
+            "frequencies": frequencies}
+
 
 operations = {
     '1': find_synonyms,

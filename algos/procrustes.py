@@ -1,8 +1,7 @@
+from typing import Optional
 import gensim
 import numpy as np
 from utils import log
-from typing import Optional
-from tqdm.auto import tqdm
 
 
 def smart_procrustes_align_gensim(base_embed: gensim.models.KeyedVectors,
@@ -50,7 +49,8 @@ def smart_procrustes_align_gensim(base_embed: gensim.models.KeyedVectors,
 
 
 class ProcrustesAligner(object):
-    def __init__(self, w2v1: gensim.models.KeyedVectors, w2v2: gensim.models.KeyedVectors, already_aligned=True):
+    def __init__(self, w2v1: gensim.models.KeyedVectors, w2v2: gensim.models.KeyedVectors,
+                 already_aligned=True):
         self.w2v1 = w2v1
         if already_aligned:
             self.w2v2 = w2v2

@@ -5,7 +5,6 @@ import pandas as pd
 from scipy import spatial
 from utils import log, format_time
 from nltk.stem.snowball import RussianStemmer
-from nltk.tokenize import word_tokenize
 
 
 class GetExamples:
@@ -34,7 +33,7 @@ class GetExamples:
             tokens = sentence.split()  # word_tokenize(sentence)
             for k, token in enumerate(tokens):
                 if stem in token.lower():
-                    tokens[k] = '<b><i>'+token+'</i></b>'
+                    tokens[k] = '<b><i>' + token + '</i></b>'
             samples_list[i] = ' '.join(tokens)
 
         return samples_list
@@ -43,9 +42,6 @@ class GetExamples:
 
         old_contexts = list()
         new_contexts = list()
-
-        # base_years = list()
-        # new_years = list()
 
         word = self.word
 
@@ -94,7 +90,8 @@ class GetExamples:
                         new_samples.append([split_lemmas, raw])
 
             except ValueError:
-                raise ValueError("Problem with", word, year, "because not enough samples found")
+                raise ValueError("Problem with", word, self.years,
+                                 "because not enough samples found")
 
         # Keep matrices of sentence vectors for future usage:
         old_samples_vec = np.zeros((len(old_samples), model1.vector_size), dtype='float32')
@@ -113,15 +110,6 @@ class GetExamples:
 
         # Find the pair of most distant sentences:
         most_distant_ids = np.unravel_index(np.argmax(distances), distances.shape)
-
-        # This is for debugging:
-
-        # max_distance = np.max(distances)
-        # most_distant_sentences = [old_samples[most_distant_ids[0]][1]]
-        # new_samples[most_distant_ids[1]][1]]
-        # print(most_distant_ids)
-        # print(max_distance)
-        # print(most_distant_sentences)
 
         # Reshaping most distant vectors a bit:
         vector0 = old_samples_vec[most_distant_ids[0]]
@@ -148,18 +136,8 @@ class GetExamples:
         old_contexts.append(five_old_samples)
         new_contexts.append(five_new_samples)
 
-        # base_years.append(self.years[0])
-        # new_years.append(self.years[1])
-
         log("")
         log("This took ", format_time(time.time() - start))
         log("")
-        # output_df = pd.DataFrame({"WORD": word, "BASE_YEAR": base_years,
-        #                           "OLD_CONTEXTS": old_contexts, "NEW_YEAR": new_years,
-        #                           "NEW_CONTEXTS": new_contexts})
-        # output_df.index.names = ["ID"]
-        # output_df.to_csv('contexts_by_year.csv')
-        # log('Contexts saved to contexts_by_year.csv')
 
         return {self.years[0]: old_contexts[0], self.years[1]: new_contexts[0]}
-

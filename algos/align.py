@@ -1,12 +1,9 @@
 # python3
 # coding: utf-8
 
-import gensim
-import logging
 import argparse
-from smart_open import open
-import numpy as np
-from os import path
+import logging
+import gensim
 from algos import smart_procrustes_align_gensim
 
 if __name__ == '__main__':
