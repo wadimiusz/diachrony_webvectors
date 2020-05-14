@@ -727,8 +727,14 @@ def binary(lang):
         if request.form.getlist("word"):  # First time click
             word = request.form.getlist("word")[0]
             word = process_query(word)
-            model1 = request.form.getlist("model1")[0]
-            model2 = request.form.getlist("model2")[0]
+            models = request.form.getlist("models")
+            if len(models) != 2:
+                error_value = 'Select 2 years!'
+                return render_template('binary.html', error=error_value, model1=list(our_models.keys())[-3],
+                               model2=list(our_models.keys())[-2], other_lang=other_lang, languages=languages,
+                                       models=our_models, url=url)
+
+            model1, model2 = models
             if model1 == model2:
                 error_value = "Identical models"
                 return render_template('binary.html', error=error_value, model1=model1,

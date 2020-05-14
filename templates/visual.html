@@ -41,21 +41,18 @@
     <p>{{strings['visual10']}}</p>
     <fieldset>
       {% for m in models %}
-      <label>
-      <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="model" value="{{ m }}">{{ strings[models[m]] }}
-      </label>
+      <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="model" id="m{{ m }}" value="{{ m }}">
+      <label for="m{{ m }}">{{ strings[models[m]] }}</label>
       {% endfor %}
     </fieldset>
   </div>
     <div class="checkbox">
     <p>{{strings['visual25']}}</p>
     <fieldset>
-      <label>
-      <input type="radio" {%if viz_method != "TSNE" %} checked {% endif %} name="viz_method" value="PCA">PCA
-      </label>
-      <label>
-      <input type="radio" {%if viz_method == "TSNE" %} checked {% endif %}name="viz_method" value="TSNE">TSNE
-      </label>
+      <input type="radio" {%if viz_method != "TSNE" %} checked {% endif %} name="viz_method" id="PCA" value="PCA">
+      <label for="PCA">PCA</label>
+      <input type="radio" {%if viz_method == "TSNE" %} checked {% endif %}name="viz_method" id="TSNE" value="TSNE">
+      <label for="TSNE">TSNE</label>
     </fieldset>
   </div>
   <button type="submit" class="btn btn-primary">{{strings['visual15']}}</button>
@@ -63,9 +60,10 @@
 {% if visual %}
 <h3>{{strings['visual3']}}</h3>
 {% for word in qwords %}
-<a href="{{ url }}{{lang}}/{{ visual|list|first }}/{{word}}/"
-{% if word in frequencies[visual|list|first] %}
-title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[visual|list|first][word][0]}}" {% if frequencies[visual|list|first][word][1] == 'high'%} style="color: green;"  {% elif frequencies[visual|list|first][word][1] == 'low' %} style="color: red;"  {% endif %}
+<a href="{{ url }}{{lang}}/{{word}}/"
+{% if word in frequencies[usermodels|list|last] %}
+title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[usermodels|list|last][word][0]}}" {% if frequencies[usermodels|list|last][word][1] == 'high'%} style="color: green;"  
+{% elif frequencies[usermodels|list|last][word][1] == 'low' %} style="color: red;"  {% endif %}
 {% endif %}
 >
 {{ word.split('_')[0].replace('::', ' ') }}</a>

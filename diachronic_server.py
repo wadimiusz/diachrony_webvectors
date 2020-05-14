@@ -239,95 +239,6 @@ def find_similarity(query):
     return results
 
 
-def scalculator(query):
-    q = query['query']
-    pos = query['pos']
-    usermodel = query['model']
-    nr_neighbors = query['nr_neighbors']
-    model = models_dic[usermodel]
-    results = {'neighbors': [], 'frequencies': {}}
-    positive_list = q[0]
-    negative_list = q[1]
-    plist = []
-    nlist = []
-    for word in positive_list:
-        if len(word) < 2:
-            continue
-        if word in model.wv.vocab:
-            plist.append(word)
-            continue
-        else:
-            candidates_set = set()
-            candidates_set.add(word.upper())
-            if tags and our_models[usermodel]['tags'] == 'True':
-                candidates_set.add(word.split('_')[0] + '_X')
-                candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
-                candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
-            else:
-                candidates_set.add(word.lower())
-                candidates_set.add(word.capitalize())
-            noresults = True
-            for candidate in candidates_set:
-                if candidate in model.wv.vocab:
-                    q = candidate
-                    noresults = False
-                    break
-            if noresults:
-                if our_models[usermodel]['algo'] == 'fasttext':
-                    results['inferred'] = True
-                else:
-                    results["Unknown to the model"] = word
-                    return results
-            else:
-                plist.append(q)
-    for word in negative_list:
-        if len(word) < 2:
-            continue
-        if word in model.wv.vocab:
-            nlist.append(word)
-            continue
-        else:
-            candidates_set = set()
-            candidates_set.add(word.upper())
-            if tags and our_models[usermodel]['tags'] == 'True':
-                candidates_set.add(word.split('_')[0] + '_X')
-                candidates_set.add(word.split('_')[0].lower() + '_' + word.split('_')[1])
-                candidates_set.add(word.split('_')[0].capitalize() + '_' + word.split('_')[1])
-            else:
-                candidates_set.add(word.lower())
-                candidates_set.add(word.capitalize())
-            noresults = True
-            for candidate in candidates_set:
-                if candidate in model.wv.vocab:
-                    q = candidate
-                    noresults = False
-                    break
-            if noresults:
-                if our_models[usermodel]['algo'] == 'fasttext':
-                    results['inferred'] = True
-                else:
-                    results["Unknown to the model"] = word
-                    return results
-            else:
-                nlist.append(q)
-    if pos == "ALL":
-        for w in model.wv.most_similar(positive=plist, negative=nlist, topn=nr_neighbors):
-            results['neighbors'].append(w)
-    else:
-        for w in model.wv.most_similar(positive=plist, negative=nlist, topn=30):
-            if w[0].split('_')[-1] == pos:
-                results['neighbors'].append(w)
-            if len(results['neighbors']) == nr_neighbors:
-                break
-    if len(results['neighbors']) == 0:
-        results['No results'] = True
-        return results
-    for res in results['neighbors']:
-        freq, tier = frequency(res[0], usermodel)
-        results['frequencies'][res[0]] = (freq, tier)
-    return results
-
-
 def vector(query):
     q = query['query']
     usermodel = query['model']
@@ -529,7 +440,6 @@ def classify_semantic_shifts(query):
 operations = {
     '1': find_synonyms,
     '2': find_similarity,
-    '3': scalculator,
     '4': vector,
     '5': find_shifts,
     '6': multiple_neighbors,

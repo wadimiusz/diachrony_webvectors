@@ -38,9 +38,8 @@
           <fieldset>
             <!-- A cicle for models to work with -->
             {%- for m in models %}
-            <label>
-            <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="model" value="{{ m }}">{{ strings[models[m]] }}
-            </label>
+            <input type="checkbox" {%if m in usermodels %}checked{% endif %} name="model" value="{{ m }}" id="m{{ m }}">
+            <label for="m{{ m }}">{{ strings[models[m]] }}</label>
             {%- endfor %}
           </fieldset>
         </div>
@@ -52,9 +51,8 @@
           <!-- radiobuttons for pos selection -->
           <!-- Within the cicle buttons with tags are added for the selected posses in the "tags.tsv" file. -->
           {%- for tag in tags2show %}
-          <label>
-          <input type="radio" name="pos" {% if tag in userpos %}checked{% endif %} value="{{ tag }}"> {{strings[tags2show[tag]]}}
-          </label>
+          <input type="radio" name="pos" {% if tag in userpos %}checked{% endif %} value="{{ tag }}" id="{{ tag }}">
+          <label for="{{ tag }}"> {{strings[tags2show[tag]]}} </label>
           {%- endfor %}
           <!-- And outside the cicle - buttons for all the possible posses and for the query pos. -->
           <label>
