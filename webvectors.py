@@ -482,7 +482,7 @@ def associates_page(lang):
                                        error=error_value,
                                        models=our_models,
                                        tags=tags, url=url,
-                                       usermodels=[defaultmodel],
+                                       usermodels=model_value,
                                        tags2show=exposed_tags)
 
             trajectory_message = {'operation': '6', 'query': query, 'pos': pos,

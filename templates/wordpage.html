@@ -20,12 +20,12 @@
     <!-- Featuring results -->
     {% if list_value -%}
     <h2>{{strings['synraw16']}} <a href="{{ url }}{{lang}}/{{word}}"
-        title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[usermodels[0]][word][0]}}"
-        class="frequency-{{frequencies[usermodels[0]][word][1]}}">
+        title="{{strings['synraw15']}} {{ word.split('_')[-1] }}, {{strings['synraw14']}} {{ frequencies[usermodels[-1]][word][0]}}"
+        class="frequency-{{frequencies[usermodels[-1]][word][1]}}">
         <i>{{ word.split('_')[0].replace('::', ' ') }}</i></a></h2>
     <!-- Word trajectory -->
     <a href="{{ url }}data/images/tsne_shift/{{ fname }}.png" target="_blank">
-    <img class="img-responsive center-block" src = "{{ url }}data/images/tsne_shift/{{ fname }}.png" alt = "{{strings['synraw16']}} {{ word }}" title = "{{strings['synraw16']}} {{ word }}" style="max-width: 700px;">
+    <img class="img-responsive center-block" src = "{{ url }}data/images/tsne_shift/{{ fname }}.png" alt = "{{strings['synraw16']}} {{ word }}" title = "{{strings['synraw16']}} {{ word }}">
     </a>
     <p>{{strings['similar33']}}</p>
     <!-- Title "Semantic associates for", "strong" means "bold" -->
