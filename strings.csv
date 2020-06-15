@@ -30,7 +30,7 @@ home4,Семантические ассоциаты для,Semantic associates f
 home5,вычисленные на&nbsp;модели,computed&nbsp;on
 home7,Крым,Крым
 similar1,Семантические сдвиги в русских новостях,Semantic shifts in Russian news
-similar2,"Слова меняют значение со временем. Введите русское слово, и ShiftRy покажет его семантическую траекторию по выбранным годам.","Words change their meaning over time. Enter a&nbsp;Russian word, and ShiftRy will show its semantic trajectory across the chosen years."
+similar2,"Слова меняют значение со временем. Введите русское слово, и ShiftRy покажет его семантическую траекторию по выбранным годам (на материале российских СМИ).","Words change their meaning over time. Enter a&nbsp;Russian word, and ShiftRy will show its semantic trajectory across the chosen years (based on Russian media)."
 similar4,Списки изменившихся слов,Lists of shifted words
 similar9,Показывать только:,Show only:
 similar10,Существительные,Nouns
@@ -118,7 +118,7 @@ pairwise8,"Выберите из списка два временных пери
 pairwise9,Найти наиболее изменившиеся слова,Find words that shifted most
 pairwise10,10 самых изменившихся слов,10 most shifted words
 pairwise11,Число -- это косинусная близость между векторами слова в двух выбранных временных периодах,The number denotes cosine similarity between the word vectors in two chosen time periods
-pairwise12,Вы должны выбрать ровно 2 года, ни больше, ни меньше!,Choose exactly 2 years!
+pairwise12,"Вы должны выбрать ровно 2 года, ни больше, ни меньше!",Choose exactly 2 years!
 binary0,"Классификатор сдвигов определяет, произошел ли сдвиг в значении выбранного слова между двумя выбранными годами.",The shift classifier tries to detect whether your query word has experienced a semantic shift within the chosen pair of years.
 binary1,Классификация семантических сдвигов,Semantic shifts classification
 binary2,Введите слово:,Enter your word:
