@@ -58,8 +58,8 @@ config = configparser.RawConfigParser()
 config.read('webvectors.cfg')
 
 root = config.get('Files and directories', 'root')
-HOST = config.get('Sockets', 'host')  # Symbolic name meaning all available interfaces
-PORT = config.getint('Sockets', 'port')  # Arbitrary non-privileged port
+HOST = config.get('Sockets', 'host')
+PORT = config.getint('Sockets', 'port')
 tags = config.getboolean('Tags', 'use_tags')
 PICKLES = config.get('Files and directories', 'pickles')
 CORPORA = config.get('Files and directories', 'corpora')
