@@ -164,7 +164,7 @@ def find_synonyms(query):
             results['neighbors'].append(i)
     else:
         counter = 0
-        for i in model.wv.most_similar(positive=qf, topn=1000):
+        for i in model.most_similar(positive=qf, topn=1000):
             if counter == nr_neighbors:
                 break
             if i[0].split('_')[-1] == pos:
