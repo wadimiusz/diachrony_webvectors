@@ -37,6 +37,10 @@ class ShiftClassifier:
 
         x_processed = self.scaler.fit_transform(x_processed)
         self.clf.fit(X=x_processed, y=y_processed)
+        print("Classes:", self.clf.classes_)
+        print("Coefficients:", self.clf.coef_)
+        print("Intercept:", self.clf.intercept_)
+        print("Iterations:", self.clf.n_iter_)
         self.fitted = True
         return self
 

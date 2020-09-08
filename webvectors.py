@@ -699,8 +699,8 @@ def binary(lang):
     if request.method == "GET":
         return render_template("binary.html", other_lang=other_lang,
                                languages=languages,
-                               model1=list(our_models.keys())[-3],
-                               model2=list(our_models.keys())[-2],
+                               model1=list(our_models.keys())[-2],
+                               model2=list(our_models.keys())[-1],
                                models=our_models, url=url)
     else:
         if request.form.getlist("word"):  # First time click

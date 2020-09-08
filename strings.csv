@@ -130,4 +130,4 @@ binary8,Нельзя выбрать две одинаковые модели!,Yo
 binary9,Примеры из корпуса для слова ,Contexts from corpora for the word
 binary10,Примеры из корпуса для этого слова не закэшированы. Вы хотите всё равно найти их? Поиск может занять от 30 до 60 секунд.,Contexts from corpora for this word are not cached. Do you want to see them anyway? Searching can take from 30 to 60 seconds.
 binary11,Найти примеры!,Look up contexts!
-binary12,пенсионный,пенсионный
+binary12,карантин,карантин

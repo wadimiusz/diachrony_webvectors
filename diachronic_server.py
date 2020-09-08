@@ -117,7 +117,7 @@ def find_variants(word, usermodel):
         candidates_set.add(word.lower())
         candidates_set.add(word.capitalize())
     for candidate in candidates_set:
-        if candidate in model.wv.vocab:
+        if candidate in model.vocab:
             results = candidate
             break
     return results
@@ -190,7 +190,7 @@ def find_similarity(query):
         (q1, q2) = pair
         qf1 = q1
         qf2 = q2
-        if q1 not in model.wv.vocab:
+        if q1 not in model.vocab:
             qf1 = find_variants(qf1, usermodel)
             if not qf1:
                 if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q1):
@@ -199,7 +199,7 @@ def find_similarity(query):
                 else:
                     results["Unknown to the model"] = q1
                     return results
-        if q2 not in model.wv.vocab:
+        if q2 not in model.vocab:
             qf2 = find_variants(qf2, usermodel)
             if not qf2:
                 if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q2):
@@ -224,7 +224,7 @@ def vector(query):
     results['frequencies'] = {}
     results['frequencies'][q] = frequency(q, usermodel)
     model = models_dic[usermodel]
-    if q not in model.wv.vocab:
+    if q not in model.vocab:
         qf = find_variants(qf, usermodel)
         if not qf:
             if our_models[usermodel]['algo'] == 'fasttext' and model.wv.__contains__(q):
