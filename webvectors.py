@@ -517,7 +517,7 @@ def associates_page(lang):
 
     return render_template('associates.html', models=our_models, tags=tags, other_lang=other_lang,
                            languages=languages, url=url,
-                           usermodels=['2012', '2013', '2014', '2015'],
+                           usermodels=['2013', '2014', '2015'],
                            tags2show=exposed_tags)
 
 
